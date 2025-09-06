@@ -4,8 +4,8 @@ import logo from '../assets/images/LogoWithoutName2.jpeg'
 const Navbar = () => {
     return (
         <>
-            <nav className="px-8 py-1">
-                <div className="flex items-center justify-between max-w-[94rem] h-22 mx-auto">
+            <nav className="py-1">
+                <div className="flex items-center justify-between max-w-[96rem] h-22 mx-auto">
                     <NavLink to='/'>
                         <div className="flex items-center space-x-2">
                             <img
@@ -21,11 +21,15 @@ const Navbar = () => {
                             </div>
                         </div>
                     </NavLink>
-                    <div className="hidden md:flex items-center space-x-6">
+                    <div className="hidden md:flex items-center space-x-8">
                         <Link to='/' className="navLinks">Home</Link>
-                        <Link to='#' className="navLinks">Dashboard</Link>
-                        <Link to='#' className="navLinks">Reports</Link>
-                        <Link to='#' className="navLinks">Settings</Link>
+                        <Link to='/about' className="navLinks">About us</Link>
+                        <Link to='/faq' className="navLinks">FAQ</Link>
+                    </div>
+
+                    <div className='hidden md:flex items-center space-x-6'>
+                        <Link to='/login' className='text-gray-600'>Log in</Link>
+                        <Link to='/register' className='text-white bg-black hover:bg-gray-900 px-4 py-2 rounded'>Register</Link>
                     </div>
 
                     {/* Mobile Menu Button */}
