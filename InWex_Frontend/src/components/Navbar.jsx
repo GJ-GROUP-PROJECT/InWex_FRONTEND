@@ -29,7 +29,7 @@ const Navbar = () => {
 
                     <div className='hidden md:flex items-center space-x-6'>
                         <Link to='/login' className='text-gray-600'>Log in</Link>
-                        <Link to='/register' className='text-white bg-black hover:bg-gray-900 px-4 py-2 rounded'>Register</Link>
+                        <Link to='/register' className='text-white bg-black hover:bg-gray-900 px-4 py-2 rounded transition-all duration-20'>Register</Link>
                     </div>
 
                     {/* Mobile Menu Button */}
