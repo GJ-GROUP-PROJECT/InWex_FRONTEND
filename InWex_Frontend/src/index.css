@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-family-custom: "Roboto", sans-serif;
+    --font-family-custom: "Poppins", sans-serif;
 }
 
 @layer base {

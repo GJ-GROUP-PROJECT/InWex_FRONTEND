@@ -1,18 +1,24 @@
 import { NavLink, Link } from 'react-router-dom'
-import logo from '../assets/images/CompanyLogoV2-TransparentBG.png'
+import logo from '../assets/images/LogoWithoutName2.jpeg'
 
 const Navbar = () => {
     return (
         <>
-            <nav className="bg-green-100 border-b border-green-200 px-8 py-1 shadow-sm">
-                <div className="flex items-center justify-between max-w-[94rem] mx-auto">
+            <nav className="px-8 py-1">
+                <div className="flex items-center justify-between max-w-[94rem] h-22 mx-auto">
                     <NavLink to='/'>
                         <div className="flex items-center space-x-2">
                             <img
-                                className='h-22 w-auto'
+                                className='h-16 w-auto'
                                 src={logo}
                                 alt='CompanyLogo'
                             />
+                            <div className="flex flex-col">
+                                <h1 className="text-3xl text-gray-600 font-bold leading-none">InWex</h1>
+                                <p className="text-gray-500 text-xs">
+                                    Warehouse <span className='block'>Management System</span>
+                                </p>
+                            </div>
                         </div>
                     </NavLink>
                     <div className="hidden md:flex items-center space-x-6">
