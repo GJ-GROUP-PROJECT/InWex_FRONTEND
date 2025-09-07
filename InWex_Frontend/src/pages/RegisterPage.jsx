@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -5,6 +6,7 @@ const RegisterPage = () => {
     const [registerForm, setRegisterForm] = useState({
         fullname: '',
         email: '',
+        contact: '',
         password: ''
     });
 
@@ -24,33 +26,36 @@ const RegisterPage = () => {
         console.log(registerForm);
 
         // try {
-        //     const res = await fetch('/api/register', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(registerForm),
-        //     })
+        //     const res = await axios.post(
+        //         '/api/accounts/register',
+        //         registerForm,
+        //         {
+        //             headers: {
+        //                 'Content-Type' : 'application/json',
+        //                 'Accept' : 'application/json',
+        //             }
+        //         }
+        //     )
 
-        //     const data = await res.json()
-
-        //     if (res.ok) {
-        //         console.log("Registration Success: ", data)
-        //         return navigate('/login')
-        //     }
-        //     else {
-        //         console.log("Registration Failed: ", data.message)
-        //     }
+        //     console.log('Registration Successful', res.data);
+        //     return navigate('/login')
         // }
         // catch (error) {
-        //     console.log("Error: ", error)
+        //     if (error.response) {
+        //         console.error("Registration Failed:", error.response.data)
+        //     }
+        //     else if (error.request) {
+        //         console.error("No response:", error.request)
+        //     } else {
+        //         console.error("Error:", error.message)
+        //     }
         // }
     }
 
     return (
         <>
             <div className="min-h-screen flex flex-col md:flex-row">
-                {/* Left Side - Login Form */}
+                {/* Left Side - SignUp Form */}
                 <div className="w-full md:w-1/2 p-12 flex flex-col items-center justify-center bg-white">
                     {/* Form container */}
                     <div className="w-full max-w-md">
@@ -66,7 +71,7 @@ const RegisterPage = () => {
                                     Full Name
                                 </label>
                                 <input
-                                    type="fullname"
+                                    type="text"
                                     name="fullname"
                                     value={registerForm.fullname}
                                     onChange={changeHandler}
@@ -99,6 +104,21 @@ const RegisterPage = () => {
                                     value={registerForm.password}
                                     onChange={changeHandler}
                                     placeholder="••••••••"
+                                    className="w-full px-4 py-3 mb-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
+                                />
+                            </div>
+                            {/* Contact */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-600 mb-2">
+                                    Contact
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="contact"
+                                    pattern="[0-9]{10}"
+                                    value={registerForm.contact}
+                                    onChange={changeHandler}
+                                    placeholder="+91 12345-67890"
                                     className="w-full px-4 py-3 mb-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
                                 />
                             </div>

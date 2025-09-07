@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import background from '../assets/images/LoginPageImage.jpg'
 
 const LoginPage = () => {
@@ -23,26 +24,31 @@ const LoginPage = () => {
         e.preventDefault();
         console.log(loginData);
 
-        // try {
-        //     const res = await fetch('/api/login', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(loginData)
-        //     })
-        //     const data = await res.json();
+        try {
+            const res = await axios.post(
+                '/api/accounts/login',
+                loginData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }
+            )
 
-        //     if (res.ok) {
-        //         console.log("Login Success:", data);
-        //         return navigate('/');
-        //     } else {
-        //         console.error("Login Failed:", data.message);
-        //     }
-        // }
-        // catch (error) {
-        //     console.log("Error: ", error);
-        // }
+            console.log('Login Successful', res.data)
+            return navigate('/')
+        }
+        catch (error) {
+            if (error.response) {
+                console.error("Login Failed:", error.response.data)
+            }
+            else if (error.request) {
+                console.error("No response:", error.request)
+            } else {
+                console.error("Error:", error.message)
+            }
+        }
     }
 
     return (
