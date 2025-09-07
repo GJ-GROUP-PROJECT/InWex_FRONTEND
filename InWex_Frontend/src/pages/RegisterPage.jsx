@@ -107,7 +107,7 @@ const RegisterPage = () => {
                                     value={registerForm.password}
                                     onChange={changeHandler}
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 mb-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
+                                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
                                 />
                             </div>
                             {/* Contact */}
@@ -122,7 +122,7 @@ const RegisterPage = () => {
                                     value={registerForm.contact}
                                     onChange={changeHandler}
                                     placeholder="+91 12345-67890"
-                                    className="w-full px-4 py-3 mb-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
+                                    className="w-full px-4 py-3 mb-5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
                                 />
                             </div>
                             {/* Register*/}
