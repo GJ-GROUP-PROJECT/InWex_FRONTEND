@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import background from '../assets/images/RegisterPageImage.jpeg'
 
 const RegisterPage = () => {
     const [registerForm, setRegisterForm] = useState({
@@ -23,6 +24,7 @@ const RegisterPage = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        toast.success('Registered Successful')
         console.log(registerForm);
 
         // try {
@@ -37,7 +39,8 @@ const RegisterPage = () => {
         //         }
         //     )
 
-        //     console.log('Registration Successful', res.data);
+        //     console.log('Registration Successful', res.data)
+        //     toast.success('Registered Successful')
         //     return navigate('/login')
         // }
         // catch (error) {
@@ -60,7 +63,7 @@ const RegisterPage = () => {
                     {/* Form container */}
                     <div className="w-full max-w-md">
                         {/* Title */}
-                        <h1 className="text-4xl font-bold text-gray-800 mb-8 mt-7">Register</h1>
+                        <h1 className="text-4xl font-extrabold text-gray-800 mb-8 mt-7">Register <span className='text-2xl font-bold text-gray-700'>as Employee</span></h1>
                         {/* Form */}
                         <form
                             className="space-y-3"
@@ -141,8 +144,12 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Right Side */}
-                <div className="w-full md:w-1/2 h-screen overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,1)]">
-
+                <div className="w-full md:w-1/2 h-screen overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,1)] rounded-tl-2xl rounded-bl-2xl">
+                    <img
+                        src={background}
+                        alt="Background"
+                        className="w-full h-full object-cover scale-x-[-1]"
+                    />
                 </div>
             </div>
         </>

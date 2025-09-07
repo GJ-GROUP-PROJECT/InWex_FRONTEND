@@ -1,7 +1,8 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import background from '../assets/images/LoginPageImage.jpg'
+import { toast } from 'react-toastify'
 
 const LoginPage = () => {
     const [loginData, setLoginData] = useState({
@@ -37,11 +38,13 @@ const LoginPage = () => {
             )
 
             console.log('Login Successful', res.data)
+            toast.success('Login Successful')
             return navigate('/')
         }
         catch (error) {
             if (error.response) {
                 console.error("Login Failed:", error.response.data)
+                toast.error('Login Failed: ', error.response.data)
             }
             else if (error.request) {
                 console.error("No response:", error.request)
@@ -121,7 +124,7 @@ const LoginPage = () => {
             </div>
 
             {/* Right Side */}
-            <div className="w-full md:w-1/2 h-screen overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,1)]">
+            <div className="w-full md:w-1/2 h-screen overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,1)] rounded-tl-2xl rounded-bl-2xl">
                 <img
                     src={background}
                     alt="Background"

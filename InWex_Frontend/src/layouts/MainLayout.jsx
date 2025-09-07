@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom"
+import { ToastContainer } from "react-toastify";
 import Navbar from "../components/Navbar"
 
 const MainLayout = () => {
@@ -11,6 +12,7 @@ const MainLayout = () => {
         <>
             {!shouldHideNavbar && <Navbar />}
             <Outlet />
+            <ToastContainer />
         </>
     )
 }
