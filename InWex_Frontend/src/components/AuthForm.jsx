@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-const AuthForm = ({ type = 'Login', fields = [], submitUrl = 'api/accounts/login', redirectTo = '/', background = '../assets/images/LoginPageImage.jpg', cssSpace='space-y-6'}) => {
+const AuthForm = ({ type = 'Login', title, fields = [], submitUrl = 'api/accounts/login', redirectTo = '/', background = '../assets/images/LoginPageImage.jpg', cssSpace = 'space-y-6' }) => {
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => ({
             ...acc,
@@ -50,14 +50,10 @@ const AuthForm = ({ type = 'Login', fields = [], submitUrl = 'api/accounts/login
     return (
         <>
             <div className="min-h-screen flex flex-col md:flex-row">
-                {/* Left Side - Form */}
                 <div className="w-full md:w-1/2 p-12 flex flex-col items-center justify-center bg-white">
                     <div className="w-full max-w-md">
-                        <h1 className="text-4xl font-bold text-gray-800 mb-8 mt-7">
-                            {type === 'Login' ? 'Log in'
-                                : type === 'Register as Employee' ?
-                                    <> Register <span className='text-2xl font-bold text-gray-700'> as Employee </span> </> :
-                                    <> Register <span className='text-2xl font-bold text-gray-700'> as Organisation </span> </>}</h1>
+                        <h1 className="text-4xl font-bold text-gray-800 mb-8 mt-7">{type === 'Login' ? 'Log in' : title}</h1>
+
                         <form className={cssSpace} onSubmit={submitHandler}>
                             {fields.map((field) => (
                                 <div key={field.name}>
@@ -91,11 +87,6 @@ const AuthForm = ({ type = 'Login', fields = [], submitUrl = 'api/accounts/login
                             </p>
                         </form>
                     </div>
-                </div>
-
-                {/* Right Side - Image */}
-                <div className="w-full md:w-1/2 h-screen overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,1)] rounded-tl-2xl rounded-bl-2xl">
-                    <img src={background} alt="Background" className="w-full h-full object-cover" />
                 </div>
             </div>
         </>
