@@ -60,7 +60,11 @@ const AuthForm = ({
     return (
         <div className="min-h-screen flex flex-col md:flex-row">
             {showImageOnLeft && (
-                <ImageContent background={background} alt="Auth Background" />
+                <ImageContent
+                    background={background}
+                    alt="Auth Background"
+                    position="left"
+                />
             )}
             <FormContent
                 type={type}
@@ -72,7 +76,11 @@ const AuthForm = ({
                 cssSpace={cssSpace}
             />
             {showImageOnRight && !showImageOnLeft && (
-                <ImageContent background={background} alt="Auth Background" />
+                <ImageContent
+                    background={background}
+                    alt="Auth Background"
+                    position="right"
+                />
             )}
         </div>
     )
