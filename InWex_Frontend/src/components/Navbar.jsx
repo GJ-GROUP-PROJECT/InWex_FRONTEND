@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom'
-import logo from '../assets/images/LogoWithoutName2.jpeg'
+import logo from '../assets/images/CompanyLogoZoomed-TransparentBG.png'
 
 const Navbar = () => {
     return (
@@ -9,7 +9,7 @@ const Navbar = () => {
                     <NavLink to='/'>
                         <div className="flex items-center space-x-2">
                             <img
-                                className='h-16 w-auto'
+                                className='h-20 w-auto'
                                 src={logo}
                                 alt='CompanyLogo'
                             />
