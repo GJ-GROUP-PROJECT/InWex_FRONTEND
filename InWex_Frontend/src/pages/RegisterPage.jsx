@@ -1,11 +1,7 @@
-import { useState } from 'react';
 import background from '../assets/images/RegisterPageImage.jpeg'
 import AuthForm from '../components/AuthForm.jsx';
-import FormImage from '../components/FormImage.jsx';
 
 const RegisterPage = () => {
-    const [regType, setRegType] = useState('Employee')
-
     const empFields = [
         { name: 'fullname', label: 'Full Name', type: 'text', placeholder: 'Test Example' },
         { name: 'email', label: 'Email Address', type: 'email', placeholder: 'test@example.com' },
@@ -22,42 +18,28 @@ const RegisterPage = () => {
 
     return (
         <>
-            {regType === 'Employee' ? (
-                <>
-                    <AuthForm
-                        type='Register as Employee'
-                        title={
-                            <>
-                                Register <span className='text-2xl font-bold text-gray-700'> as Employee </span>
-                            </>
-                        }
-                        fields={empFields}
-                        submitUrl='/api/accounts/register'
-                        redirectTo='/login'
-                        cssSpace='space-y-3'
-                    />
-                    {/* Right: Image */}
-                    <FormImage src={background} alt="Registration Background" />
-                </>
-            ) : (
-                <>
-                    {/* Image on Left */}
-                    <FormImage src={background} alt="Registration Background" />
-                    {/* Form on Right */}
-                    <AuthForm
-                        type='Register as Organization'
-                        title={
-                            <>
-                                Register <span className="text-2xl font-bold text-gray-700">as Organization</span>
-                            </>
-                        }
-                        fields={orgFields}
-                        submitUrl='/api/accounts/register'
-                        redirectTo='/login'
-                        cssSpace='space-y-3'
-                    />
-                </>
-            )}
+            <AuthForm
+                type='Register as Employee'
+                title={<>Register <span className='text-2xl font-bold text-gray-700'> as Employee </span></>}
+                fields={empFields}
+                submitUrl='/api/accounts/register'
+                redirectTo='/login'
+                background={background}
+                cssSpace='space-y-3'
+                showImageOnRight={true}
+            />
+
+            <AuthForm
+                type='Register as Organization'
+                title={<>Register <span className="text-2xl font-bold text-gray-700">as Organization</span></>}
+                fields={orgFields}
+                submitUrl='/api/accounts/register'
+                redirectTo='/login'
+                background={background}
+                cssSpace='space-y-3'
+                showImageOnLeft={true}
+                showImageOnRight={false}
+            />
         </>
     )
 }

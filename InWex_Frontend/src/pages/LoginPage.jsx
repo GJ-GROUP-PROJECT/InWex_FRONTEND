@@ -14,6 +14,8 @@ const LoginPage = () => {
                 redirectTo='/'
                 background={background}
                 cssSpace='space-y-5'
+                showImageOnRight={true}
+                showImageOnLeft={false}
             />
         </>
     )
