@@ -37,7 +37,21 @@ const AuthForm = ({
             navigate(redirectTo);
         } catch (error) {
             if (error.response) {
-                toast.error(`${type} Failed: ${JSON.stringify(error.response.data)}`);
+                let message = "Something went wrong";
+
+                const data = error.response.data;
+                if (typeof data === "object" && data !== null) {
+                    const firstKey = Object.keys(data)[0];
+                    if (Array.isArray(data[firstKey])) {
+                        message = data[firstKey][0];
+                    } else {
+                        message = data[firstKey];
+                    }
+                } else if (typeof data === "string") {
+                    message = data;
+                }
+
+                toast.error(`${type} Failed: ${message}`);
             } else if (error.request) {
                 console.log("No response from server");
             } else {
