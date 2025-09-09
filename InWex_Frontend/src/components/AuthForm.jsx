@@ -1,58 +1,47 @@
-import axios from 'axios'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import FormContent from './FormContent'
-import ImageContent from './ImageContent'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import FormContent from "./FormContent";
+import ImageContent from "./ImageContent";
 
 const AuthForm = ({
-    type = 'Login',
+    type = "Login",
     title,
     fields = [],
-    submitUrl = 'api/accounts/login',
-    redirectTo = '/',
-    background = '../assets/images/LoginPageImage.jpg',
-    cssSpace = 'space-y-6',
+    submitUrl = "api/accounts/login",
+    redirectTo = "/",
+    background = "../assets/images/LoginPageImage.jpg",
+    cssSpace = "space-y-6",
     showImageOnLeft = false,
-    showImageOnRight = true
+    showImageOnRight = true,
 }) => {
-    const [formData, setFormData] = useState(
-        fields.reduce((acc, field) => ({
-            ...acc,
-            [field.name]: ''
-        }), {})
-    );
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const changeHandler = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    }
-
-    const submitHandler = async (e) => {
-        e.preventDefault();
-
+    const onSubmit = async (data) => {
         try {
-            const res = await axios.post(submitUrl, formData, {
+            const res = await axios.post(submitUrl, data, {
                 headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json'
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
                 },
             });
+
             toast.success(`${type} Successful`);
             navigate(redirectTo);
-        }
-        catch (error) {
+        } catch (error) {
             if (error.response) {
-                toast.error(`${type} Failed: ${error.response.data}`);
+                toast.error(`${type} Failed: ${JSON.stringify(error.response.data)}`);
             } else if (error.request) {
-                toast.error('No response from server');
+                console.log("No response from server");
             } else {
-                toast.error(error.message);
+                console.log(error.message);
             }
         }
     };
@@ -60,30 +49,25 @@ const AuthForm = ({
     return (
         <div className="min-h-screen flex flex-col md:flex-row">
             {showImageOnLeft && (
-                <ImageContent
-                    background={background}
-                    alt="Auth Background"
-                    position="left"
-                />
+                <ImageContent background={background} alt="Auth Background" position="left" />
             )}
+
             <FormContent
                 type={type}
                 title={title}
                 fields={fields}
-                formData={formData}
-                changeHandler={changeHandler}
-                submitHandler={submitHandler}
+                register={register}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                errors={errors}
                 cssSpace={cssSpace}
             />
+
             {showImageOnRight && !showImageOnLeft && (
-                <ImageContent
-                    background={background}
-                    alt="Auth Background"
-                    position="right"
-                />
+                <ImageContent background={background} alt="Auth Background" position="right" />
             )}
         </div>
-    )
-}
+    );
+};
 
-export default AuthForm
+export default AuthForm;

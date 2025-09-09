@@ -6,18 +6,22 @@ import SignupPage from './pages/RegisterPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import FAQPage from './pages/FAQPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
 
 const App = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
-            <Route path='/' element={<MainLayout />}>
-                <Route index element={<HomePage />} />
-                <Route path='/login' element={<LoginPage />} />
-                <Route path='/register' element={<SignupPage />} />
-                <Route path='/about' element={<AboutPage />} />
-                <Route path='/faq' element={<FAQPage />} />
-                <Route path='/forgot-password' element={<ForgotPasswordPage />} />
-            </Route>
+            <>
+                <Route path='/' element={<MainLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path='/login' element={<LoginPage />} />
+                    <Route path='/register' element={<SignupPage />} />
+                    <Route path='/about' element={<AboutPage />} />
+                    <Route path='/faq' element={<FAQPage />} />
+                    <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+                </Route>
+                <Route path='*' element={<NotFoundPage />} />
+            </>
         )
     )
 

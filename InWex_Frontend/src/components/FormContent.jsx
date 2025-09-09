@@ -4,9 +4,10 @@ const FormContent = ({
     type,
     title,
     fields,
-    formData,
-    changeHandler,
-    submitHandler,
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
     cssSpace
 }) => {
     return (
@@ -16,7 +17,7 @@ const FormContent = ({
                     {type === 'Login' ? 'Log in' : title}
                 </h1>
 
-                <form className={cssSpace} onSubmit={submitHandler}>
+                <form className={cssSpace} onSubmit={handleSubmit(onSubmit)}>
                     {fields.map((field) => (
                         <div key={field.name}>
                             <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -24,12 +25,17 @@ const FormContent = ({
                             </label>
                             <input
                                 type={field.type}
-                                name={field.name}
-                                value={formData[field.name]}
-                                onChange={changeHandler}
                                 placeholder={field.placeholder}
                                 className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-200"
+                                {
+                                ...register(field.name, field.rules)
+                                }
                             />
+                            {errors[field.name] && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors[field.name].message}
+                                </p>
+                            )}
                         </div>
                     ))}
 
