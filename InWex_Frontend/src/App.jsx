@@ -7,6 +7,7 @@ import AboutPage from './pages/AboutPage.jsx'
 import FAQPage from './pages/FAQPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
 
 const App = () => {
     const router = createBrowserRouter(
@@ -20,6 +21,7 @@ const App = () => {
                     <Route path='/faq' element={<FAQPage />} />
                     <Route path='/forgot-password' element={<ForgotPasswordPage />} />
                 </Route>
+                <Route path='/dashboard' element={<DashboardPage />} />
                 <Route path='*' element={<NotFoundPage />} />
             </>
         )
