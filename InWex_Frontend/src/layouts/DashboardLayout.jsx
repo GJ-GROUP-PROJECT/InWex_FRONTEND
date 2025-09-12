@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify"
 import { WMSHeader } from "../components/WMSHeader";
 import { WMSSidebar } from "../components/WMSSidebar";
