@@ -12,7 +12,7 @@ import {
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-    { icon: Home, label: "Dashboard", path: "/" },
+    { icon: Home, label: "Dashboard", path: "/dashboard" },
     { icon: Package, label: "Inventory", path: "/inventory" },
     { icon: ShoppingCart, label: "Orders", path: "/orders" },
     { icon: Truck, label: "Shipping", path: "/shipping" },
@@ -24,7 +24,7 @@ const menuItems = [
 
 export function WMSSidebar() {
     return (
-        <aside className="bg-card border-r border-border w-64 h-full shadow-soft">
+        <aside className="bg-card border-r border-border w-64 min-h-screen shadow-soft">
             <nav className="p-4">
                 <ul className="space-y-2">
                     {menuItems.map((item) => {
