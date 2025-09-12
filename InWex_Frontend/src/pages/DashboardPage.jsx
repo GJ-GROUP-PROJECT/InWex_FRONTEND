@@ -7,14 +7,14 @@ import { QuickActions } from "../components/QuickActions";
 import { Package, ShoppingCart, Truck, TrendingUp } from "lucide-react";
 
 const DashboardPage = () => {
-    const user = localStorage.getItem('user');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
     const token = localStorage.getItem('token');
 
     console.log(user, token)
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <WMSHeader />
+            <WMSHeader user={user} />
 
             <div className="flex flex-1">
                 <WMSSidebar />

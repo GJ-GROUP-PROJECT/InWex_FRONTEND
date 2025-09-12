@@ -1,9 +1,11 @@
-import { Bell, Import, Search, User } from "lucide-react";
+import { Bell, Search, User } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { TooltipCard } from "../components/ui/tooltip";
 import logo from '../assets/images/CompanyLogoZoomed-TransparentBG.png'
 
-export function WMSHeader() {
+export function WMSHeader({ user }) {
+    console.log(user)
     return (
         <header className="bg-card border-b border-border px-6 py-2 shadow-soft">
             <div className="flex items-center justify-between">
@@ -34,9 +36,32 @@ export function WMSHeader() {
                         </span>
                     </Button>
 
-                    <Button variant="ghost" size="icon">
-                        <User className="h-5 w-5" />
-                    </Button>
+                    <TooltipCard
+                        position="right"
+                        trigger={
+                            <Button variant="ghost" size="icon">
+                                <User className="h-5 w-5" />
+                            </Button>
+                        }
+                    >
+                        {user && Object.keys(user).length > 0 ? (
+                            <>
+                                <p className="font-medium">{user.fullname}</p>
+                                <p className="text-gray-600">{user.email}</p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    {user.roles ?
+                                        Object.entries(user.roles)
+                                            .filter(([key, value]) => value === true)
+                                            .map(([key]) => key)
+                                            .join(", ") || "No active roles"
+                                        : "No roles"
+                                    }
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-sm text-gray-500">Loading user...</p>
+                        )}
+                    </TooltipCard>
                 </div>
             </div>
         </header>
