@@ -1,5 +1,4 @@
 import {
-    BarChart3,
     Package,
     ShoppingCart,
     Truck,
@@ -13,7 +12,7 @@ import { NavLink } from "react-router-dom";
 
 const menuItems = [
     { icon: Home, label: "Dashboard", path: "/dashboard" },
-    { icon: Package, label: "Inventory", path: "/inventory" },
+    { icon: Package, label: "Inventory", path: "/dashboard/inventory" },
     { icon: ShoppingCart, label: "Orders", path: "/orders" },
     { icon: Truck, label: "Shipping", path: "/shipping" },
     { icon: ClipboardList, label: "Receiving", path: "/receiving" },

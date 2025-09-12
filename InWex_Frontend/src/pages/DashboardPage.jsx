@@ -1,5 +1,3 @@
-import { WMSHeader } from "../components/WMSHeader";
-import { WMSSidebar } from "../components/WMSSidebar";
 import { MetricCard } from "../components/MetricCard";
 import { RecentActivity } from "../components/RecentActivity";
 import { InventoryChart } from "../components/InventoryChart";
@@ -7,68 +5,53 @@ import { QuickActions } from "../components/QuickActions";
 import { Package, ShoppingCart, Truck, TrendingUp } from "lucide-react";
 
 const DashboardPage = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const token = localStorage.getItem('token');
-
-    console.log(user, token)
-
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <WMSHeader user={user} />
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                    title="Total Inventory"
+                    value="12,458"
+                    change="+5.2% from last month"
+                    changeType="positive"
+                    icon={Package}
+                />
+                <MetricCard
+                    title="Pending Orders"
+                    value="89"
+                    change="-2.1% from yesterday"
+                    changeType="negative"
+                    icon={ShoppingCart}
+                />
+                <MetricCard
+                    title="Active Shipments"
+                    value="23"
+                    change="+12.5% from last week"
+                    changeType="positive"
+                    icon={Truck}
+                />
+                <MetricCard
+                    title="Warehouse Efficiency"
+                    value="94.7%"
+                    change="+0.8% from last month"
+                    changeType="positive"
+                    icon={TrendingUp}
+                />
+            </div>
 
-            <div className="flex flex-1">
-                <WMSSidebar />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 bg-white rounded-2xl p-4 shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4">Inventory Flow</h2>
+                    <InventoryChart />
+                </div>
 
-                <main className="flex-1 p-6 bg-white rounded-tl-2xl shadow-inner">
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <MetricCard
-                                title="Total Inventory"
-                                value="12,458"
-                                change="+5.2% from last month"
-                                changeType="positive"
-                                icon={Package}
-                            />
-                            <MetricCard
-                                title="Pending Orders"
-                                value="89"
-                                change="-2.1% from yesterday"
-                                changeType="negative"
-                                icon={ShoppingCart}
-                            />
-                            <MetricCard
-                                title="Active Shipments"
-                                value="23"
-                                change="+12.5% from last week"
-                                changeType="positive"
-                                icon={Truck}
-                            />
-                            <MetricCard
-                                title="Warehouse Efficiency"
-                                value="94.7%"
-                                change="+0.8% from last month"
-                                changeType="positive"
-                                icon={TrendingUp}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div className="lg:col-span-2 bg-white rounded-2xl p-4 shadow-sm">
-                                <h2 className="text-lg font-semibold mb-4">Inventory Flow</h2>
-                                <InventoryChart />
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="bg-white rounded-2xl p-4 shadow-sm">
-                                    <QuickActions />
-                                </div>
-                                <div className="bg-white rounded-2xl p-4 shadow-sm">
-                                    <RecentActivity />
-                                </div>
-                            </div>
-                        </div>
+                <div className="space-y-6">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                        <QuickActions />
                     </div>
-                </main>
+                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                        <RecentActivity />
+                    </div>
+                </div>
             </div>
         </div>
     );

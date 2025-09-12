@@ -7,19 +7,24 @@ import AboutPage from './pages/AboutPage.jsx'
 import FAQPage from './pages/FAQPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
+import InventoryPage from './pages/DashBoardPage/InventoryPage.jsx'
+import DashboardLayout from './layouts/DashboardLayout.jsx'
 
 const App = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
             <>
-                <Route path='/' element={<MainLayout />}>
+                <Route path='/' element={<MainLayout />} >
                     <Route index element={<HomePage />} />
                     <Route path='/login' element={<LoginPage />} />
                     <Route path='/register' element={<SignupPage />} />
                     <Route path='/about' element={<AboutPage />} />
                     <Route path='/faq' element={<FAQPage />} />
                 </Route>
-                <Route path='/dashboard' element={<DashboardPage />} />
+                <Route path='/dashboard' element={<DashboardLayout />}>
+                    <Route index element={<DashboardPage />} />
+                    <Route path='inventory' element={<InventoryPage />} />
+                </Route>
                 <Route path='*' element={<NotFoundPage />} />
             </>
         )

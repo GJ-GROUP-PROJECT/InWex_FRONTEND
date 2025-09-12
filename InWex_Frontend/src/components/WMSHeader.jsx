@@ -5,7 +5,6 @@ import { TooltipCard } from "../components/ui/tooltip";
 import logo from '../assets/images/CompanyLogoZoomed-TransparentBG.png'
 
 export function WMSHeader({ user }) {
-    console.log(user)
     return (
         <header className="bg-card border-b border-border px-6 py-2 shadow-soft">
             <div className="flex items-center justify-between">
