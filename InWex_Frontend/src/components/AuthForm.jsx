@@ -51,7 +51,9 @@ const AuthForm = ({
             }
         };
 
-        fetchOrganizations();
+        if (type != 'Login') {
+            fetchOrganizations();
+        }
     }, []);
 
     const onSubmit = async (data) => {
@@ -69,6 +71,8 @@ const AuthForm = ({
                     Accept: "application/json",
                 },
             });
+
+            console.log(res.data)
 
             toast.success(`${type} Successful`);
             navigate(redirectTo);

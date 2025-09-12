@@ -5,7 +5,6 @@ import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/RegisterPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import FAQPage from './pages/FAQPage.jsx'
-import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 
@@ -19,7 +18,6 @@ const App = () => {
                     <Route path='/register' element={<SignupPage />} />
                     <Route path='/about' element={<AboutPage />} />
                     <Route path='/faq' element={<FAQPage />} />
-                    <Route path='/forgot-password' element={<ForgotPasswordPage />} />
                 </Route>
                 <Route path='/dashboard' element={<DashboardPage />} />
                 <Route path='*' element={<NotFoundPage />} />
