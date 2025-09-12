@@ -15,6 +15,7 @@ const AuthForm = ({
     cssSpace = "space-y-6",
     showImageOnLeft = false,
     showImageOnRight = true,
+    additionalData = {}
 }) => {
     const {
         register,
@@ -26,7 +27,14 @@ const AuthForm = ({
 
     const onSubmit = async (data) => {
         try {
-            const res = await axios.post(submitUrl, data, {
+            const submitData = {
+                ...data,
+                ...additionalData
+            }
+
+            console.log("Submitting data:", submitData);
+
+            const res = await axios.post(submitUrl, submitData, {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
@@ -35,7 +43,8 @@ const AuthForm = ({
 
             toast.success(`${type} Successful`);
             navigate(redirectTo);
-        } catch (error) {
+        } 
+        catch (error) {
             if (error.response) {
                 let message = "Something went wrong";
 
@@ -44,17 +53,21 @@ const AuthForm = ({
                     const firstKey = Object.keys(data)[0];
                     if (Array.isArray(data[firstKey])) {
                         message = data[firstKey][0];
-                    } else {
+                    }
+                    else {
                         message = data[firstKey];
                     }
-                } else if (typeof data === "string") {
+                }
+                else if (typeof data === "string") {
                     message = data;
                 }
 
                 toast.error(`${type} Failed: ${message}`);
-            } else if (error.request) {
+            }
+            else if (error.request) {
                 console.log("No response from server");
-            } else {
+            }
+            else {
                 console.log(error.message);
             }
         }

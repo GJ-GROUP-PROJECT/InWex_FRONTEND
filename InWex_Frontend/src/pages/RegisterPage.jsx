@@ -138,6 +138,10 @@ const RegisterPage = () => {
                     cssSpace='space-y-3'
                     showImageOnRight={true}
                     showImageOnLeft={false}
+                    additionalData={{
+                        is_business:false,
+                        is_warehouse_staff:true
+                    }}
                 />
             ) : (
                 <AuthForm
@@ -154,6 +158,10 @@ const RegisterPage = () => {
                     cssSpace='space-y-3'
                     showImageOnLeft={true}
                     showImageOnRight={false}
+                    additionalData={{
+                        is_business:true,
+                        is_warehouse_staff:false
+                    }}
                 />
             )}
         </>

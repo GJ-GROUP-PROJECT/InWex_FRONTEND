@@ -35,7 +35,7 @@ const LoginPage = () => {
                     },
                 ]}
                 submitUrl='/api/accounts/login'
-                redirectTo='/'
+                redirectTo='/dashboard'
                 background={background}
                 cssSpace='space-y-5'
                 showImageOnRight={true}
