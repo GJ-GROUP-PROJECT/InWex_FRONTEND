@@ -55,12 +55,22 @@ const RegisterPage = () => {
                 }
             }
         },
+        {
+            name: 'organization',
+            label: 'Organization',
+            type: 'dropdown',
+            placeholder: 'Select an organization',
+            option:[],
+            rules: {
+                required: 'Organization is required'
+            }
+        }
     ]
 
     const orgFields = [
         {
             name: 'orgName',
-            label: 'Org Name',
+            label: 'Full Name',
             type: 'text',
             placeholder: 'Test Example',
             rules: {

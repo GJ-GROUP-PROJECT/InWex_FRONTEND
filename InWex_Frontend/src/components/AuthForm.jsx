@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -25,6 +26,34 @@ const AuthForm = ({
 
     const navigate = useNavigate();
 
+    const [organizations, setOrganizations] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchOrganizations = async () => {
+            setLoading(true);
+            try {
+                console.log("Fetching organizations from: /api/accounts/companies");
+
+                const res = await axios.get('/api/accounts/companies', {
+                    headers: {
+                        "Content-Type": 'application/json'
+                    },
+                });
+
+                console.log("Organizations fetched:", res.data);
+                setOrganizations(res.data);
+            } catch (error) {
+                console.error("Error fetching organizations:", error);
+                setOrganizations([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrganizations();
+    }, []);
+
     const onSubmit = async (data) => {
         try {
             const submitData = {
@@ -43,7 +72,7 @@ const AuthForm = ({
 
             toast.success(`${type} Successful`);
             navigate(redirectTo);
-        } 
+        }
         catch (error) {
             if (error.response) {
                 let message = "Something went wrong";
@@ -88,6 +117,8 @@ const AuthForm = ({
                 onSubmit={onSubmit}
                 errors={errors}
                 cssSpace={cssSpace}
+                organizations={organizations}
+                loading={loading}
             />
 
             {showImageOnRight && !showImageOnLeft && (
