@@ -74,6 +74,17 @@ const AuthForm = ({
 
             console.log(res.data)
 
+            const { token } = res.data;
+            const user = {
+                id: res.data.id,
+                fullname: res.data.fullname,
+                email: res.data.email,
+                roles: res.data.roles,
+            };
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user))
+
             toast.success(`${type} Successful`);
             navigate(redirectTo);
         }
