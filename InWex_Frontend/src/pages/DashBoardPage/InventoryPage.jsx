@@ -12,13 +12,7 @@ const InventoryPage = () => {
             try {
                 setLoading(true);
                 const token = localStorage.getItem('token');
-
-                // Debug logging
-                console.log('=== InventoryPage Debug ===');
-                console.log('Token from localStorage:', token);
-                console.log('Token exists:', !!token);
-                console.log('Token type:', typeof token);
-                console.log('Token length:', token?.length);
+                console.log(token)
 
                 if (!token) {
                     setError('No authentication token found. Please login again.');
@@ -28,30 +22,23 @@ const InventoryPage = () => {
 
                 console.log('Making request with headers:', {
                     "Content-Type": 'application/json',
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Token ${token}`
                 });
 
                 const response = await axios.get('/api/products/get-products', {
                     headers: {
                         "Content-Type": 'application/json',
-                        "Authorization": `Bearer ${token}`
+                        "Authorization": `Token ${token}`
                     },
                 });
 
-                // Debug logging
-                console.log('Full response:', response);
-                console.log('Response data:', response.data);
-                console.log('Is response.data an array?', Array.isArray(response.data));
 
                 // Handle different response structures
                 let productsData;
                 if (Array.isArray(response.data)) {
                     productsData = response.data;
-                } else if (response.data && Array.isArray(response.data.products)) {
-                    productsData = response.data.products;
-                } else if (response.data && Array.isArray(response.data.data)) {
-                    productsData = response.data.data;
-                } else {
+                }
+                else {
                     console.error('Unexpected response structure:', response.data);
                     productsData = [];
                 }
@@ -59,21 +46,13 @@ const InventoryPage = () => {
                 setProducts(productsData);
                 setError(null);
             } catch (err) {
-                console.error('=== Error Details ===');
-                console.error('Full Error:', err);
-                console.error('Status:', err.response?.status);
-                console.error('Status Text:', err.response?.statusText);
-                console.error('Response Data:', err.response?.data);
-                console.error('Request Headers:', err.config?.headers);
-                console.error('Request URL:', err.config?.url);
+                console.error('Error:', err);
 
                 if (err.response?.status === 401) {
                     console.error('Authentication failed - token might be invalid or expired');
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     setError('Session expired. Please login again.');
-                    // You might want to redirect to login here
-                    // window.location.href = '/login';
                 } else {
                     setError('Failed to load products');
                 }
