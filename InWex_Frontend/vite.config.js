@@ -13,7 +13,7 @@ export default defineConfig({
         port: 3000,
         proxy: {
             '/api': {
-                target: 'https://inwex.tech/',
+                target: 'https://www.inwex.tech/',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '')
             }
