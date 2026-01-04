@@ -1,7 +1,7 @@
 "use client"
 
 import { Bell, MessageSquareMore } from "lucide-react"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import Image from "next/image"
 
 const Navbar = () => {

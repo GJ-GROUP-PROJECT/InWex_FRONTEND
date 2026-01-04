@@ -1,4 +1,4 @@
-import { NavbarLeft } from "@/components/NavbarLeft"
+import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
 
 const Shipping = () => {
     return (

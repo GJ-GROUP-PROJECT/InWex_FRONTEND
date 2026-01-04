@@ -1,13 +1,12 @@
 "use client"
 
-import { NavbarLeft } from "@/components/NavbarLeft"
+import { ProductCard } from "@/components/Inventory/ProductCard"
+import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { ChevronDown, Ellipsis, Funnel, Menu, Plus, SearchIcon } from "lucide-react"
 import { useState } from "react"
-import Image from "next/image"
 
 const Inventory = () => {
     const [selected, setSelected] = useState("Product")
@@ -15,17 +14,24 @@ const Inventory = () => {
     const options = [
         "Product",
         "Warehouse",
-        "High To Low Price",
-        "Low to High Price",
+        "Price: High To Low",
+        "Price: Low to High",
     ]
+
+    const products = Array.from({ length: 6 }).map((_, i) => ({
+        code: `12${i}`,
+        price: 123,
+        name: "Product Name",
+        stock: 300,
+    }))
 
     return (
         <>
             <NavbarLeft>
-                <h1 className="text-[51px] font-medium">Inventory</h1>
+                <h1 className="text-4xl font-medium">Inventory</h1>
             </NavbarLeft>
 
-            <main className="mt-15">
+            <main className="mt-12">
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-4xl font-semibold">Product List</h1>
@@ -94,206 +100,11 @@ const Inventory = () => {
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-8">
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                    <div>
-                        <Card className="w-80 rounded-xl overflow-hidden bg-[#1E1E1E] p-0 border-none">
-                            <div className="h-60 bg-zinc-200 flex items-center justify-center">
-                                <Image
-                                    src="/globe.svg"
-                                    alt="Product"
-                                    width={80}
-                                    height={80}
-                                    className="opacity-60"
-                                />
-                            </div>
-                            <CardContent className="px-4 space-y-2">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="bg-zinc-700 text-white px-3 py-1 rounded-md">
-                                        Code: 123
-                                    </span>
-                                    <span className="text-white text-lg font-semibold">₹123</span>
-                                </div>
-
-                                <CardTitle className="text-white text-2xl">
-                                    Product Name
-                                </CardTitle>
-
-                                <CardDescription className="text-zinc-400">
-                                    In hand: 300 items
-                                </CardDescription>
-                            </CardContent>
-                            <CardFooter className="px-4 pb-6 flex justify-end gap-2">
-                                <Button size="lg" variant="secondary">delete</Button>
-                                <Button size="lg" variant="secondary">update</Button>
-                            </CardFooter>
-                        </Card>
-                    </div>
+                    {products.map((product, index) => (
+                        <ProductCard key={index} {...product} />
+                    ))}
                 </div>
-            </main>
+            </main >
         </>
     )
 }

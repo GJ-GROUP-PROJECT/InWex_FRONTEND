@@ -4,7 +4,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarDays, ChevronDown, SearchIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { NavbarLeft } from "@/components/NavbarLeft"
+import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -48,7 +48,7 @@ const Dashboard = () => {
                 </div>
             </NavbarLeft>
 
-            <main className="mt-15">
+            <main className="mt-12">
                 <div className="flex justify-between">
                     <div>
                         <h1 className="text-4xl font-bold">Hello, Gayrav!</h1>
