@@ -4,8 +4,8 @@ import { ProductCard } from "@/components/Inventory/ProductCard"
 import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
-import { ChevronDown, Ellipsis, Funnel, Menu, Plus, SearchIcon } from "lucide-react"
+import Searchbar from "@/components/ui/Searchbar"
+import { ChevronDown, Ellipsis, Menu, Plus } from "lucide-react"
 import { useState } from "react"
 
 const Inventory = () => {
@@ -45,27 +45,15 @@ const Inventory = () => {
                     </div>
                 </div>
                 <div className="my-10 flex justify-between items-center">
-                    <div className="flex space-x-5 items-center">
-                        <InputGroup className="border-none w-90 h-11 pl-4">
-                            <InputGroupInput placeholder="Search" />
-                            <InputGroupAddon>
-                                <SearchIcon className="h-5! w-5!" />
-                            </InputGroupAddon>
-                        </InputGroup>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="secondary" className="p-5! cursor-pointer">
-                                    <Funnel className="h-4.5! w-4.5!" />
-                                    Filter
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent side="bottom" align="start" sideOffset={8} className="px-2 py-3 rounded-sm bg-zinc-900 text-white border-none">
-                                <DropdownMenuItem>Code</DropdownMenuItem>
-                                <DropdownMenuItem>Name</DropdownMenuItem>
-                                <DropdownMenuItem>Price</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+                    <Searchbar
+                        filters={[
+                            { label: "Product Code", value: "code" },
+                            { label: "Product Name", value: "name" },
+                            { label: "Price", value: "price" }
+                        ]}
+                        onFilterSelect={(value) => console.log("Products filter:", value)}
+                    />
+
                     <div className="flex space-x-8 items-center">
                         <div className="flex space-x-4 items-center">
                             <p>Grouped By :</p>
