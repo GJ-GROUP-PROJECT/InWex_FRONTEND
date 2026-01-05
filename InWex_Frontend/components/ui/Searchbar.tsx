@@ -45,7 +45,3 @@ const Searchbar = ({ filters, onFilterSelect }: SearchbarProps) => {
 }
 
 export default Searchbar
-
-// < DropdownMenuItem > Code</DropdownMenuItem >
-//                 <DropdownMenuItem>Name</DropdownMenuItem>
-//                 <DropdownMenuItem>Price</DropdownMenuItem>
