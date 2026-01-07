@@ -8,4 +8,4 @@ export const signupSchema = z.object({
     // org:
 })
 
-export type SignupValues = z.infer<typeof signupSchema>
+export type SignupOrgValues = z.infer<typeof signupSchema>

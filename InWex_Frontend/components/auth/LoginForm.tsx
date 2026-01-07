@@ -1,9 +1,12 @@
+"use client"
+
 import { loginSchema, LoginValues } from '@/lib/validation/login.schema'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 const LoginForm = () => {
     const form = useForm<LoginValues>({
@@ -20,38 +23,65 @@ const LoginForm = () => {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                    control={form.control}
-                    name='email'
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input placeholder='your@example.com' {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <Card className='w-95 border-none bg-background'>
+            <CardHeader>
+                <CardTitle className='text-4xl'>Login</CardTitle>
+                <CardTitle className='font-light'>Enter your credentials</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-5' noValidate>
+                        <FormField
+                            control={form.control}
+                            name='email'
+                            render={({ field }) => (
+                                <FormItem className='mt-3'>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='pl-4 border-none' />
+                                    </FormControl>
+                                    <FormMessage className="transition-opacity duration-200" />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={form.control}
-                    name='password'
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input type='password' {...field} />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={form.control}
+                            name='password'
+                            render={({ field }) => (
+                                <FormItem className='mb-5'>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='pl-4 border-none' />
+                                    </FormControl>
+                                    <FormMessage className="transition-opacity duration-200" />
+                                </FormItem>
+                            )}
+                        />
 
-                <Button type='submit'>Submit</Button>
-            </form>
-        </Form>
+                        <Button
+                            type='submit'
+                            disabled={form.formState.isSubmitting}
+                            className='w-45 mb-2 self-center cursor-pointer'
+                        >
+                            {form.formState.isSubmitting ? 'Logging in...' : 'Log In'}
+                        </Button>
+                        {/* 
+                        <p className='text-center text-sm'>
+                            Don&#39;t have an account?
+                            <Button
+                                type="button"
+                                variant="link"
+                                className='cursor-pointer'
+                                onClick={() => setIsSignUp(true)}
+                            >
+                                Sign up
+                            </Button>
+                        </p> */}
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
     )
 }
 
