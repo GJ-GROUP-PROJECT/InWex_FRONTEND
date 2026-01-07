@@ -10,14 +10,17 @@ const AuthContainer = () => {
 
     return (
         <div className='relative h-screen overflow-hidden bg-background'>
-            <div className="grid grid-cols-2 h-full">
-                <div className='flex items-center justify-center'>
-                    {!isSignUp ? <LoginForm /> : <SignupAsEmp />}
+            <div className="flex h-full">
+                <div className="w-1/2 flex items-center justify-center">
+                    <LoginForm onSwitch={() => setIsSignUp(true)} />
                 </div>
-                <div />
+
+                <div className="w-1/2 flex items-center justify-center">
+                    <SignupAsEmp onSwitch={() => setIsSignUp(false)} />
+                </div>
             </div>
 
-            {/* <SidePanel isSignup={isSignup} toggle={() => setIsSignup(!isSignup)} /> */}
+            <SidePanel isSignup={isSignUp} />
         </div>
     )
 }

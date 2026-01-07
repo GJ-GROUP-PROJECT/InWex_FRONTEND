@@ -8,7 +8,11 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
-const LoginForm = () => {
+type LoginFormProps = {
+    onSwitch: () => void
+}
+
+const LoginForm = ({ onSwitch }: LoginFormProps) => {
     const form = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -66,18 +70,18 @@ const LoginForm = () => {
                         >
                             {form.formState.isSubmitting ? 'Logging in...' : 'Log In'}
                         </Button>
-                        {/* 
+
                         <p className='text-center text-sm'>
                             Don&#39;t have an account?
                             <Button
                                 type="button"
                                 variant="link"
                                 className='cursor-pointer'
-                                onClick={() => setIsSignUp(true)}
+                                onClick={onSwitch}
                             >
                                 Sign up
                             </Button>
-                        </p> */}
+                        </p>
                     </form>
                 </Form>
             </CardContent>

@@ -1,12 +1,16 @@
-import { Form, useForm } from "react-hook-form"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { useForm } from "react-hook-form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { SignupEmpValues, signupSchema } from "@/lib/validation/emp-signup.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 
-const SignupAsEmp = () => {
+type SignupFormProps = {
+    onSwitch: () => void
+}
+
+const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const form = useForm<SignupEmpValues>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -22,12 +26,12 @@ const SignupAsEmp = () => {
     }
 
     return (
-        <Card className='w-95 border-none bg-background'>
+        <Card className='w-120 border-none bg-background'>
             <CardHeader>
                 <CardTitle className='text-4xl'>Create an account</CardTitle>
                 <CardTitle className='font-light'>Enter your details below to create your account</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="w-95">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-5' noValidate>
                         <FormField
@@ -65,7 +69,7 @@ const SignupAsEmp = () => {
                                 <FormItem>
                                     <FormLabel>Contact</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="+91 9772122472" {...field} />
+                                        <Input placeholder="+91 9772122472" {...field} className='pl-4 border-none' />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -79,6 +83,18 @@ const SignupAsEmp = () => {
                         >
                             {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                         </Button>
+
+                        <p className='text-center text-sm'>
+                            ALready have an account?
+                            <Button
+                                type="button"
+                                variant="link"
+                                className='cursor-pointer'
+                                onClick={onSwitch}
+                            >
+                                Login
+                            </Button>
+                        </p>
                     </form>
                 </Form>
             </CardContent>
