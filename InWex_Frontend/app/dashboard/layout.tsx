@@ -1,6 +1,5 @@
 import AppSidebar from '@/components/ui/app-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import Navbar from '@/components/Navbar/Navbar'
 import React from 'react'
 
 const dashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -11,16 +10,8 @@ const dashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 <AppSidebar />
 
                 <div className="flex flex-col w-full overflow-hidden">
-                    {/* TOP NAVBAR */}
-                    <div className="px-20 pt-10 py-4">
-                        <div className="flex justify-between items-center">
-                            <div id="navbar-left" />
-                            <Navbar />
-                        </div>
-                    </div>
-
                     {/* PAGE CONTENT */}
-                    <main className="flex-1 px-20 pb-10 overflow-y-auto overflow-x-hidden">
+                    <main className="flex-1 px-20 pt-10 pb-4 overflow-y-auto overflow-x-hidden">
                         {children}
                     </main>
                 </div>

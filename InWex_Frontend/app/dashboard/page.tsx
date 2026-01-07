@@ -4,10 +4,10 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarDays, ChevronDown, SearchIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import Navbar from "@/components/Navbar/Navbar";
 
 const Dashboard = () => {
     const [today, setToday] = useState("")
@@ -34,19 +34,21 @@ const Dashboard = () => {
 
     const [date, setDate] = useState<Date | undefined>(new Date())
 
+    const navbarLeftContent = (
+        <div className="flex items-center space-x-4">
+            <InputGroup className="border-none w-90 h-11 pl-4">
+                <InputGroupInput placeholder="Search" />
+                <InputGroupAddon>
+                    <SearchIcon className="h-5! w-5!" />
+                </InputGroupAddon>
+            </InputGroup>
+            <p className="text-sm">Today, {today}</p>
+        </div>
+    )
+
     return (
         <>
-            <NavbarLeft>
-                <div className="flex items-center space-x-4">
-                    <InputGroup className="border-none w-90 h-11 pl-4">
-                        <InputGroupInput placeholder="Search" />
-                        <InputGroupAddon>
-                            <SearchIcon className="h-5! w-5!" />
-                        </InputGroupAddon>
-                    </InputGroup>
-                    <p className="text-sm">Today, {today}</p>
-                </div>
-            </NavbarLeft>
+            <Navbar leftContent={navbarLeftContent} />
 
             <main className="mt-12">
                 <div className="flex justify-between">

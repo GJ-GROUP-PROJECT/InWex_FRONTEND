@@ -1,7 +1,7 @@
 "use client"
 
 import { ProductCard } from "@/components/Inventory/ProductCard"
-import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
+import Navbar from "@/components/Navbar/Navbar"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Searchbar from "@/components/ui/Searchbar"
@@ -25,11 +25,13 @@ const Inventory = () => {
         stock: 300,
     }))
 
+    const navbarLeftContent = (
+        <h1 className="text-4xl font-medium">Inventory</h1>
+    )
+
     return (
         <>
-            <NavbarLeft>
-                <h1 className="text-4xl font-medium">Inventory</h1>
-            </NavbarLeft>
+            <Navbar leftContent={navbarLeftContent} />
 
             <main className="mt-12">
                 <div className="flex justify-between items-center">
