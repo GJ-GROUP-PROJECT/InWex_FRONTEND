@@ -5,6 +5,7 @@ import { Button } from "../ui/button"
 import { SignupEmpValues, signupSchema } from "@/lib/validation/emp-signup.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 type SignupFormProps = {
     onSwitch: () => void
@@ -21,55 +22,93 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         }
     });
 
+    const EmpFields = [
+        {
+            name: "name",
+            label: "Name",
+            placeholder: "Example",
+            type: "text",
+            autoComplete: "name",
+        },
+        {
+            name: "email",
+            label: "Email",
+            placeholder: "your@example.com",
+            type: "email",
+            autoComplete: "email",
+        },
+        {
+            name: "password",
+            label: "Password",
+            placeholder: "••••••••",
+            type: "password",
+            autoComplete: "current-password",
+        },
+        {
+            name: "contact",
+            label: "Contact",
+            placeholder: "+91 9772122472",
+            type: "text",
+        },
+    ] as const
+
+
     const onSubmit = (data: SignupEmpValues) => {
         console.log(data)
     }
 
     return (
-        <Card className='w-120 border-none bg-background'>
+        <Card className='w-95 border-none bg-background'>
             <CardHeader>
-                <CardTitle className='text-4xl'>Create an account</CardTitle>
-                <CardTitle className='font-light'>Enter your details below to create your account</CardTitle>
+                <CardTitle className='text-4xl'>SignUp</CardTitle>
+                <CardTitle className='font-light'>Enter your details to create your account</CardTitle>
             </CardHeader>
-            <CardContent className="w-95">
+            <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-5' noValidate>
-                        <FormField
-                            control={form.control}
-                            name='email'
-                            render={({ field }) => (
-                                <FormItem className='mt-3'>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='pl-4 border-none' />
-                                    </FormControl>
-                                    <FormMessage className="transition-opacity duration-200" />
-                                </FormItem>
-                            )}
-                        />
+                        {EmpFields.map(({ name, label, placeholder, type, autoComplete }) => (
+                            <FormField
+                                key={name}
+                                control={form.control}
+                                name={name}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{label}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type={type}
+                                                placeholder={placeholder}
+                                                autoComplete={autoComplete}
+                                                className="pl-4 border-none"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        ))}
 
                         <FormField
                             control={form.control}
-                            name='password'
+                            name="org"
                             render={({ field }) => (
-                                <FormItem className='mb-5'>
-                                    <FormLabel>Password</FormLabel>
+                                <FormItem className="">
+                                    <FormLabel>Organization</FormLabel>
                                     <FormControl>
-                                        <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='pl-4 border-none' />
-                                    </FormControl>
-                                    <FormMessage className="transition-opacity duration-200" />
-                                </FormItem>
-                            )}
-                        />
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                        >
+                                            <SelectTrigger className="pl-4 border-none w-full mb-3">
+                                                <SelectValue placeholder="Select Organization" />
+                                            </SelectTrigger>
 
-                        < FormField
-                            control={form.control}
-                            name='contact'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Contact</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="+91 9772122472" {...field} className='pl-4 border-none' />
+                                            <SelectContent align="start" sideOffset={4} className="border-none">
+                                                <SelectItem value="NO_ORG">No Organization</SelectItem>
+                                                <SelectItem value="1">InWex</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -84,12 +123,12 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                             {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                         </Button>
 
-                        <p className='text-center text-sm'>
-                            ALready have an account?
+                        <p className="flex items-center justify-center gap-2 text-sm">
+                            Already have an account?
                             <Button
                                 type="button"
                                 variant="link"
-                                className='cursor-pointer'
+                                className="p-0 cursor-pointer"
                                 onClick={onSwitch}
                             >
                                 Login

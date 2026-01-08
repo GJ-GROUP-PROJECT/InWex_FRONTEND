@@ -71,12 +71,12 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                             {form.formState.isSubmitting ? 'Logging in...' : 'Log In'}
                         </Button>
 
-                        <p className='text-center text-sm'>
+                        <p className='flex items-center justify-center gap-2 text-sm'>
                             Don&#39;t have an account?
                             <Button
                                 type="button"
                                 variant="link"
-                                className='cursor-pointer'
+                                className="p-0 text-sm cursor-pointer"
                                 onClick={onSwitch}
                             >
                                 Sign up
