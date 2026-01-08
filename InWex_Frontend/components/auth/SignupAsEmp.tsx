@@ -49,6 +49,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             label: "Contact",
             placeholder: "+91 9772122472",
             type: "text",
+            autoComplete: undefined,
         },
     ] as const
 
