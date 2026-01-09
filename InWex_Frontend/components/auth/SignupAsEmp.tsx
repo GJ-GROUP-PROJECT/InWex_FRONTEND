@@ -1,3 +1,5 @@
+"use client"
+
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
@@ -101,7 +103,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                             onValueChange={field.onChange}
                                             value={field.value}
                                         >
-                                            <SelectTrigger className="pl-4 border-none w-full mb-3">
+                                            <SelectTrigger className="pl-4 border-none w-full">
                                                 <SelectValue placeholder="Select Organization" />
                                             </SelectTrigger>
 
@@ -119,7 +121,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                         <Button
                             type='submit'
                             disabled={form.formState.isSubmitting}
-                            className='w-45 self-center cursor-pointer'
+                            className='w-45 mb-2 self-center cursor-pointer'
                         >
                             {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                         </Button>

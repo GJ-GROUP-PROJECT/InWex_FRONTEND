@@ -53,7 +53,7 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                             control={form.control}
                             name='password'
                             render={({ field }) => (
-                                <FormItem className='mb-5'>
+                                <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
                                         <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='pl-4 border-none' />
