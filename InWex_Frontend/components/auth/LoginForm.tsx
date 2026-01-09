@@ -30,7 +30,9 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         <Card className='w-95 border-none bg-background'>
             <CardHeader>
                 <CardTitle className='text-4xl'>Login</CardTitle>
-                <CardTitle className='font-light'>Enter your credentials</CardTitle>
+                <p className="text-m text-muted-foreground">
+                    Enter your credentials
+                </p>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -39,7 +41,7 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                             control={form.control}
                             name='email'
                             render={({ field }) => (
-                                <FormItem className='mt-3'>
+                                <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='pl-4 border-none' />
