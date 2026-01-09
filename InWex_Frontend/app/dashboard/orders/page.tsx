@@ -1,6 +1,6 @@
 "use client"
 
-import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
+import Navbar from "@/components/Navbar/Navbar";
 import { OrdersTable } from "@/components/Orders/OrdersTable";
 import { StatusCard } from "@/components/Orders/StatusCard"
 import { Button } from "@/components/ui/button";
@@ -45,11 +45,13 @@ const Orders = () => {
         },
     ];
 
+    const navbarLeftContent = (
+        <h1 className="text-4xl font-medium">Orders</h1>
+    )
+
     return (
         <>
-            <NavbarLeft>
-                <h1 className="text-4xl font-medium">Orders</h1>
-            </NavbarLeft>
+            <Navbar leftContent={navbarLeftContent} />
             <main className="mt-12">
                 <div className="flex flex-wrap gap-15">
                     {cardsContent.map((content) => (

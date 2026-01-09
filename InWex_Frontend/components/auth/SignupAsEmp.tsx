@@ -4,18 +4,21 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { SignupEmpValues, signupSchema } from "@/lib/validation/emp-signup.schema"
+import { SignupEmpValues, signupEmpSchema } from "@/lib/validation/emp-signup.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { useRouter } from "next/navigation"
 
 type SignupFormProps = {
     onSwitch: () => void
 }
 
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
+    const router = useRouter()
+
     const form = useForm<SignupEmpValues>({
-        resolver: zodResolver(signupSchema),
+        resolver: zodResolver(signupEmpSchema),
         defaultValues: {
             name: "",
             email: "",
@@ -64,7 +67,9 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         <Card className='w-95 border-none bg-background'>
             <CardHeader>
                 <CardTitle className='text-4xl'>SignUp</CardTitle>
-                <CardTitle className='font-light'>Enter your details to create your account</CardTitle>
+                <p className="text-m text-muted-foreground">
+                    Enter your details to create your account
+                </p>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -126,7 +131,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                             {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                         </Button>
 
-                        <p className="flex items-center justify-center gap-2 text-sm">
+                        <p className="flex items-center mb-0 justify-center gap-2 text-sm">
                             Already have an account?
                             <Button
                                 type="button"
@@ -135,6 +140,18 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                 onClick={onSwitch}
                             >
                                 Login
+                            </Button>
+                        </p>
+
+                        <p className="flex items-center justify-center gap-2 text-sm">
+                            Don&#39;t see your organization?
+                            <Button
+                                type="button"
+                                variant="link"
+                                className="p-0 cursor-pointer"
+                                onClick={() => router.push("/auth/org-signup")}
+                            >
+                                Create one
                             </Button>
                         </p>
                     </form>
