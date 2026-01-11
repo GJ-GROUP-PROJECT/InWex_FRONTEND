@@ -1,7 +1,7 @@
 "use client"
 
 
-import Navbar from "@/components/Dashboard/Navbar/Navbar";
+import Navbar from "@/components/Dashboard/Navbar";
 import { OrdersTable } from "@/components/Dashboard/Orders/OrdersTable";
 import { StatusCard } from "@/components/Dashboard/Orders/StatusCard"
 import { Button } from "@/components/ui/button";
