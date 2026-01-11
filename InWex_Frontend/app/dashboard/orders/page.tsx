@@ -1,8 +1,9 @@
 "use client"
 
-import Navbar from "@/components/Navbar/Navbar";
-import { OrdersTable } from "@/components/Orders/OrdersTable";
-import { StatusCard } from "@/components/Orders/StatusCard"
+
+import Navbar from "@/components/Dashboard/Navbar/Navbar";
+import { OrdersTable } from "@/components/Dashboard/Orders/OrdersTable";
+import { StatusCard } from "@/components/Dashboard/Orders/StatusCard"
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Searchbar from "@/components/ui/Searchbar";

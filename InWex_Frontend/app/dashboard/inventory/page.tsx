@@ -1,7 +1,7 @@
 "use client"
 
-import { ProductCard } from "@/components/Inventory/ProductCard"
-import Navbar from "@/components/Navbar/Navbar"
+import { ProductCard } from "@/components/Dashboard/Inventory/ProductCard"
+import Navbar from "@/components/Dashboard/Navbar/Navbar";
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Searchbar from "@/components/ui/Searchbar"
