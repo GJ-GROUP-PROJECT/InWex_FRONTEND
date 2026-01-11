@@ -1,11 +1,16 @@
-import { NavbarLeft } from "@/components/Navbar/NavbarLeft"
+import Navbar from "@/components/Dashboard/Navbar"
+
+
 
 const Shipping = () => {
+    const navbarLeftContent = (
+        <h1 className="text-4xl font-medium">Shipping</h1>
+
+    )
+
     return (
         <>
-            <NavbarLeft>
-                <h1 className="text-4xl font-medium">Shipping</h1>
-            </NavbarLeft>
+            <Navbar leftContent={navbarLeftContent} />
         </>
     )
 }

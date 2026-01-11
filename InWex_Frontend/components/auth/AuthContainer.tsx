@@ -1,12 +1,16 @@
 "use client"
 
 import { useState } from 'react'
-import LoginForm from './LoginForm';
-import SignupAsEmp from './SignupAsEmp';
-import SidePanel from './SidePanel';
+import LoginForm from './LoginForm'
+import SignupAsEmp from './SignupAsEmp'
+import SidePanel from './SidePanel'
+import { useSearchParams } from 'next/navigation'
 
 const AuthContainer = () => {
-    const [isSignUp, setIsSignUp] = useState(false);
+    const searchParams = useSearchParams()
+    const [isSignUp, setIsSignUp] = useState(() => {
+        return searchParams.get('signup') === 'true'
+    });
 
     return (
         <div className='relative h-screen overflow-hidden bg-background'>
