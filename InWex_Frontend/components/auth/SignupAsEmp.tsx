@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { useRouter } from "next/navigation"
+import { api } from "@/lib/api"
+import axios from "axios"
 
 type SignupFormProps = {
     onSwitch: () => void
@@ -23,7 +25,9 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             name: "",
             email: "",
             password: "",
-            contact: ""
+            contact: "",
+            org: "NO_ORG",
+            is_warehouse_staff: true,
         }
     });
 
@@ -58,9 +62,25 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         },
     ] as const
 
+    type SignupEmpResponse = {
+        message: string,
+        token?: string
+    }
 
-    const onSubmit = (data: SignupEmpValues) => {
+    const onSubmit = async (data: SignupEmpValues) => {
         console.log(data)
+        try {
+            const res = await api.post<SignupEmpResponse>("/accounts/register", data)
+            console.log("emp signup data:", res.data)
+            router.push("/auth?signup=false")
+        }
+        catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Signup failed:", error.response?.data)
+            } else {
+                console.error("Unexpected error:", error)
+            }
+        }
     }
 
     return (

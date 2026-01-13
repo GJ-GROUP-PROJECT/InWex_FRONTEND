@@ -8,6 +8,8 @@ import { signupOrgSchema, SignupOrgValues } from "@/lib/validation/org-signup.sc
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { api } from "@/lib/api"
+import axios from "axios"
 
 const SignupAsComp = () => {
     const router = useRouter()
@@ -18,7 +20,8 @@ const SignupAsComp = () => {
             org_name: "",
             org_email: "",
             org_password: "",
-            org_contact: ""
+            org_contact: "",
+            is_business: true,
         }
     })
 
@@ -49,12 +52,30 @@ const SignupAsComp = () => {
             label: "Business Contact",
             placeholder: "+91 9772122472",
             type: "text",
-            autoComplete: undefined,
+            autoComplete: "tel",
         },
     ] as const
 
-    const onSubmit = (data: SignupOrgValues) => {
+    type SignupOrgResponse = {
+        message: string,
+        orgId: string,
+        token?: string
+    }
+
+    const onSubmit = async (data: SignupOrgValues) => {
         console.log(data)
+        try {
+            const res = await api.post<SignupOrgResponse>("/accounts/register", data)
+            console.log("org signup data:", res.data)
+            router.push("/dashboard")
+        }
+        catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Signup failed:", error.response?.data)
+            } else {
+                console.error("Unexpected error:", error)
+            }
+        }
     }
 
     return (
@@ -97,7 +118,7 @@ const SignupAsComp = () => {
                                 disabled={form.formState.isSubmitting}
                                 className='w-45 mb-2 self-center cursor-pointer'
                             >
-                                {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
+                                {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
                             </Button>
 
                             <p className="flex items-center mb-0 justify-center gap-2 text-sm">
