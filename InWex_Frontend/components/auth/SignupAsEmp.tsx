@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useRouter } from "next/navigation"
 import { api } from "@/lib/api"
 import axios from "axios"
+import { useEffect, useState } from "react"
 
 type SignupFormProps = {
     onSwitch: () => void
@@ -18,6 +19,28 @@ type SignupFormProps = {
 
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const router = useRouter()
+
+    const [orgs, setOrgs] = useState<Array<({ id: string; name: string; })>>([])
+
+    useEffect(() => {
+        const fetchingOrg = async () => {
+            try {
+                const res = await api.get("/accounts/companies")
+
+                setOrgs(res.data)
+                console.log("Organizations fetched: ", res.data)
+            }
+            catch (error) {
+                if (axios.isAxiosError(error)) {
+                    console.error("Fetching failed:", error.response?.data)
+                } else {
+                    console.error("Unexpected error:", error)
+                }
+            }
+        }
+
+        fetchingOrg()
+    }, [])
 
     const form = useForm<SignupEmpValues>({
         resolver: zodResolver(signupEmpSchema),
@@ -134,7 +157,9 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
 
                                             <SelectContent align="start" sideOffset={4} className="border-none">
                                                 <SelectItem value="NO_ORG">No Organization</SelectItem>
-                                                <SelectItem value="1">InWex</SelectItem>
+                                                {orgs.map((org) => (
+                                                    <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -148,7 +173,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                             disabled={form.formState.isSubmitting}
                             className='w-45 mb-2 self-center cursor-pointer'
                         >
-                            {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
+                            {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
                         </Button>
 
                         <p className="flex items-center mb-0 justify-center gap-2 text-sm">
