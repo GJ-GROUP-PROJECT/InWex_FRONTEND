@@ -7,12 +7,17 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import axios from 'axios'
+import { api } from '@/lib/api'
+import { useRouter } from 'next/navigation'
 
 type LoginFormProps = {
     onSwitch: () => void
 }
 
 const LoginForm = ({ onSwitch }: LoginFormProps) => {
+    const router = useRouter()
+
     const form = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -22,8 +27,20 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         mode: "onBlur"
     })
 
-    const onSubmit = (data: LoginValues) => {
+    const onSubmit = async (data: LoginValues) => {
         console.log(data)
+        try {
+            const res = await api.post("/accounts/login", data)
+            console.log("Login details: ", res.data)
+            router.push("/dashboard")
+        }
+        catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Login failed:", error.response?.data)
+            } else {
+                console.error("Unexpected error:", error)
+            }
+        }
     }
 
     return (
