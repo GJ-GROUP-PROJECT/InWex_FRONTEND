@@ -96,7 +96,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         try {
             const res = await api.post<SignupEmpResponse>("/accounts/register", data)
             console.log("emp signup data:", res.data)
-            router.push("/auth?signup=false")
+            router.push("/auth/verify")
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
