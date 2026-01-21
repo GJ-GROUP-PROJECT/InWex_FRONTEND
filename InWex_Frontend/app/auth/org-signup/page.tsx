@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { api } from "@/lib/api"
 import axios from "axios"
+import { toast } from "sonner"
 
 const SignupAsComp = () => {
     const router = useRouter()
@@ -71,9 +72,12 @@ const SignupAsComp = () => {
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error("Signup failed:", error.response?.data)
+                toast.error(
+                    error.response?.data?.message ||
+                    "Signup failed:"
+                )
             } else {
-                console.error("Unexpected error:", error)
+                toast.error("Unexpected error occurred during signup")
             }
         }
     }

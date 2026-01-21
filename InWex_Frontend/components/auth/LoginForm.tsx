@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import axios from 'axios'
 import { api } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 type LoginFormProps = {
     onSwitch: () => void
@@ -32,13 +33,17 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         try {
             const res = await api.post("/accounts/login", data)
             console.log("Login details: ", res.data)
+            toast.success("Login successful!")
             router.push("/dashboard")
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error("Login failed:", error.response?.data)
+                toast.error(
+                    error.response?.data?.message ||
+                    "Invalid email or password"
+                )
             } else {
-                console.error("Unexpected error:", error)
+                toast.error("Something went wrong")
             }
         }
     }

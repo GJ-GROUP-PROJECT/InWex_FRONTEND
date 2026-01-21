@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { api } from "@/lib/api"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 type SignupFormProps = {
     onSwitch: () => void
@@ -99,9 +100,12 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error("Signup failed:", error.response?.data)
+                toast.error(
+                    error.response?.data?.message ||
+                    "Signup failed"
+                )
             } else {
-                console.error("Unexpected error:", error)
+                toast.error("Unexpected error occurred during signup")
             }
         }
     }
