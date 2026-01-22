@@ -1,5 +1,5 @@
-import ManagerDashboard from "./(manager)/ManagerDashboard"
-import StaffDashboard from "./(staff)/StaffDashboard"
+import ManagerDashboard from "./(role)/(manager)/ManagerDashboard"
+import StaffDashboard from "./(role)/(staff)/StaffDashboard"
 
 const DashboardPage = async () => {
     const role = "manager"

@@ -13,30 +13,23 @@ import {
     SidebarFooter,
     SidebarGroupContent,
 } from "./sidebar"
-
 import {
-    Home,
     Settings,
-    Package,
-    ShoppingCart,
-    Truck,
     LogOut,
 } from "lucide-react"
+import { managerItems, staffItems } from "../config/sidebar/sidebarItems"
 
-const mainItems = [
-    { title: "Dashboard", url: "/dashboard", icon: Home },
-    { title: "Inventory", url: "/dashboard/inventory", icon: Package },
-    { title: "Orders", url: "/dashboard/orders", icon: ShoppingCart },
-    { title: "Shipping", url: "/dashboard/shipping", icon: Truck },
-]
+type Role = "staff" | "manager"
 
 const bottomItems = [
     { title: "Settings", url: "/settings", icon: Settings },
     { title: "Log out", url: "/logout", icon: LogOut },
 ]
 
-const AppSidebar = () => {
+const AppSidebar = ({ role }: { role: Role }) => {
     const pathname = usePathname()
+
+    const mainItems = role === "manager" ? managerItems : staffItems
 
     return (
         <Sidebar className="border-none">
