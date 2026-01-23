@@ -198,7 +198,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                 type="button"
                                 variant="link"
                                 className="p-0 cursor-pointer"
-                                onClick={() => router.push("/auth/org-signup")}
+                                onClick={() => router.push("/auth/org/signup")}
                             >
                                 Create one
                             </Button>
