@@ -19,10 +19,10 @@ import { Separator } from "../ui/separator"
 
 interface NavbarProps {
     leftContent?: React.ReactNode
-    name: string
-    email: string
-    role: string
-    avatar: string
+    name?: string
+    email?: string
+    role?: string
+    avatar?: string
 }
 
 const Navbar = ({ leftContent, name, email, role, avatar }: NavbarProps) => {

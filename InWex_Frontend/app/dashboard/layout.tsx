@@ -7,7 +7,7 @@ const dashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <SidebarProvider>
             <div className="flex h-screen w-screen overflow-hidden">
                 {/* SIDEBAR */}
-                <AppSidebar />
+                <AppSidebar role='manager' />
 
                 <div className="flex flex-col w-full overflow-hidden">
                     {/* PAGE CONTENT */}

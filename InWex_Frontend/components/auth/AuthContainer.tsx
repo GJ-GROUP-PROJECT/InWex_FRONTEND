@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import LoginForm from './LoginForm'
 import SignupAsEmp from './SignupAsEmp'
 import SidePanel from './SidePanel'
@@ -29,4 +29,10 @@ const AuthContainer = () => {
     )
 }
 
-export default AuthContainer
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AuthContainer />
+        </Suspense>
+    )
+}
