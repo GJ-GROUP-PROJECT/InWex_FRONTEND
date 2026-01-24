@@ -21,7 +21,7 @@ type SignupFormProps = {
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const router = useRouter()
 
-    const [orgs, setOrgs] = useState<Array<({ id: string; name: string; })>>([])
+    const [orgs, setOrgs] = useState<Array<({ id: string; fullname: string; })>>([])
 
     useEffect(() => {
         const fetchingOrg = async () => {
@@ -88,6 +88,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
 
     type SignupEmpResponse = {
         message: string,
+        orgId: string,
         token?: string
     }
 
@@ -162,7 +163,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                             <SelectContent align="start" sideOffset={4} className="border-none">
                                                 <SelectItem value="NO_ORG">No Organization</SelectItem>
                                                 {orgs.map((org) => (
-                                                    <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
+                                                    <SelectItem key={org.id} value={org.id.toString()}>{org.fullname}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
@@ -206,7 +207,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                     </form>
                 </Form>
             </CardContent>
-        </Card>
+        </Card >
     )
 }
 

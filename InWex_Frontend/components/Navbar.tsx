@@ -62,7 +62,7 @@ const Navbar = () => {
                                 <ul className="grid w-48 gap-1">
                                     <li>
                                         <NavigationMenuLink asChild>
-                                            <Link href="/auth/org-signup" className="p-3">As Business</Link>
+                                            <Link href="/auth/org/signup" className="p-3">As Business</Link>
                                         </NavigationMenuLink>
                                     </li>
                                     <li>
