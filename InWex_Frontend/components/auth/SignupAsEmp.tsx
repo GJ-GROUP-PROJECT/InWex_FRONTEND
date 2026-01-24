@@ -46,10 +46,10 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const form = useForm<SignupEmpValues>({
         resolver: zodResolver(signupEmpSchema),
         defaultValues: {
-            name: "",
+            fullname: "",
             email: "",
             password: "",
-            contact: "",
+            contact_number: "",
             org: "NO_ORG",
             is_warehouse_staff: true,
         }
@@ -57,9 +57,9 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
 
     const EmpFields = [
         {
-            name: "name",
-            label: "Name",
-            placeholder: "Example",
+            name: "fullname",
+            label: "Full Name",
+            placeholder: "Example Full Name",
             type: "text",
             autoComplete: "name",
         },
@@ -78,7 +78,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             autoComplete: "current-password",
         },
         {
-            name: "contact",
+            name: "contact_number",
             label: "Contact",
             placeholder: "+91 9772122472",
             type: "text",
