@@ -18,44 +18,51 @@ const SignupAsComp = () => {
     const form = useForm<SignupOrgValues>({
         resolver: zodResolver(signupOrgSchema),
         defaultValues: {
-            org_name: "",
-            org_email: "",
-            org_password: "",
-            org_contact: "",
+            fullname: "",
+            email: "",
+            password: "",
+            contact_number: "",
             is_business: true,
+            is_warehouse_staff: false,
         }
     })
 
     const OrgFields = [
         {
-            name: "org_name",
+            name: "fullname",
             label: "Business Name",
-            placeholder: "Example",
+            placeholder: "Example Full Name",
             type: "text",
             autoComplete: "name",
         },
         {
-            name: "org_email",
+            name: "email",
             label: "Business Email",
             placeholder: "your@example.com",
             type: "email",
             autoComplete: "email",
         },
         {
-            name: "org_password",
+            name: "password",
             label: "Password",
             placeholder: "••••••••",
             type: "password",
             autoComplete: "current-password",
         },
         {
-            name: "org_contact",
+            name: "contact_number",
             label: "Business Contact",
-            placeholder: "+91 9772122472",
+            placeholder: "9772122472",
             type: "text",
-            autoComplete: "tel",
+            autoComplete: undefined,
         },
-    ] as const
+    ] satisfies readonly {
+        name: keyof SignupOrgValues
+        label: string
+        placeholder: string
+        type: string
+        autoComplete?: string
+    }[]
 
     type SignupOrgResponse = {
         message: string,
