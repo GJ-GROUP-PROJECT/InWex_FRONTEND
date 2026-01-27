@@ -21,7 +21,7 @@ type SignupFormProps = {
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const router = useRouter()
 
-    const [orgs, setOrgs] = useState<Array<({ id: string; fullname: string; })>>([])
+    const [orgs, setOrgs] = useState<Array<({ id: string; name: string; })>>([])
 
     useEffect(() => {
         const fetchingOrg = async () => {
@@ -50,7 +50,8 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             email: "",
             password: "",
             contact_number: "",
-            org: "NO_ORG",
+            company: "",
+            is_business: true,
             is_warehouse_staff: true,
         }
     });
@@ -58,7 +59,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const EmpFields = [
         {
             name: "fullname",
-            label: "Full Name",
+            label: "Name",
             placeholder: "Example Full Name",
             type: "text",
             autoComplete: "name",
@@ -80,11 +81,17 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         {
             name: "contact_number",
             label: "Contact",
-            placeholder: "+91 9772122472",
+            placeholder: "9772122472",
             type: "text",
             autoComplete: undefined,
         },
-    ] as const
+    ] satisfies readonly {
+        name: keyof SignupEmpValues
+        label: string
+        placeholder: string
+        type: string
+        autoComplete?: string
+    }[]
 
     type SignupEmpResponse = {
         message: string,
@@ -147,7 +154,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
 
                         <FormField
                             control={form.control}
-                            name="org"
+                            name="company"
                             render={({ field }) => (
                                 <FormItem className="">
                                     <FormLabel>Organization</FormLabel>
@@ -155,15 +162,15 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
+                                            disabled={!orgs.length}
                                         >
                                             <SelectTrigger className="pl-4 border-none w-full">
                                                 <SelectValue placeholder="Select Organization" />
                                             </SelectTrigger>
 
-                                            <SelectContent align="start" sideOffset={4} className="border-none">
-                                                <SelectItem value="NO_ORG">No Organization</SelectItem>
+                                            <SelectContent align="start" sideOffset={4} className="border-none" aria-placeholder="Select Organization">
                                                 {orgs.map((org) => (
-                                                    <SelectItem key={org.id} value={org.id.toString()}>{org.fullname}</SelectItem>
+                                                    <SelectItem key={org.id} value={org.id.toString()}>{org.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
