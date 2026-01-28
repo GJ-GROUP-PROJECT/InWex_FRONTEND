@@ -51,7 +51,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             password: "",
             contact_number: "",
             company: "",
-            is_business: true,
+            is_business: false,
             is_warehouse_staff: true,
         }
     });
