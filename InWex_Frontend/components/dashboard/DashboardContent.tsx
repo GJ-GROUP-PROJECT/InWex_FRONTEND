@@ -3,31 +3,30 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarDays, ChevronDown, SearchIcon } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import Navbar from "@/components/dashboard/Navbar";
 
 const DashBoardContent = () => {
-    const [today, setToday] = useState("")
-    const [userData, setUserData] = useState({ fullname: "" })
-
-    useEffect(() => {
+    const [today, setToday] = useState(() => {
         const current = new Date()
         const weekday = current.toLocaleString("en-US", { weekday: "short" });
         const day = current.getDate();
         const month = current.toLocaleString("en-US", { month: "short" });
 
-        setToday(`${weekday} ${day} ${month}`);
-
+        return `${weekday}, ${day} ${month}`;
+    })
+    const [userData, setUserData] = useState(() => {
         if (typeof window !== "undefined") {
             const stored = localStorage.getItem("UserData")
             if (stored) {
-                setUserData(JSON.parse(stored))
+                return JSON.parse(stored)
             }
         }
-    }, [])
+        return { fullname: "" }
+    })
 
     const [selected, setSelected] = useState("This month")
 

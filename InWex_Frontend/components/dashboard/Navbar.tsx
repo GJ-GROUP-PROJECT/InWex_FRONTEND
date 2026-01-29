@@ -21,21 +21,26 @@ interface NavbarProps {
 }
 
 const Navbar = ({ leftContent }: NavbarProps) => {
-    const [userData, setUserData] = useState({ fullname: "", avatar: "", roles: {} })
-    const [userRole, setUserRole] = useState("")
+    const [userData, setUserData] = useState(() => {
+        if (typeof window !== "undefined") {
+            const stored = localStorage.getItem("UserData")
+            if (stored) {
+                return JSON.parse(stored)
+            }
+        }
+        return { fullname: "", avatar: "", roles: {} }
+    })
 
-    useEffect(() => {
+    const [userRole] = useState(() => {
         if (typeof window !== "undefined") {
             const stored = localStorage.getItem("UserData")
             if (stored) {
                 const data = JSON.parse(stored)
-                setUserData(data)
-
-                const role = Object.entries(data.roles || {}).find(([_, value]) => value)?.[0]?.replace(/_/g, " ") || "Unknown"
-                setUserRole(role)
+                return Object.entries(data.roles || {}).find(([_, value]) => value)?.[0]?.replace(/_/g, " ") || "Unknown"
             }
         }
-    }, [])
+        return "Unknown"
+    })
 
     return (
         <div className="flex items-center justify-between w-full px-4">
@@ -81,7 +86,7 @@ const Navbar = ({ leftContent }: NavbarProps) => {
                             <CardContent className="text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Role</span>
-                                    <span className="font-medium">{activeRole}</span>
+                                    <span className="font-medium">{userRole}</span>
                                 </div>
                             </CardContent>
                         </Card>
