@@ -17,15 +17,20 @@ const DashboardPage = () => {
     const router = useRouter()
 
     useEffect(() => {
-        const userData = JSON.parse(localStorage.getItem("UserData") || "{}")
-        if (!userData.roles) {
+        if (typeof window === "undefined") return
+
+        const stored = localStorage.getItem("UserData")
+        if (!stored) {
             router.replace("/login")
             return
         }
+
+        const userData = JSON.parse(stored)
         setRole(userData.roles)
     }, [router])
 
     if (!role) return <div>Loading...</div>
+
     if (role.manager) return <ManagerDashboard />
     if (role.warehouse_staff) return <StaffDashboard />
 
