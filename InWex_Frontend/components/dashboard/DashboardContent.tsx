@@ -11,6 +11,7 @@ import Navbar from "@/components/dashboard/Navbar";
 
 const DashBoardContent = () => {
     const [today, setToday] = useState("")
+    const userData = JSON.parse(localStorage.getItem("UserData") || "{}")
 
     useEffect(() => {
         const current = new Date()
@@ -53,8 +54,8 @@ const DashBoardContent = () => {
             <main className="mt-12">
                 <div className="flex justify-between">
                     <div>
-                        <h1 className="text-4xl font-bold">Hello, Gayrav!</h1>
-                        <p>Wats Up Ma Nigga?</p>
+                        <h1 className="text-4xl font-bold">Hello, {userData.fullname}!</h1>
+                        <p>Hope you&#39;re having a great day.</p>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div>

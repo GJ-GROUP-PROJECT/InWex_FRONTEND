@@ -15,17 +15,15 @@ import {
     CardHeader,
     CardContent,
 } from "../ui/card"
-import { Separator } from "../ui/separator"
 
 interface NavbarProps {
     leftContent?: React.ReactNode
-    name?: string
-    email?: string
-    role?: string
-    avatar?: string
 }
 
-const Navbar = ({ leftContent, name, email, role, avatar }: NavbarProps) => {
+const Navbar = ({ leftContent }: NavbarProps) => {
+    const userData = JSON.parse(localStorage.getItem("UserData") || "{}")
+    const activeRole = Object.entries(userData.roles || {}).find(([_, value]) => value)?.[0]?.replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) || "Unknown"
+
     return (
         <div className="flex items-center justify-between w-full px-4">
             <div className="flex-1">{leftContent}</div>
@@ -42,9 +40,9 @@ const Navbar = ({ leftContent, name, email, role, avatar }: NavbarProps) => {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Avatar className="h-9 w-9 cursor-pointer">
-                            <AvatarImage src={avatar} />
+                            <AvatarImage src={userData.avatar} />
                             <AvatarFallback>
-                                {name?.slice(0, 2).toUpperCase()}
+                                {userData.fullname?.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
@@ -53,26 +51,24 @@ const Navbar = ({ leftContent, name, email, role, avatar }: NavbarProps) => {
                         <Card className="w-72 border-none shadow-none">
                             <CardHeader className="flex flex-row items-center gap-3">
                                 <Avatar className="h-10 w-10">
-                                    <AvatarImage src={avatar} />
+                                    <AvatarImage src={userData.avatar} />
                                     <AvatarFallback>
-                                        {name?.slice(0, 2).toUpperCase()}
+                                        {userData.fullname?.slice(0, 2).toUpperCase()}
                                     </AvatarFallback>
                                 </Avatar>
 
                                 <div>
-                                    <p className="text-sm font-medium">{name}</p>
+                                    <p className="text-sm font-medium">{userData.fullname}</p>
                                     <p className="text-xs text-muted-foreground">
-                                        {email}
+                                        {userData.email}
                                     </p>
                                 </div>
                             </CardHeader>
 
-                            <Separator />
-
-                            <CardContent className="pt-3 text-sm">
+                            <CardContent className="text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Role</span>
-                                    <span className="font-medium">{role}</span>
+                                    <span className="font-medium">{activeRole}</span>
                                 </div>
                             </CardContent>
                         </Card>

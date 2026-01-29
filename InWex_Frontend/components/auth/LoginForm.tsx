@@ -32,8 +32,8 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         console.log(data)
         try {
             const res = await api.post("/accounts/login", data)
-            console.log("Login details: ", res.data)
             toast.success("Login successful!")
+            localStorage.setItem("UserData", JSON.stringify(res.data))
             router.push("/dashboard")
         }
         catch (error) {
