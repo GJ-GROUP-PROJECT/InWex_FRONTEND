@@ -19,14 +19,12 @@ import {
 } from "lucide-react"
 import { managerItems, staffItems } from "../config/sidebar/sidebarItems"
 
-type Role = "staff" | "manager"
-
 const bottomItems = [
     { title: "Settings", url: "/settings", icon: Settings },
     { title: "Log out", url: "/logout", icon: LogOut },
 ]
 
-const AppSidebar = ({ role }: { role: Role }) => {
+const AppSidebar = ({ role }: { role: string }) => {
     const pathname = usePathname()
 
     const mainItems = role === "manager" ? managerItems : staffItems
