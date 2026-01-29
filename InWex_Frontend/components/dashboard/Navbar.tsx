@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Bell, MessageSquareMore } from "lucide-react"
 
 import { Button } from "../ui/button"
@@ -21,8 +21,21 @@ interface NavbarProps {
 }
 
 const Navbar = ({ leftContent }: NavbarProps) => {
-    const userData = JSON.parse(localStorage.getItem("UserData") || "{}")
-    const activeRole = Object.entries(userData.roles || {}).find(([_, value]) => value)?.[0]?.replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) || "Unknown"
+    const [userData, setUserData] = useState({ fullname: "", avatar: "", roles: {} })
+    const [userRole, setUserRole] = useState("")
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const stored = localStorage.getItem("UserData")
+            if (stored) {
+                const data = JSON.parse(stored)
+                setUserData(data)
+
+                const role = Object.entries(data.roles || {}).find(([_, value]) => value)?.[0]?.replace(/_/g, " ") || "Unknown"
+                setUserRole(role)
+            }
+        }
+    }, [])
 
     return (
         <div className="flex items-center justify-between w-full px-4">

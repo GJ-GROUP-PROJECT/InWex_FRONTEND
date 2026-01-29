@@ -11,7 +11,7 @@ import Navbar from "@/components/dashboard/Navbar";
 
 const DashBoardContent = () => {
     const [today, setToday] = useState("")
-    const userData = JSON.parse(localStorage.getItem("UserData") || "{}")
+    const [userData, setUserData] = useState({ fullname: "" })
 
     useEffect(() => {
         const current = new Date()
@@ -20,6 +20,13 @@ const DashBoardContent = () => {
         const month = current.toLocaleString("en-US", { month: "short" });
 
         setToday(`${weekday} ${day} ${month}`);
+
+        if (typeof window !== "undefined") {
+            const stored = localStorage.getItem("UserData")
+            if (stored) {
+                setUserData(JSON.parse(stored))
+            }
+        }
     }, [])
 
     const [selected, setSelected] = useState("This month")
