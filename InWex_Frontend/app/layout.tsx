@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 import { AppProviders } from "@/providers/app-providers";
+import ScrollOnRefresh from "@/components/scroll/ScrollOnRefresh";
+import ScrollSpy from "@/components/scroll/ScrollSpy";
 
 const poppins = Poppins({
     subsets: ["latin"],
@@ -26,6 +28,8 @@ export default function RootLayout({
             <body className={poppins.className} >
                 <ThemeProvider>
                     <AppProviders>
+                        <ScrollOnRefresh />
+                        <ScrollSpy />
                         {children}
                         <Toaster richColors position="top-right" />
                     </AppProviders>

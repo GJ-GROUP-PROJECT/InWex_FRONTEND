@@ -36,12 +36,6 @@ const Navbar = () => {
 
                         <NavigationMenuItem>
                             <NavigationMenuLink asChild>
-                                <Link href="#pricing" className="px-4 py-2">Pricing</Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
                                 <Link href="#contact" className="px-4 py-2">Contact</Link>
                             </NavigationMenuLink>
                         </NavigationMenuItem>
