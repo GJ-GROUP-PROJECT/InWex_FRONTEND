@@ -32,7 +32,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
             const res = await api.get('/products/get-products', {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Token ${token}`
                 }
             })
             setProducts(res.data)

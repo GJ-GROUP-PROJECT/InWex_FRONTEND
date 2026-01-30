@@ -27,10 +27,8 @@ export default function RootLayout({
             <body className={poppins.className} >
                 <ThemeProvider>
                     <AppProviders>
-                        <ProductProvider>
-                            {children}
-                            <Toaster richColors position="top-right" />
-                        </ProductProvider>
+                        {children}
+                        <Toaster richColors position="top-right" />
                     </AppProviders>
                 </ThemeProvider>
             </body>
