@@ -16,7 +16,7 @@ const Navbar = () => {
             <div className="h-full w-full max-w-7xl mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="text-xl font-semibold">
-                    <Image src="/logo/Inwex.png" alt="InWex Logo" width={200} height={200} />
+                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={80} height={80} />
                 </Link>
 
                 {/* Navigation Links */}

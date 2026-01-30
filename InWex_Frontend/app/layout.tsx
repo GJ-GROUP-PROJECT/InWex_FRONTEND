@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 import { AppProviders } from "@/providers/app-providers";
-import { ProductProvider } from "@/contexts/ProductContext";
 
 const poppins = Poppins({
     subsets: ["latin"],
