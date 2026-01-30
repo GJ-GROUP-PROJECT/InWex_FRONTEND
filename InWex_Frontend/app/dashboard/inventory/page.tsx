@@ -5,11 +5,13 @@ import Navbar from "@/components/dashboard/Navbar";
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Searchbar from "@/components/ui/Searchbar"
+import { useProduct } from "@/contexts/ProductContext";
 import { ChevronDown, Ellipsis, Menu, Plus } from "lucide-react"
 import { useState } from "react"
 
 const Inventory = () => {
     const [selected, setSelected] = useState("Product")
+    const { products, isLoading, error } = useProduct()
 
     const options = [
         "Product",
@@ -17,13 +19,6 @@ const Inventory = () => {
         "Price: High To Low",
         "Price: Low to High",
     ]
-
-    const products = Array.from({ length: 6 }).map((_, i) => ({
-        code: `12${i}`,
-        price: 123,
-        name: "Product Name",
-        stock: 300,
-    }))
 
     const navbarLeftContent = (
         <h1 className="text-4xl font-medium">Inventory</h1>
@@ -89,11 +84,31 @@ const Inventory = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-wrap gap-8">
-                    {products.map((product, index) => (
-                        <ProductCard key={index} {...product} />
-                    ))}
-                </div>
+                {isLoading && (
+                    <div className="flex justify-center items-center py-20">
+                        <p className="text-lg text-muted-foreground">Loading products...</p>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="flex justify-center items-center py-20">
+                        <p className="text-lg text-red-500">{error}</p>
+                    </div>
+                )}
+
+                {!isLoading && !error && (
+                    <div className="flex flex-wrap gap-8">
+                        {products.length > 0 ? (
+                            products.map((product) => (
+                                <ProductCard key={product.id} product={product} />
+                            ))
+                        ) : (
+                            <div className="w-full flex justify-center items-center py-20">
+                                <p className="text-lg text-muted-foreground">No products found</p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </main >
         </>
     )

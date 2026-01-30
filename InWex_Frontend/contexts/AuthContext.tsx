@@ -1,6 +1,6 @@
 "use client"
 
-import { Roles, UserData } from "@/types"
+import { Roles, UserData } from "@/lib/types"
 import { useRouter } from "next/navigation"
 import { createContext, useCallback, useContext, useState } from "react"
 

@@ -33,7 +33,13 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         try {
             const res = await api.post("/accounts/login", data)
             toast.success("Login successful!")
+
+            // UserData
             localStorage.setItem("UserData", JSON.stringify(res.data))
+
+            // Token
+            localStorage.setItem("token", res.data.token)
+
             router.push("/dashboard")
         }
         catch (error) {

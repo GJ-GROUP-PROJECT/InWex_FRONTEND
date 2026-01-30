@@ -8,6 +8,7 @@ import {
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 const Navbar = () => {
     return (
@@ -15,7 +16,7 @@ const Navbar = () => {
             <div className="h-full w-full max-w-7xl mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="text-xl font-semibold">
-                    Logo
+                    <Image src="/logo/Inwex.png" alt="InWex Logo" width={200} height={200} />
                 </Link>
 
                 {/* Navigation Links */}
