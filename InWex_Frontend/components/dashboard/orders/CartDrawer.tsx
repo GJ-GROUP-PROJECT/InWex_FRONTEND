@@ -71,7 +71,7 @@ const CartDrawer = () => {
             append({
                 product: product.id,
                 quantity: 1,
-                unit_price: product.selling_price,
+                unit_price: Number(product.selling_price),
             });
         }
     };
