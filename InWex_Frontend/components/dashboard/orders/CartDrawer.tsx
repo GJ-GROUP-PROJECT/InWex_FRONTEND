@@ -22,6 +22,7 @@ import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { AddOrdersSchema, OrderValues } from "@/lib/schemas/order/addOrders.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { useOrder } from "@/InWex_Frontend/contexts/OrderContext";
 
 // Replace with your actual products fetch
 const MOCK_PRODUCTS = [
@@ -32,6 +33,7 @@ const MOCK_PRODUCTS = [
 const CartDrawer = () => {
     const [step, setStep] = useState<"build" | "review">("build");
     const [search, setSearch] = useState("");
+    const {addOrder} = useOrder();
 
     const form = useForm<OrderValues>({
         resolver: zodResolver(AddOrdersSchema),
@@ -74,8 +76,9 @@ const CartDrawer = () => {
         }
     };
 
-    const onSubmit = (data: OrderValues) => {
-        console.log("Submitting:", data);
+    const onSubmit = async(data: OrderValues) => {
+        await addOrder(data);
+        form.reset();
     };
 
     return (
