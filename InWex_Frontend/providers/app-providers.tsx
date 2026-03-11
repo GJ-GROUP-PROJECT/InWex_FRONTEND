@@ -5,6 +5,7 @@ import { DashboardProvider } from "@/contexts/DashboardContext"
 import { ProductProvider } from "@/contexts/ProductContext"
 import { StaffProvider } from "@/contexts/StaffContext"
 import { WarehouseProvider } from "@/contexts/WarehouseContext"
+import { OrderProvider } from "@/contexts/OrderContext"
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
     return (
@@ -13,7 +14,9 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
                 <DashboardProvider>
                     <WarehouseProvider>
                         <StaffProvider>
-                            {children}
+                            <OrderProvider>
+                                {children}
+                            </OrderProvider>
                         </StaffProvider>
                     </WarehouseProvider>
                 </DashboardProvider>
