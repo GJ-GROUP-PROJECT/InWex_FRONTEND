@@ -54,7 +54,7 @@ const CartDrawer = () => {
     const watchItems = useWatch({ control: form.control, name: "items" });
 
     const totalPrice = watchItems.reduce((acc, item) => {
-        return acc + parseFloat(item.unit_price) * item.quantity;
+        return acc + item.unit_price * item.quantity;
     }, 0);
 
     const filteredProducts = MOCK_PRODUCTS.filter(p =>
