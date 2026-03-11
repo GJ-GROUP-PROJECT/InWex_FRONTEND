@@ -15,7 +15,7 @@ export type OrderContextType = {
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined)
 
-export const OrderProvider => ({ children }: { children: React.ReactNode }) {
+export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const [orders, setOrders] = useState<Orders[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
