@@ -288,7 +288,7 @@ const CartDrawer = () => {
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-sm font-bold text-zinc-300">
-                                                    ₹{(parseFloat(field.unit_price) * (watchItems[index]?.quantity ?? 1)).toFixed(2)}
+                                                    ₹{field.unit_price * (watchItems[index]?.quantity ?? 1)).toFixed(2)}
                                                 </span>
                                                 <button type="button" onClick={() => remove(index)}>
                                                     <Trash2 className="h-4 w-4 text-zinc-600 hover:text-red-400 transition-colors" />
