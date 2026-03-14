@@ -77,6 +77,10 @@ export type Staff = {
     sections: number
     is_confirmed: boolean
     user: Users
+
+    // temp fix - remove later
+    fullname: string
+    contact_number: string
 }
 
 export type Orders = {
