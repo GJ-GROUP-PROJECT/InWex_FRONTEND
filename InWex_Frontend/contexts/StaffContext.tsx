@@ -8,6 +8,7 @@ export type StaffContextType = {
     isLoading: boolean
     error: string | null
     fetchStaff: (showLoading?: boolean) => Promise<void>
+    fetchStaffBySearch: (query: string, showLoading?: boolean) => Promise<void>
 }
 
 export const StaffContext = createContext<StaffContextType | undefined>(undefined)
@@ -20,9 +21,26 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
 
     const fetchStaff = useCallback(async (showLoading = true) => {
         if (showLoading) setIsLoading(true)
+        setError(null)
 
         try {
             const res = await api.get('api/warehouse/get-staff')
+            setStaffs(res.data)
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred")
+        }
+        finally {
+            if (showLoading) setIsLoading(false)
+        }
+    }, [])
+
+    const fetchStaffBySearch = useCallback(async (query: string, showLoading = true) => {
+        if (showLoading) setIsLoading(true)
+        setError(null)
+
+        try {
+            const res = await api.get(`api/warehouse/staff-search?name=${query}`)
             setStaffs(res.data)
         }
         catch (err) {
@@ -46,7 +64,8 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
                 staffs,
                 isLoading,
                 error,
-                fetchStaff
+                fetchStaff,
+                fetchStaffBySearch,
             }}
         >
             {children}

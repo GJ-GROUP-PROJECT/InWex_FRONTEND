@@ -6,14 +6,23 @@ import { useStaff } from "@/contexts/StaffContext"
 import { Loader2, Phone, UserRound, ChevronRight, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { useDebouncedCallback } from "use-debounce"
 
 const StaffContent = () => {
     const router = useRouter()
-    const { staffs, isLoading, error, fetchStaff } = useStaff()
+    const { staffs, isLoading, error, fetchStaff, fetchStaffBySearch } = useStaff()
 
     useEffect(() => {
         fetchStaff(true)
     }, [fetchStaff])
+
+    const handleSearch = useDebouncedCallback(async (value: string) => {
+        if (!value.trim()) {
+            fetchStaff(true)
+            return
+        }
+        fetchStaffBySearch(value)
+    }, 300)
 
     return (
         <main className="mt-12 w-full px-4 md:px-10">
@@ -33,6 +42,7 @@ const StaffContent = () => {
                             { label: "Mumbai", value: "mumbai" },
                         ]}
                         onFilterSelect={(value) => console.log("Warehouse filter:", value)}
+                        onSearch={handleSearch}
                     />
                 </div>
             </div>
@@ -58,13 +68,13 @@ const StaffContent = () => {
 
                                 <div className="flex-1 min-w-0">
                                     <p className="font-semibold text-zinc-100 text-lg truncate">
-                                        {staff.user?.fullname || staff.name}
+                                        {staff.user?.fullname || staff.fullname}
                                     </p>
                                     <div className="flex items-center gap-2 mt-1 text-zinc-500">
                                         <div className="bg-zinc-800 p-1 rounded-md">
                                             <Phone className="h-3 w-3" />
                                         </div>
-                                        <span className="text-sm font-medium">{staff.user?.contact_number || "No Contact"}</span>
+                                        <span className="text-sm font-medium">{staff.user?.contact_number || staff.contact_number}</span>
                                     </div>
                                 </div>
 

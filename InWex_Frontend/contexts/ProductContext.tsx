@@ -19,6 +19,7 @@ type ProductContextType = {
     error: string | null
     fetchProducts: (showLoading: boolean, url?: string) => Promise<void>
     fetchProductBySlug: (showLoading: boolean, slug: string) => Promise<void>
+    fetchProductBySearch: (query: string, showLoading?: boolean) => Promise<void>
     fetchCategory: () => Promise<void>
     addProduct: (product: ProductValues) => Promise<void>
     updateProduct: (productId: number, updatedProduct: UpdateProductPayload) => Promise<void>
@@ -100,6 +101,21 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         try {
             const res = await api.get(`/api/warehouse/get-product?slug=${slug}`)
             setSelectedProduct(res.data)
+        }
+        catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred")
+        }
+        finally {
+            if (showLoading) setIsLoading(false)
+        }
+    }, [])
+
+    const fetchProductBySearch = useCallback(async (query: string, showLoading = true) => {
+        if (showLoading) setIsLoading(true)
+        setError(null)
+        try {
+            const res = await api.get(`products/product-search?product=${query}`)
+            setProducts(res.data)
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
@@ -194,6 +210,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
                 error,
                 fetchProducts,
                 fetchProductBySlug,
+                fetchProductBySearch,
                 fetchCategory,
                 addProduct,
                 updateProduct,

@@ -20,11 +20,12 @@ import {
 import { ProductCardShimmer } from "./ProductCardShimmer"
 import { BrowserMultiFormatReader } from '@zxing/library'
 import { api } from "@/lib/api"
+import { useDebouncedCallback } from "use-debounce"
 
 const InventoryContent = () => {
     const [selected, setSelected] = useState("Product")
     const [showScanner, setShowScanner] = useState(false)
-    const { products, count, isLoading, error, fetchProducts, fetchCategory, goToPage, goToNextPage, goToPrevPage, hasNext, hasPrev, total_pages, current_page } = useProduct()
+    const { products, count, isLoading, error, fetchProducts, fetchProductBySearch, fetchCategory, goToPage, goToNextPage, goToPrevPage, hasNext, hasPrev, total_pages, current_page } = useProduct()
     const router = useRouter()
 
     const options = [
@@ -63,6 +64,13 @@ const InventoryContent = () => {
         }
     }, [router, showScanner])
 
+    const handleSearch = useDebouncedCallback(async (value: string) => {
+        if (!value.trim()) {
+            fetchProducts(true)
+            return
+        }
+        fetchProductBySearch(value)
+    }, 300)
 
     return (
         <main className="mt-8 md:mt-12 w-full px-4 sm:px-6 md:px-10 pb-8">
@@ -93,6 +101,7 @@ const InventoryContent = () => {
                             { label: "Price", value: "price" }
                         ]}
                         onFilterSelect={(value) => console.log("Products filter:", value)}
+                        onSearch={handleSearch}
                     />
                 </div>
 

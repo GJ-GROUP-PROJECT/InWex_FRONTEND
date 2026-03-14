@@ -7,7 +7,7 @@ export const AddOrdersSchema = z.object({
     items: z.array(z.object({
         product: z.number(),
         quantity: z.number().min(1),
-        unit_price: z.number(),
+        unit_price: z.string(),
     })).min(1, "Add at least one item"),
 })
 
