@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
     ShoppingCart,
     Search,
@@ -27,19 +27,23 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useDebouncedCallback } from "use-debounce"
 import { Product } from "@/lib/types/types"
 import { useOrder } from "@/contexts/OrderContext"
-import { useProduct } from "@/contexts/ProductContext"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { api } from "@/lib/api"
 
 const CartDrawer = () => {
     const [step, setStep] = useState<"build" | "review">("build")
-    const { products, fetchProductBySearch } = useProduct()
-    const { addOrder } = useOrder()
+    const [searchResults, setSearchResults] = useState<Product[]>([])
     const [isSearching, setIsSearching] = useState(false)
     const [query, setQuery] = useState("")
 
+    const { pendingOrder, stageOrder, productCache, cacheProducts } = useOrder()
+    const router = useRouter()
+
     const form = useForm<OrderValues>({
         resolver: zodResolver(AddOrdersSchema),
-        mode: "onSubmit",
-        defaultValues: {
+        mode: "onChange",
+        defaultValues: pendingOrder || {
             order_type: "Inbound",
             status: "Requested",
             notes: "",
@@ -59,19 +63,45 @@ const CartDrawer = () => {
         return acc + (Number(item.unit_price || 0) * Number(item.quantity || 0))
     }, 0) || 0
 
+    useEffect(() => {
+        const subscription = form.watch((value) => {
+            stageOrder(value as OrderValues)
+        })
+        return () => subscription.unsubscribe()
+    }, [form, stageOrder])
+
+    const handleProceedToCheckout = async () => {
+        const isValid = await form.trigger()
+        if (!isValid) return toast.error("Please fix the errors in your order")
+
+        const data = form.getValues()
+        if (data.items.length === 0) return toast.error("Cart is empty")
+
+        stageOrder(data)
+        router.push("/dashboard/orders/checkout")
+    }
+
     const handleSearch = useDebouncedCallback(async (value: string) => {
         setQuery(value)
         if (!value.trim()) return
         setIsSearching(true)
-        await fetchProductBySearch(value, false)
-        setIsSearching(false)
+        try {
+            const res = await api.get(`products/product-search?product=${value}`)
+            setSearchResults(res.data)
+        } finally {
+            setIsSearching(false)
+        }
     }, 300)
 
     const handleAddProduct = (product: Product) => {
-        const existingIndex = form.getValues("items").findIndex(i => i.product === product.id)
+        cacheProducts([product])
+
+        const currentItems = form.getValues("items")
+        const existingIndex = currentItems.findIndex(i => i.product === product.id)
+
         if (existingIndex !== -1) {
-            const current = form.getValues(`items.${existingIndex}.quantity`)
-            form.setValue(`items.${existingIndex}.quantity`, current + 1)
+            const currentQty = currentItems[existingIndex].quantity
+            form.setValue(`items.${existingIndex}.quantity`, currentQty + 1)
         } else {
             append({
                 product: product.id,
@@ -79,11 +109,6 @@ const CartDrawer = () => {
                 unit_price: String(product.cost_price),
             })
         }
-    }
-
-    const onSubmit = async (data: OrderValues) => {
-        await addOrder(data)
-        form.reset()
     }
 
     return (
@@ -101,7 +126,7 @@ const CartDrawer = () => {
 
             <SheetContent className="bg-zinc-950 border-none text-white sm:max-w-md px-0 flex flex-col">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
+                    <form onSubmit={(e) => e.preventDefault()} className="flex flex-col flex-1 overflow-hidden">
 
                         <SheetHeader className="space-y-1 px-6 pt-4">
                             <SheetTitle className="text-2xl font-bold text-white">Create New Order</SheetTitle>
@@ -213,11 +238,11 @@ const CartDrawer = () => {
                                         <p className="text-xs text-zinc-500 text-center py-6">Searching...</p>
                                     )}
 
-                                    {!isSearching && query && products.length === 0 && (
+                                    {!isSearching && query && searchResults.length === 0 && (
                                         <p className="text-xs text-zinc-500 text-center py-6">No products found</p>
                                     )}
 
-                                    {!isSearching && query && products.map((product) => {
+                                    {!isSearching && query && searchResults.map((product) => {
                                         const inCart = watchItems?.find(i => i.product === product.id)
                                         return (
                                             <button
@@ -279,14 +304,17 @@ const CartDrawer = () => {
 
                                     <div className="space-y-2">
                                         {fields.map((field, index) => {
-                                            const productDetail = products.find(p => p.id === watchItems[index]?.product);
+                                            const productId = watchItems[index]?.product
+                                            const productDetail =
+                                                searchResults.find(p => p.id === productId) ??
+                                                productCache[productId]
 
                                             return (
                                                 <div key={field.id} className="group p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all">
                                                     <div className="flex justify-between items-start">
                                                         <div className="space-y-1">
                                                             <p className="text-sm font-semibold text-white leading-tight">
-                                                                {productDetail?.name || "Loading product..."}
+                                                                {productDetail?.name || "Unknown product"}
                                                             </p>
                                                             <p className="text-xs text-zinc-500 font-medium">
                                                                 {watchItems[index]?.quantity} units <span className="mx-1">×</span> ₹{Number(watchItems[index]?.unit_price).toLocaleString()}
@@ -306,7 +334,7 @@ const CartDrawer = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            );
+                                            )
                                         })}
                                     </div>
                                 </section>
@@ -322,10 +350,7 @@ const CartDrawer = () => {
                                 {step === "build" ? (
                                     <Button
                                         type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            setStep("review")
-                                        }}
+                                        onClick={() => setStep("review")}
                                         disabled={fields.length === 0}
                                         className="w-full h-12 rounded-xl bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
                                     >
@@ -333,10 +358,12 @@ const CartDrawer = () => {
                                     </Button>
                                 ) : (
                                     <Button
-                                        type="submit"
+                                        type="button"
+                                        onClick={handleProceedToCheckout}
+                                        disabled={fields.length === 0}
                                         className="w-full h-12 rounded-xl bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
                                     >
-                                        Place Order
+                                        Proceed to Checkout
                                     </Button>
                                 )}
                             </div>
@@ -344,7 +371,7 @@ const CartDrawer = () => {
                     </form>
                 </Form>
             </SheetContent>
-        </Sheet >
+        </Sheet>
     )
 }
 

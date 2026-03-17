@@ -85,6 +85,7 @@ export type Staff = {
 
 export type Orders = {
     id: number
+    reference: string
     order_type: "Inbound" | "Outbound"
     status: "Requested" | "In_Progress" | "Delivered" | "Returned" | "Cancelled"
     notes: string
@@ -94,7 +95,7 @@ export type Orders = {
 
 export type OrderItems = {
     id: number
-    product: number
+    product: Product
     quantity: number
     unit_price: string
 } 

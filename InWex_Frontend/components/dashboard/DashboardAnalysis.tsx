@@ -121,7 +121,7 @@ export default function DashboardAnalysis() {
 
                     <div className="space-y-1">
                         {mostInStockItems.slice(0, 6).map((item, index) => (
-                            <div key={item.product__sku} className="flex items-center gap-4 py-3 px-2 rounded-xl hover:bg-zinc-900/40 transition-all group">
+                            <div key={`${item.product__sku}-${index}`} className="flex items-center gap-4 py-3 px-2 rounded-xl hover:bg-zinc-900/40 transition-all group">
                                 <div className="h-8 w-8 rounded-lg bg-zinc-900 flex items-center justify-center text-[10px] font-black text-zinc-700 group-hover:text-zinc-400 transition-colors">
                                     0{index + 1}
                                 </div>

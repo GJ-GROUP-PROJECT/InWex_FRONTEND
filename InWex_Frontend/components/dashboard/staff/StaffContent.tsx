@@ -30,7 +30,7 @@ const StaffContent = () => {
                 <h1 className="text-4xl font-bold tracking-tight text-white">Staff List</h1>
                 <p className="text-zinc-500 mt-1 flex items-center gap-2">
                     <Users className="h-4 w-4" />
-                    {staffs.length} Staff Members
+                    {staffs.length ?? 0} Staff Members
                 </p>
             </div>
 
@@ -56,7 +56,7 @@ const StaffContent = () => {
 
             {!isLoading && !error && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
-                    {staffs.length > 0 ? (
+                    {staffs?.length > 0 ? (
                         staffs.map((staff) => (
                             <div
                                 key={staff.id}

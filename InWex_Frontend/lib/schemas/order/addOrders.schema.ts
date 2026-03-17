@@ -4,6 +4,7 @@ export const AddOrdersSchema = z.object({
     order_type: z.enum(["Inbound", "Outbound"]),
     status: z.enum(["Requested", "In_Progress", "Delivered", "Returned", "Cancelled"]),
     notes: z.string().optional(),
+    address: z.string().optional(),
     items: z.array(z.object({
         product: z.number(),
         quantity: z.number().min(1),

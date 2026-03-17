@@ -8,6 +8,7 @@ import {
 } from "../../ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
 import NotificationBell from "./NotificationBell"
+import CartDrawer from "../orders/CartDrawer"
 
 interface NavbarProps {
     leftContent?: React.ReactNode
@@ -29,6 +30,7 @@ const Navbar = ({ leftContent }: NavbarProps) => {
             <div className="flex-1 text-white">{leftContent}</div>
 
             <div className="flex items-center gap-2">
+                <CartDrawer />
 
                 <NotificationBell />
 
