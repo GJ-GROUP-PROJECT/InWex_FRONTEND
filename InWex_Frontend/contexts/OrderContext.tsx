@@ -14,7 +14,9 @@ export type OrderContextType = {
     error: string | null
     fetchOrders: (showLoading: boolean) => Promise<void>
     fetchOrderByReferenceId: (query: string, showLoading?: boolean) => Promise<void>
+    downloadOrder: () => Promise<void>
     addOrder: (order: OrderValues) => Promise<void>
+    deleteOrder: (orderId: number) => Promise<void>
     stageOrder: (order: OrderValues) => void
     cacheProducts: (products: Product[]) => void
     clearPendingOrder: () => void
@@ -91,10 +93,33 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
+    const downloadOrder = useCallback(async () => {
+        setError(null)
+        try {
+            const res = await api.get("", {
+                responseType: "blob",
+            })
+
+            const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }))
+            const link = document.createElement('a')
+
+            link.href = url
+            link.download = `invoice-${selectedOrder[0]?.id || "file"}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred")
+        }
+    }, [selectedOrder])
+
     useEffect(() => {
         if (!user) {
             setOrders([])
             setSelectedOrder([])
+            clearPendingOrder()
         }
     }, [user])
 
@@ -105,6 +130,16 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchOrders(true)
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Failed to add product")
+        }
+    }
+
+    const deleteOrder: OrderContextType['deleteOrder'] = async (orderId: number) => {
+        try {
+            await api.delete(`/products/order/${orderId}`)
+            toast.success("Order deleted successfully")
+            await fetchOrders(true)
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Failed to delete product")
         }
     }
 
@@ -119,7 +154,9 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 error,
                 fetchOrders,
                 fetchOrderByReferenceId,
+                downloadOrder,
                 addOrder,
+                deleteOrder,
                 stageOrder,
                 cacheProducts,
                 clearPendingOrder

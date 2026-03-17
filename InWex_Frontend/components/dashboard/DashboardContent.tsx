@@ -5,10 +5,13 @@ import { useState } from "react"
 import Navbar from "@/components/dashboard/navbar/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardAnalysis from "./DashboardAnalysis";
-import { SearchIcon } from "lucide-react";
+import { Download, SearchIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { useDashboard } from "@/contexts/DashboardContext";
 
 const DashBoardContent = () => {
     const { user } = useAuth()
+    const { downloadReport } = useDashboard()
 
     const [today] = useState(() => {
         const current = new Date()
@@ -37,20 +40,34 @@ const DashBoardContent = () => {
         </div>
     )
 
+    const handleDownload = async () => {
+        downloadReport()
+    }
+
     return (
         <div className="w-full px-4 sm:px-6 md:px-10 pb-20">
             <Navbar leftContent={navbarLeftContent} />
 
             <main className="mt-12 md:mt-16">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                    <div className="space-y-1">
-                        <h1 className="text-5xl font-bold text-white tracking-tight">
-                            Hello, {user?.fullname?.split(' ')[0] || "User"}!
-                        </h1>
-                        <p className="text-zinc-500 text-lg">
-                            Here is what&apos;s happening with your inventory today.
-                        </p>
+                <div className="flex justify-between">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                        <div className="space-y-1">
+                            <h1 className="text-5xl font-bold text-white tracking-tight">
+                                Hello, {user?.fullname?.split(' ')[0] || "User"}!
+                            </h1>
+                            <p className="text-zinc-500 text-lg">
+                                Here is what&apos;s happening with your inventory today.
+                            </p>
+                        </div>
                     </div>
+
+                    <Button
+                        onClick={handleDownload}
+                        className="bg-white hover:bg-zinc-200 text-black font-semibold py-6 px-8 rounded-2xl transition-all duration-200 flex items-center gap-2 shadow-lg shadow-white/5 active:scale-95"
+                    >
+                        <Download className="w-4 h-4" />
+                        Download Report
+                    </Button>
                 </div>
 
                 <div className="mt-16">

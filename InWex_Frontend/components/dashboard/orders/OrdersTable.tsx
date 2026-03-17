@@ -17,7 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useRouter } from "next/navigation"
 
 const OrdersTable = () => {
-    const { orders, isLoading, error, fetchOrders } = useOrder()
+    const { orders, isLoading, error, fetchOrders, downloadOrder, deleteOrder } = useOrder()
     const router = useRouter()
 
     const statusStyles = {
@@ -33,6 +33,10 @@ const OrdersTable = () => {
     useEffect(() => {
         fetchOrders(true)
     }, [fetchOrders])
+
+    const handleDownload = async () => {
+        downloadOrder()
+    }
 
     return (
         <div className="mt-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 overflow-hidden min-h-100">
@@ -103,10 +107,18 @@ const OrdersTable = () => {
                                             >
                                                 <ExternalLink size={14} className="text-zinc-500" /> View Details
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-3 py-2 focus:bg-zinc-800 focus:text-white cursor-pointer">
-                                                <FileText size={14} className="text-zinc-500" /> Export Manifest
+                                            <DropdownMenuItem className="gap-3 py-2 focus:bg-zinc-800 focus:text-white cursor-pointer" onClick={handleDownload} >
+                                                <FileText size={14} className="text-zinc-500" /> Download Invoice
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-3 py-2 text-rose-500 focus:bg-rose-500/10 focus:text-rose-500 cursor-pointer">
+                                            <DropdownMenuItem
+                                                className="gap-3 py-2 text-rose-500 focus:bg-rose-500/10 focus:text-rose-500 cursor-pointer"
+                                                onClick={() => {
+                                                    if (confirm("Are you sure?")) {
+                                                        deleteOrder(order.id)
+                                                        router.push('/dashboard/inventory')
+                                                    }
+                                                }}
+                                            >
                                                 Cancel Order
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>

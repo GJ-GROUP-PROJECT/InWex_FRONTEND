@@ -12,6 +12,7 @@ export type DashboardContextType = {
     error: string | null
     fetchLowStock: (showLoading?: boolean) => Promise<void>
     fetchStockReport: (showLoading?: boolean) => Promise<void>
+    downloadReport: () => Promise<void>
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
@@ -55,6 +56,28 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
         }
     }, [])
 
+    const downloadReport = useCallback(async () => {
+        setError(null)
+        try {
+            const res = await api.get("/products/download-report", {
+                responseType: "blob",
+            })
+
+            const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+            const link = document.createElement('a')
+
+            link.href = url
+            link.download = `stock-report-${new Date().toLocaleString('default', { month: 'short', year: 'numeric' }).replace(' ', '-')}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred")
+        }
+    }, [])
+
     useEffect(() => {
         if (!user) {
             setLowStockItems([])
@@ -75,7 +98,8 @@ export const DashboardProvider = ({ children }: { children: React.ReactNode }) =
                 isLoading,
                 error,
                 fetchLowStock,
-                fetchStockReport
+                fetchStockReport,
+                downloadReport
             }}
         >
             {children}

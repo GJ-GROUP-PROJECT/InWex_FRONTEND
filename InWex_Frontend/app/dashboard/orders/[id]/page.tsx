@@ -11,6 +11,7 @@ import {
     Calendar,
     FileText,
     Loader2,
+    Download,
 } from 'lucide-react'
 import {
     Table,
@@ -25,7 +26,7 @@ import { OrderItems } from '@/lib/types/types'
 const OrderDetailsPage = () => {
     const { id } = useParams()
     const router = useRouter()
-    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading } = useOrder()
+    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder } = useOrder()
     const [initializing, setInitializing] = useState(orders.length === 0)
 
     const currentOrder = orders.find(o => o.id === Number(id))
@@ -68,6 +69,10 @@ const OrderDetailsPage = () => {
         )
     }
 
+    const handleDownload = async () => {
+        downloadOrder()
+    }
+
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col gap-4">
@@ -87,7 +92,8 @@ const OrderDetailsPage = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300">
+                        <Button variant="outline" className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300" onClick={handleDownload}>
+                            <Download className="w-4 h-4" />
                             Download Invoice
                         </Button>
                         <Button className="bg-white text-black hover:bg-zinc-200">
