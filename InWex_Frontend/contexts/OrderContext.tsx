@@ -14,7 +14,7 @@ export type OrderContextType = {
     error: string | null
     fetchOrders: (showLoading: boolean) => Promise<void>
     fetchOrderByReferenceId: (query: string, showLoading?: boolean) => Promise<void>
-    downloadOrder: () => Promise<void>
+    downloadOrder: (orderId: number) => Promise<void>
     addOrder: (order: OrderValues) => Promise<void>
     deleteOrder: (orderId: number) => Promise<void>
     stageOrder: (order: OrderValues) => void
@@ -93,10 +93,10 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
-    const downloadOrder = useCallback(async () => {
+    const downloadOrder = useCallback(async (orderId: number) => {
         setError(null)
         try {
-            const res = await api.get("", {
+            const res = await api.get(`/products/download-order-report?order_id=${orderId}`, {
                 responseType: "blob",
             })
 
@@ -104,7 +104,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             const link = document.createElement('a')
 
             link.href = url
-            link.download = `invoice-${selectedOrder[0]?.id || "file"}.pdf`
+            link.download = `invoice-${orderId || "file"}.pdf`
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
@@ -113,7 +113,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
         }
-    }, [selectedOrder])
+    }, [])
 
     useEffect(() => {
         if (!user) {

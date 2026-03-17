@@ -69,10 +69,6 @@ const OrderDetailsPage = () => {
         )
     }
 
-    const handleDownload = async () => {
-        downloadOrder()
-    }
-
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col gap-4">
@@ -92,7 +88,11 @@ const OrderDetailsPage = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300" onClick={handleDownload}>
+                        <Button
+                            variant="outline"
+                            className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300"
+                            onClick={async () => await downloadOrder(order.id)}
+                        >
                             <Download className="w-4 h-4" />
                             Download Invoice
                         </Button>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MoreHorizontal, Loader2, AlertCircle, ExternalLink, FileText } from "lucide-react"
+import { MoreHorizontal, Loader2, AlertCircle, ExternalLink, FileText, Trash } from "lucide-react"
 import { useOrder } from "@/contexts/OrderContext"
 import { useEffect } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -33,10 +33,6 @@ const OrdersTable = () => {
     useEffect(() => {
         fetchOrders(true)
     }, [fetchOrders])
-
-    const handleDownload = async () => {
-        downloadOrder()
-    }
 
     return (
         <div className="mt-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 overflow-hidden min-h-100">
@@ -107,18 +103,22 @@ const OrdersTable = () => {
                                             >
                                                 <ExternalLink size={14} className="text-zinc-500" /> View Details
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-3 py-2 focus:bg-zinc-800 focus:text-white cursor-pointer" onClick={handleDownload} >
+                                            <DropdownMenuItem
+                                                className="gap-3 py-2 focus:bg-zinc-800 focus:text-white cursor-pointer"
+                                                onClick={async () => await downloadOrder(order.id)}
+                                            >
                                                 <FileText size={14} className="text-zinc-500" /> Download Invoice
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
                                                 className="gap-3 py-2 text-rose-500 focus:bg-rose-500/10 focus:text-rose-500 cursor-pointer"
-                                                onClick={() => {
+                                                onClick={async () => {
                                                     if (confirm("Are you sure?")) {
-                                                        deleteOrder(order.id)
+                                                        await deleteOrder(order.id)
                                                         router.push('/dashboard/inventory')
                                                     }
                                                 }}
                                             >
+                                                <Trash className="text-rose-500" />
                                                 Cancel Order
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>

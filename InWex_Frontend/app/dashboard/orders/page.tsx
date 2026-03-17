@@ -4,7 +4,9 @@ import Navbar from "@/components/dashboard/navbar/Navbar"
 import OrdersTable from "@/components/dashboard/orders/OrdersTable"
 import { StatusCard } from "@/components/dashboard/orders/StatusCard"
 import SearchbarWithFilter from "@/components/ui/SearchbarWithFilter"
+import { useOrder } from "@/contexts/OrderContext"
 import { ShoppingCart, PackageSearch } from "lucide-react"
+import { useDebouncedCallback } from "use-debounce"
 
 type Trend = "up" | "down";
 
@@ -15,13 +17,23 @@ type StatusCardData = {
     trend: Trend;
 }
 
+const cardsContent: StatusCardData[] = [
+    { title: "New Orders", value: 21, percentage: 2.69, trend: "down" },
+    { title: "Returned Orders", value: 8, percentage: 4.2, trend: "up" },
+    { title: "On-Way Orders", value: 57, percentage: 1.12, trend: "down" },
+    { title: "Delivery Orders", value: 21, percentage: 2.69, trend: "down" },
+]
+
 const Orders = () => {
-    const cardsContent: StatusCardData[] = [
-        { title: "New Orders", value: 21, percentage: 2.69, trend: "down" },
-        { title: "Returned Orders", value: 8, percentage: 4.2, trend: "up" },
-        { title: "On-Way Orders", value: 57, percentage: 1.12, trend: "down" },
-        { title: "Delivery Orders", value: 21, percentage: 2.69, trend: "down" },
-    ]
+    const { orders, fetchOrders, fetchOrderByReferenceId } = useOrder()
+
+    // const handleSearch = useDebouncedCallback(async (value: string) => {
+    //     if (!value.trim()) {
+    //         fetchOrders(true)
+    //         return
+    //     }
+    //     fetchOrderByReferenceId(value)
+    // }, 300)
 
     return (
         <>
@@ -33,7 +45,7 @@ const Orders = () => {
                     <h1 className="text-4xl font-bold tracking-tight text-white">Orders Dashboard</h1>
                     <p className="text-zinc-500 mt-1 flex items-center gap-2">
                         <ShoppingCart className="h-4 w-4" />
-                        123 Total Orders Processing
+                        {orders.length} Total Orders Processing
                     </p>
                 </div>
 
@@ -54,7 +66,7 @@ const Orders = () => {
                                 { label: "Date Created", value: "date" }
                             ]}
                             onFilterSelect={(value) => console.log("Filter:", value)}
-                        // onSearch={(val) => handleSearch(val)} // Add a debounce search
+                        // onSearch={(val) => handleSearch(val)} // Ask to add the api 
                         />
                     </div>
 
