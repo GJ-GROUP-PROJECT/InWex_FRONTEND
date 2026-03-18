@@ -20,6 +20,11 @@ export const ProductCardShimmer = () => {
                 </div>
             </CardContent>
 
+            <div className="flex items-center gap-2 pt-1">
+                <div className="h-2 w-2 rounded-full bg-zinc-800/50" />
+                <div className="h-4 w-24 bg-zinc-800/50 rounded-md" />
+            </div>
+
             <CardFooter className="px-5 pb-6 pt-2">
                 <div className="h-11 w-full bg-zinc-800/50 rounded-xl" />
             </CardFooter>

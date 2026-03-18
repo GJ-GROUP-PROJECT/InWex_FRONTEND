@@ -40,10 +40,11 @@ const OrdersTable = () => {
                 <TableHeader>
                     <TableRow className="bg-zinc-900/60 border-zinc-800 hover:bg-zinc-900/60">
                         <TableHead className={`${headCell} pl-8 w-[15%]`}>ID</TableHead>
+                        <TableHead className={`${headCell} w-[25%]`}>Order ID</TableHead>
                         <TableHead className={`${headCell} w-[15%]`}>Type</TableHead>
-                        <TableHead className={`${headCell} w-[20%]`}>Status</TableHead>
+                        <TableHead className={`${headCell} w-[15%]`}>Status</TableHead>
                         <TableHead className={`${headCell} w-[15%]`}>Items</TableHead>
-                        <TableHead className={`${headCell} w-[25%]`}>Date Created</TableHead>
+                        <TableHead className={`${headCell} w-[15%]`}>Date Created</TableHead>
                         <TableHead className="py-4 pr-8 text-right w-[10%]" />
                     </TableRow>
                 </TableHeader>
@@ -51,7 +52,7 @@ const OrdersTable = () => {
                 <TableBody>
                     {isLoading ? (
                         <TableRow>
-                            <TableCell colSpan={6} className="py-32">
+                            <TableCell colSpan={7} className="py-32">
                                 <div className="flex flex-col items-center justify-center gap-4">
                                     <Loader2 className="h-8 w-8 animate-spin text-white/50" />
                                     <p className="text-zinc-500 text-sm animate-pulse tracking-tight">Syncing orders...</p>
@@ -71,6 +72,7 @@ const OrdersTable = () => {
                         orders.map((order) => (
                             <TableRow key={order.id} className="border-zinc-800/50 hover:bg-white/2 transition-colors">
                                 <TableCell className="pl-8 py-5 font-mono text-zinc-300">#{order.id}</TableCell>
+                                <TableCell className="py-5 font-mono text-zinc-300">#{order.reference}</TableCell>
                                 <TableCell className="py-5">
                                     <Badge variant="outline" className="rounded-md font-medium border-zinc-800 text-zinc-400 bg-zinc-800/30">
                                         {order.order_type}
@@ -114,7 +116,7 @@ const OrdersTable = () => {
                                                 onClick={async () => {
                                                     if (confirm("Are you sure?")) {
                                                         await deleteOrder(order.id)
-                                                        router.push('/dashboard/inventory')
+                                                        router.push('/dashboard/orders')
                                                     }
                                                 }}
                                             >

@@ -26,7 +26,7 @@ import { OrderItems } from '@/lib/types/types'
 const OrderDetailsPage = () => {
     const { id } = useParams()
     const router = useRouter()
-    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder, completeOrder } = useOrder()
+    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder, shippingOrder, completeOrder } = useOrder()
     const [initializing, setInitializing] = useState(orders.length === 0)
 
     const currentOrder = orders.find(o => o.id === Number(id))
@@ -99,11 +99,20 @@ const OrderDetailsPage = () => {
                         <Button
                             className="bg-white text-black hover:bg-zinc-200"
                             onClick={async () => {
-                                await completeOrder(order.id)
+                                await shippingOrder(order.id)
                                 await fetchOrderByReferenceId(order.reference, false)
                             }}
                         >
                             Ship Order
+                        </Button>
+                        <Button
+                            className="bg-white text-black hover:bg-zinc-200"
+                            onClick={async () => {
+                                await completeOrder(order.id)
+                                await fetchOrderByReferenceId(order.reference, false)
+                            }}
+                        >
+                            Complete Order
                         </Button>
                     </div>
                 </div>

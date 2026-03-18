@@ -8,31 +8,50 @@ import { useOrder } from "@/contexts/OrderContext"
 import { ShoppingCart, PackageSearch } from "lucide-react"
 import { useDebouncedCallback } from "use-debounce"
 
-type Trend = "up" | "down";
+type OrderStatus = "Requested" | "In_Progress" | "Delivered" | "Returned"
 
 type StatusCardData = {
-    title: string;
-    value: number;
-    percentage: number;
-    trend: Trend;
+    title: string
+    value: number
+    status: OrderStatus
 }
-
-const cardsContent: StatusCardData[] = [
-    { title: "New Orders", value: 21, percentage: 2.69, trend: "down" },
-    { title: "Returned Orders", value: 8, percentage: 4.2, trend: "up" },
-    { title: "On-Way Orders", value: 57, percentage: 1.12, trend: "down" },
-    { title: "Delivery Orders", value: 21, percentage: 2.69, trend: "down" },
-]
 
 const Orders = () => {
     const { orders, fetchOrders, fetchOrderByReferenceId } = useOrder()
+    const requested = orders?.filter(o => o.status === "Requested").length ?? 0
+    const inProgress = orders?.filter(o => o.status === "In_Progress").length ?? 0
+    const delivered = orders?.filter(o => o.status === "Delivered").length ?? 0
+    const returned = orders?.filter(o => o.status === "Returned").length ?? 0
+
+    const cardsContent: StatusCardData[] = [
+        {
+            title: "Requested Orders",
+            value: requested,
+            status: "Requested"
+        },
+        {
+            title: "Returned Orders",
+            value: returned,
+            status: "Returned"
+        },
+        {
+            title: "In-Progress Orders",
+            value: inProgress,
+            status: "In_Progress"
+        },
+        {
+            title: "Delivered Orders",
+            value: delivered,
+            status: "Delivered"
+        },
+    ]
 
     // const handleSearch = useDebouncedCallback(async (value: string) => {
     //     if (!value.trim()) {
     //         fetchOrders(true)
     //         return
     //     }
-    //     fetchOrderByReferenceId(value)
+    //     fetchOrderByReferenceId(value, true)
     // }, 300)
 
     return (
@@ -45,7 +64,7 @@ const Orders = () => {
                     <h1 className="text-4xl font-bold tracking-tight text-white">Orders Dashboard</h1>
                     <p className="text-zinc-500 mt-1 flex items-center gap-2">
                         <ShoppingCart className="h-4 w-4" />
-                        {orders.length} Total Orders Processing
+                        {orders.length} Total Orders
                     </p>
                 </div>
 
@@ -66,7 +85,7 @@ const Orders = () => {
                                 { label: "Date Created", value: "date" }
                             ]}
                             onFilterSelect={(value) => console.log("Filter:", value)}
-                        // onSearch={(val) => handleSearch(val)} // Ask to add the api 
+                        // onSearch={handleSearch}
                         />
                     </div>
 
