@@ -147,7 +147,7 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                                                 </span>
                                             </div>
                                             <div className="text-right shrink-0">
-                                                <span className="text-xs font-bold text-white block">{product.stock?.quantity || 1}</span>
+                                                <span className="text-xs font-bold text-white block">{product.warehouse_stocks?.quantity || 1}</span>
                                                 <span className="text-[10px] text-zinc-600 uppercase font-bold tracking-tighter">qty</span>
                                             </div>
                                         </div>
