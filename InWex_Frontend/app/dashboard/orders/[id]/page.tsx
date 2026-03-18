@@ -26,7 +26,7 @@ import { OrderItems } from '@/lib/types/types'
 const OrderDetailsPage = () => {
     const { id } = useParams()
     const router = useRouter()
-    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder } = useOrder()
+    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder, completeOrder } = useOrder()
     const [initializing, setInitializing] = useState(orders.length === 0)
 
     const currentOrder = orders.find(o => o.id === Number(id))
@@ -96,7 +96,13 @@ const OrderDetailsPage = () => {
                             <Download className="w-4 h-4" />
                             Download Invoice
                         </Button>
-                        <Button className="bg-white text-black hover:bg-zinc-200">
+                        <Button
+                            className="bg-white text-black hover:bg-zinc-200"
+                            onClick={async () => {
+                                await completeOrder(order.id)
+                                await fetchOrderByReferenceId(order.reference, false)
+                            }}
+                        >
                             Ship Order
                         </Button>
                     </div>
@@ -133,42 +139,52 @@ const OrderDetailsPage = () => {
                 </div>
             </div>
 
-            {/* Items Table */}
-            <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl overflow-hidden">
-                <div className="p-6 border-b border-zinc-800">
-                    <h3 className="text-lg font-semibold text-white">Order Items</h3>
+            {/* Items Table Section */}
+            <div className="space-y-4 pt-4">
+                <div className="flex items-baseline justify-between px-2">
+                    <h3 className="text-xl font-bold text-white tracking-tight">Order Items</h3>
+                    <span className="text-zinc-500 text-xs font-medium">
+                        {order.items.length} {order.items.length === 1 ? 'Item' : 'Items'}
+                    </span>
                 </div>
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-zinc-900/60 border-zinc-800 hover:bg-zinc-900/60">
-                            <TableHead className="py-4 pl-6 text-zinc-500 uppercase text-[10px] font-bold">Product Details</TableHead>
-                            <TableHead className="py-4 text-zinc-500 uppercase text-[10px] font-bold">SKU</TableHead>
-                            <TableHead className="py-4 text-zinc-500 uppercase text-[10px] font-bold">Unit Price</TableHead>
-                            <TableHead className="py-4 text-zinc-500 uppercase text-[10px] font-bold text-right pr-6">Quantity</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {order.items.map((item: OrderItems, idx: number) => (
-                            <TableRow key={idx} className="border-zinc-800/50 hover:bg-white/2">
-                                <TableCell className="pl-6 py-5">
-                                    <div className="flex flex-col">
-                                        <span className="text-white font-medium">{item.product.name}</span>
-                                        <span className="text-xs text-zinc-500">{item.product.unit_of_measure}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-zinc-400 font-mono text-xs">
-                                    {item.product.sku}
-                                </TableCell>
-                                <TableCell className="text-zinc-300">
-                                    ₹{item.product.cost_price}
-                                </TableCell>
-                                <TableCell className="text-right pr-6 text-white font-bold">
-                                    {item.quantity}
-                                </TableCell>
+
+                <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl overflow-hidden shadow-2xl">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-zinc-900/60 border-zinc-800 hover:bg-zinc-900/60 transition-none">
+                                <TableHead className="h-12 pl-6 text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Product Details</TableHead>
+                                <TableHead className="h-12 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-center">SKU</TableHead>
+                                <TableHead className="h-12 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-center">Unit Price</TableHead>
+                                <TableHead className="h-12 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-right pr-6">Quantity</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {order.items.map((item: OrderItems, idx: number) => (
+                                <TableRow key={idx} className="border-zinc-800/50 hover:bg-white/3 transition-colors group">
+                                    <TableCell className="pl-6 py-5">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-zinc-100 font-semibold text-sm group-hover:text-white transition-colors">
+                                                {item.product.name}
+                                            </span>
+                                            <span className="text-[10px] text-zinc-500 uppercase font-medium tracking-wider">
+                                                {item.product.unit_of_measure}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-zinc-400 font-mono text-xs text-center">
+                                        {item.product.sku}
+                                    </TableCell>
+                                    <TableCell className="text-zinc-300 text-sm text-center">
+                                        ₹{item.product.cost_price}
+                                    </TableCell>
+                                    <TableCell className="text-right pr-6 text-white font-bold text-base">
+                                        {item.quantity}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
 
             {/* Notes Section */}

@@ -48,13 +48,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                         {product.description || "No description available"}
                     </CardDescription>
                 </div>
-
-                <div className="flex items-center gap-2 pt-1">
-                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    <p className="text-zinc-400 text-xs font-medium">
-                        Stock: {product.stock?.quantity || 1} units
-                    </p>
-                </div>
             </CardContent>
 
             <CardFooter className="px-5 pb-6 pt-2">

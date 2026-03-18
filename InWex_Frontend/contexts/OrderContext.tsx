@@ -14,6 +14,7 @@ export type OrderContextType = {
     error: string | null
     fetchOrders: (showLoading: boolean) => Promise<void>
     fetchOrderByReferenceId: (query: string, showLoading?: boolean) => Promise<void>
+    completeOrder: (orderId: number) => Promise<void>
     downloadOrder: (orderId: number) => Promise<void>
     addOrder: (order: OrderValues) => Promise<void>
     deleteOrder: (orderId: number) => Promise<void>
@@ -93,6 +94,18 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
+    const completeOrder = useCallback(async (orderId: number) => {
+        try {
+            await api.post(`/products/order/${orderId}/complete`)
+            toast.success("Order marked as shipped")
+            await fetchOrders(false)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Failed to complete order"
+            setError(message)
+            toast.error(message)
+        }
+    }, [fetchOrders])
+
     const downloadOrder = useCallback(async (orderId: number) => {
         setError(null)
         try {
@@ -154,6 +167,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 error,
                 fetchOrders,
                 fetchOrderByReferenceId,
+                completeOrder,
                 downloadOrder,
                 addOrder,
                 deleteOrder,

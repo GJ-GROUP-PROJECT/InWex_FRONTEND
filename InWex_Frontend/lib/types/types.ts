@@ -36,7 +36,7 @@ export type Product = {
     cost_price: string
     selling_price: string
     image: string
-    stock: Stock
+    warehouse_stocks: Stock
     created_at: string
     updated_at: string
     category: string
@@ -71,16 +71,13 @@ export type Section = {
 
 export type Staff = {
     id: number
-    name: string
+    fullname: string
+    contact_number: string
     company: number
     warehouse: number
     sections: number
     is_confirmed: boolean
     user: Users
-
-    // temp fix - remove later
-    fullname: string
-    contact_number: string
 }
 
 export type Orders = {
