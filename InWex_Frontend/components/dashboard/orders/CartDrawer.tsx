@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react"
-import {
-    ShoppingCart,
-    Search,
-    Trash2,
-    Plus,
-} from "lucide-react"
-
+import { ShoppingCart, Search, Trash2, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger
+    Sheet, SheetContent, SheetDescription, SheetFooter,
+    SheetHeader, SheetTitle, SheetTrigger
 } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -37,7 +26,7 @@ const CartDrawer = () => {
     const [isSearching, setIsSearching] = useState(false)
     const [query, setQuery] = useState("")
 
-    const { pendingOrder, stageOrder, productCache, cacheProducts } = useOrder()
+    const { pendingOrder, stageOrder, productCache, cacheProducts, addOrder } = useOrder()
     const router = useRouter()
 
     const form = useForm<OrderValues>({
@@ -51,11 +40,7 @@ const CartDrawer = () => {
         }
     })
 
-    const { fields, append, remove } = useFieldArray({
-        control: form.control,
-        name: "items",
-    })
-
+    const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" })
     const watchOrderType = useWatch({ control: form.control, name: "order_type" })
     const watchItems = useWatch({ control: form.control, name: "items" })
 
@@ -64,18 +49,22 @@ const CartDrawer = () => {
     }, 0) || 0
 
     useEffect(() => {
-        const subscription = form.watch((value) => {
-            stageOrder(value as OrderValues)
-        })
+        const subscription = form.watch((value) => { stageOrder(value as OrderValues) })
         return () => subscription.unsubscribe()
     }, [form, stageOrder])
 
     const handleProceedToCheckout = async () => {
         const isValid = await form.trigger()
         if (!isValid) return toast.error("Please fix the errors in your order")
-
         const data = form.getValues()
         if (data.items.length === 0) return toast.error("Cart is empty")
+
+        if (data.order_type === "Inbound") {
+            await addOrder(data)
+            form.reset()
+            setStep("build")
+            return
+        }
 
         stageOrder(data)
         router.push("/dashboard/orders/checkout")
@@ -87,7 +76,7 @@ const CartDrawer = () => {
         setIsSearching(true)
         try {
             const res = await api.get(`products/product-search?product=${value}`)
-            setSearchResults(res.data)
+            setSearchResults(res.data.results)
         } finally {
             setIsSearching(false)
         }
@@ -95,96 +84,74 @@ const CartDrawer = () => {
 
     const handleAddProduct = (product: Product) => {
         cacheProducts([product])
-
         const currentItems = form.getValues("items")
         const existingIndex = currentItems.findIndex(i => i.product === product.id)
-
         if (existingIndex !== -1) {
-            const currentQty = currentItems[existingIndex].quantity
-            form.setValue(`items.${existingIndex}.quantity`, currentQty + 1)
+            form.setValue(`items.${existingIndex}.quantity`, currentItems[existingIndex].quantity + 1)
         } else {
-            append({
-                product: product.id,
-                quantity: 1,
-                unit_price: String(product.cost_price),
-            })
+            append({ product: product.id, quantity: 1, unit_price: String(product.cost_price) })
         }
     }
 
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button className="relative p-3 hover:bg-white/80 rounded-xl transition-all group h-auto">
-                    <ShoppingCart size={16} />
+                <Button className="relative hover:bg-white/80 rounded-lg transition-all group" size="icon">
+                    <ShoppingCart size={14} />
                     {fields.length > 0 && (
-                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-emerald-500 text-white text-[9px] font-bold flex items-center justify-center">
                             {fields.length}
                         </span>
                     )}
                 </Button>
             </SheetTrigger>
 
-            <SheetContent className="bg-zinc-950 border-none text-white sm:max-w-md px-0 flex flex-col">
+            <SheetContent className="bg-zinc-950 border-none text-white sm:max-w-sm px-0 flex flex-col">
                 <Form {...form}>
                     <form onSubmit={(e) => e.preventDefault()} className="flex flex-col flex-1 overflow-hidden">
 
-                        <SheetHeader className="space-y-1 px-6 pt-4">
-                            <SheetTitle className="text-2xl font-bold text-white">Create New Order</SheetTitle>
-                            <SheetDescription className="text-zinc-500">
+                        <SheetHeader className="space-y-0.5 px-5 pt-4">
+                            <SheetTitle className="text-xl! font-bold text-white">Create New Order</SheetTitle>
+                            <SheetDescription className="text-xs text-zinc-500">
                                 Search and add products to your order.
                             </SheetDescription>
                         </SheetHeader>
 
-                        {/* Navigation Tabs */}
-                        <div className="flex gap-8 border-b border-zinc-800 px-6 mt-2">
-                            <button
-                                type="button"
-                                onClick={() => setStep("build")}
-                                className={`py-2.5 text-sm font-medium border-b-2 transition-colors ${step === "build" ? "border-white text-white" : "border-transparent text-zinc-500"}`}
-                            >
-                                Build Order
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setStep("review")}
-                                className={`py-2.5 text-sm font-medium border-b-2 transition-colors ${step === "review" ? "border-white text-white" : "border-transparent text-zinc-500"}`}
-                            >
-                                Review
-                            </button>
+                        {/* Tabs */}
+                        <div className="flex gap-6 border-b border-zinc-800 px-5 mt-2">
+                            {["build", "review"].map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => setStep(s as "build" | "review")}
+                                    className={`py-2 text-xs font-medium border-b-2 transition-colors capitalize ${step === s ? "border-white text-white" : "border-transparent text-zinc-500"}`}
+                                >
+                                    {s === "build" ? "Build Order" : "Review"}
+                                </button>
+                            ))}
                         </div>
 
                         {step === "build" ? (
                             <div className="flex-1 overflow-y-auto flex flex-col">
-                                <div className="px-6 pt-4 py-6 border-b border-zinc-800 space-y-6">
-
+                                <div className="px-5 pt-4 pb-4 border-b border-zinc-800 space-y-4">
                                     <FormField
                                         control={form.control}
                                         name="order_type"
                                         render={({ field }) => (
                                             <FormItem className="space-y-2">
-                                                <FormLabel className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Order Type</FormLabel>
+                                                <FormLabel className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">Order Type</FormLabel>
                                                 <FormControl>
-                                                    <RadioGroup
-                                                        onValueChange={field.onChange}
-                                                        defaultValue={field.value}
-                                                        className="flex gap-2"
-                                                    >
-                                                        <FormItem className="space-y-0">
-                                                            <FormControl>
-                                                                <RadioGroupItem value="Inbound" className="sr-only" type="button" />
-                                                            </FormControl>
-                                                            <FormLabel className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-colors cursor-pointer border ${field.value === "Inbound" ? "bg-white text-zinc-950 border-white" : "bg-zinc-900/50 text-zinc-400 border-zinc-800 hover:bg-zinc-900"}`}>
-                                                                Stock In
-                                                            </FormLabel>
-                                                        </FormItem>
-                                                        <FormItem className="space-y-0">
-                                                            <FormControl>
-                                                                <RadioGroupItem value="Outbound" className="sr-only" type="button" />
-                                                            </FormControl>
-                                                            <FormLabel className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-colors cursor-pointer border ${field.value === "Outbound" ? "bg-white text-zinc-950 border-white" : "bg-zinc-900/50 text-zinc-400 border-zinc-800 hover:bg-zinc-900"}`}>
-                                                                Stock Out
-                                                            </FormLabel>
-                                                        </FormItem>
+                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-2">
+                                                        {["Inbound", "Outbound"].map((type) => (
+                                                            <FormItem key={type} className="space-y-0">
+                                                                <FormControl>
+                                                                    <RadioGroupItem value={type} className="sr-only" type="button" />
+                                                                </FormControl>
+                                                                <FormLabel className={`px-4 py-2 rounded-lg text-xs! font-bold transition-colors cursor-pointer border ${field.value === type ? "bg-white text-zinc-950 border-white" : "bg-zinc-900/50 text-zinc-400 border-zinc-800 hover:bg-zinc-900"}`}>
+                                                                    {type === "Inbound" ? "Stock In" : "Stock Out"}
+                                                                </FormLabel>
+                                                            </FormItem>
+                                                        ))}
                                                     </RadioGroup>
                                                 </FormControl>
                                                 <FormMessage />
@@ -196,14 +163,10 @@ const CartDrawer = () => {
                                         control={form.control}
                                         name="notes"
                                         render={({ field }) => (
-                                            <FormItem className="space-y-2">
-                                                <FormLabel className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Notes (optional)</FormLabel>
+                                            <FormItem className="space-y-1.5">
+                                                <FormLabel className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">Notes (optional)</FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="e.g. Stock purchased from supplier"
-                                                        className="rounded-xl p-4 py-5 border-none"
-                                                    />
+                                                    <Input {...field} placeholder="e.g. Stock purchased from supplier" className="h-9 text-xs! rounded-lg px-3 border-none" />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -212,57 +175,46 @@ const CartDrawer = () => {
                                 </div>
 
                                 {/* Search */}
-                                <div className="px-6 pt-6 pb-2 shrink-0">
-                                    <Label className="text-xs text-zinc-400 font-medium uppercase tracking-wider mb-2 block">Add Products</Label>
-                                    <div className="relative">
-                                        <InputGroup className="bg-zinc-950 border-none w-full max-w-110 h-11 pl-4 rounded-xl focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
-                                            <InputGroupInput
-                                                placeholder="Search"
-                                                className="placeholder:text-zinc-600 text-zinc-100 bg-transparent"
-                                                onChange={(e) => handleSearch(e.target.value)}
-                                            />
-                                            <InputGroupAddon>
-                                                <Search className="h-5! w-5! text-zinc-600" />
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                    </div>
+                                <div className="px-5 pt-4 pb-2 shrink-0">
+                                    <Label className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider mb-2 block">Add Products</Label>
+                                    <InputGroup className="bg-zinc-900/50 border-none w-full h-8 pl-3 rounded-lg focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
+                                        <InputGroupInput
+                                            placeholder="Search products..."
+                                            className="text-xs! placeholder:text-zinc-600 text-zinc-100 bg-transparent"
+                                            onChange={(e) => handleSearch(e.target.value)}
+                                        />
+                                        <InputGroupAddon>
+                                            <Search className="h-3.5 w-3.5 text-zinc-600" />
+                                        </InputGroupAddon>
+                                    </InputGroup>
                                 </div>
 
-                                {/* Product Results */}
-                                <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-2 mt-3">
+                                {/* Results */}
+                                <div className="flex-1 overflow-y-auto px-5 pb-4 space-y-1.5 mt-2">
                                     {form.formState.errors.items && (
-                                        <p className="text-xs text-red-500">{form.formState.errors.items.message}</p>
+                                        <p className="text-[10px] text-red-500">{form.formState.errors.items.message}</p>
                                     )}
-
-                                    {isSearching && (
-                                        <p className="text-xs text-zinc-500 text-center py-6">Searching...</p>
-                                    )}
-
+                                    {isSearching && <p className="text-[10px] text-zinc-500 text-center py-4">Searching...</p>}
                                     {!isSearching && query && searchResults.length === 0 && (
-                                        <p className="text-xs text-zinc-500 text-center py-6">No products found</p>
+                                        <p className="text-[10px] text-zinc-500 text-center py-4">No products found</p>
                                     )}
-
                                     {!isSearching && query && searchResults.map((product) => {
-                                        const inCart = watchItems?.find(i => i.product === product.id)
+                                        const inCart = watchItems?.find(i => String(i.product) === String(product.id))
                                         return (
                                             <button
                                                 key={product.id}
                                                 type="button"
                                                 onClick={() => handleAddProduct(product)}
-                                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-600 transition-colors group"
+                                                className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-600 transition-colors group"
                                             >
                                                 <div className="text-left">
-                                                    <p className="text-sm font-medium text-white">{product.name}</p>
-                                                    <p className="text-xs text-zinc-500 mt-0.5">₹{product.cost_price}</p>
+                                                    <p className="text-xs font-medium text-white">{product.name}</p>
+                                                    <p className="text-[10px] text-zinc-500 mt-0.5">₹{product.cost_price}</p>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    {inCart && (
-                                                        <span className="text-xs text-emerald-400 font-medium">
-                                                            x{inCart.quantity} in cart
-                                                        </span>
-                                                    )}
-                                                    <span className="h-6 w-6 rounded-full bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center transition-colors shrink-0">
-                                                        <Plus className="h-3.5 w-3.5 text-zinc-400" />
+                                                <div className="flex items-center gap-1.5">
+                                                    {inCart && <span className="text-[10px] text-emerald-400 font-medium">x{inCart.quantity}</span>}
+                                                    <span className="h-5 w-5 rounded-full bg-zinc-800 group-hover:bg-zinc-700 flex items-center justify-center transition-colors shrink-0">
+                                                        <Plus className="h-3 w-3 text-zinc-400" />
                                                     </span>
                                                 </div>
                                             </button>
@@ -271,65 +223,55 @@ const CartDrawer = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
+                            <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
                                 <section>
-                                    <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Order Summary</h3>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-3 rounded-xl bg-zinc-900/50 border border-zinc-800">
+                                    <h3 className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-2">Order Summary</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
                                             <p className="text-[10px] text-zinc-500 uppercase">Movement</p>
-                                            <p className={`text-sm font-bold ${watchOrderType === "Inbound" ? "text-emerald-400" : "text-amber-400"}`}>
+                                            <p className={`text-xs font-bold ${watchOrderType === "Inbound" ? "text-emerald-400" : "text-amber-400"}`}>
                                                 {watchOrderType === "Inbound" ? "Stock In" : "Stock Out"}
                                             </p>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-zinc-900/50 border border-zinc-800">
+                                        <div className="p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
                                             <p className="text-[10px] text-zinc-500 uppercase">Status</p>
-                                            <p className="text-sm font-bold text-white">Requested</p>
+                                            <p className="text-xs font-bold text-white">Requested</p>
                                         </div>
                                     </div>
-
                                     {form.getValues("notes") && (
-                                        <div className="mt-3 p-3 rounded-xl bg-zinc-900/30 border border-dashed border-zinc-800">
+                                        <div className="mt-2 p-2.5 rounded-lg bg-zinc-900/30 border border-dashed border-zinc-800">
                                             <p className="text-[10px] text-zinc-500 uppercase">Notes</p>
-                                            <p className="text-sm text-zinc-300 italic line-clamp-2">&#34;{form.getValues("notes")}&#34;</p>
+                                            <p className="text-xs text-zinc-300 italic line-clamp-2">&#34;{form.getValues("notes")}&#34;</p>
                                         </div>
                                     )}
                                 </section>
 
-                                {/* Items Section */}
                                 <section className="flex-1">
-                                    <div className="flex justify-between items-end mb-3 px-1">
-                                        <h3 className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Items Breakdown</h3>
+                                    <div className="flex justify-between items-end mb-2 px-0.5">
+                                        <h3 className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Items Breakdown</h3>
                                         <span className="text-[10px] text-zinc-500 font-mono">{fields.length} SKUs</span>
                                     </div>
-
-                                    <div className="space-y-2">
+                                    <div>
                                         {fields.map((field, index) => {
                                             const productId = watchItems[index]?.product
-                                            const productDetail =
-                                                searchResults.find(p => p.id === productId) ??
-                                                productCache[productId]
-
+                                            const productDetail = searchResults.find(p => String(p.id) === String(productId)) ?? productCache[String(productId)]
                                             return (
-                                                <div key={field.id} className="group p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all">
+                                                <div key={field.id} className="group p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all">
                                                     <div className="flex justify-between items-start">
-                                                        <div className="space-y-1">
-                                                            <p className="text-sm font-semibold text-white leading-tight">
+                                                        <div className="space-y-1.5">
+                                                            <p className="text-xs font-semibold text-white leading-tight">
                                                                 {productDetail?.name || "Unknown product"}
                                                             </p>
-                                                            <p className="text-xs text-zinc-500 font-medium">
-                                                                {watchItems[index]?.quantity} units <span className="mx-1">×</span> ₹{Number(watchItems[index]?.unit_price).toLocaleString()}
+                                                            <p className="text-[10px] text-zinc-500">
+                                                                {watchItems[index]?.quantity} units x ₹{Number(watchItems[index]?.unit_price).toLocaleString()}
                                                             </p>
                                                         </div>
                                                         <div className="flex flex-col items-end gap-1">
-                                                            <p className="text-sm font-bold text-white">
+                                                            <p className="text-xs font-bold text-white">
                                                                 ₹{(Number(watchItems[index]?.unit_price || 0) * Number(watchItems[index]?.quantity || 0)).toLocaleString()}
                                                             </p>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => remove(index)}
-                                                                className="p-1 hover:bg-red-500/10 rounded transition-colors group/trash"
-                                                            >
-                                                                <Trash2 className="h-3.5 w-3.5 text-zinc-600 group-hover/trash:text-red-500" />
+                                                            <button type="button" onClick={() => remove(index)} className="p-1 hover:bg-red-500/10 rounded transition-colors group/trash">
+                                                                <Trash2 className="h-3 w-3 text-zinc-600 group-hover/trash:text-red-500" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -341,31 +283,25 @@ const CartDrawer = () => {
                             </div>
                         )}
 
-                        <SheetFooter className="p-6 border-t border-zinc-800 bg-zinc-950 mt-auto shrink-0">
-                            <div className="w-full space-y-4">
-                                <div className="flex justify-between items-center px-1">
-                                    <span className="text-zinc-400 text-sm">Total Amount</span>
-                                    <span className="text-white font-bold text-lg">₹{totalPrice.toFixed(2)}</span>
+                        <SheetFooter className="px-5 py-4 border-t border-zinc-800 bg-zinc-950 mt-auto shrink-0">
+                            <div className="w-full space-y-3">
+                                <div className="flex justify-between items-center px-0.5">
+                                    <span className="text-zinc-400 text-xs">Total Amount</span>
+                                    <span className="text-white font-bold text-sm">₹{totalPrice.toFixed(2)}</span>
                                 </div>
-                                {step === "build" ? (
-                                    <Button
-                                        type="button"
-                                        onClick={() => setStep("review")}
-                                        disabled={fields.length === 0}
-                                        className="w-full h-12 rounded-xl bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
-                                    >
-                                        Review Order ({fields.length})
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        type="button"
-                                        onClick={handleProceedToCheckout}
-                                        disabled={fields.length === 0}
-                                        className="w-full h-12 rounded-xl bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
-                                    >
-                                        Proceed to Checkout
-                                    </Button>
-                                )}
+                                <Button
+                                    type="button"
+                                    onClick={step === "build" ? () => setStep("review") : handleProceedToCheckout}
+                                    disabled={fields.length === 0}
+                                    className="w-full h-8 text-xs rounded-lg bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
+                                >
+                                    {step === "build"
+                                        ? `Review Order (${fields.length})`
+                                        : watchOrderType === "Inbound"
+                                            ? "Add Stock"
+                                            : "Proceed to Checkout"
+                                    }
+                                </Button>
                             </div>
                         </SheetFooter>
                     </form>

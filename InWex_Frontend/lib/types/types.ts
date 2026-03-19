@@ -36,7 +36,7 @@ export type Product = {
     cost_price: string
     selling_price: string
     image: string
-    warehouse_stocks: Stock
+    total_stock: number
     created_at: string
     updated_at: string
     category: string

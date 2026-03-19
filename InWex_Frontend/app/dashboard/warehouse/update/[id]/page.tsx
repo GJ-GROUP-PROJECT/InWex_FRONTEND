@@ -48,7 +48,9 @@ const Page = ({ params }: { params: Promise<{ id: number }> }) => {
     return (
         <>
             <Navbar />
-            <UpdateWarehouse warehouse={warehouse} />
+            <div className="flex justify-center items-center mt-40">
+                <UpdateWarehouse warehouse={warehouse} />
+            </div>
         </>
     )
 }

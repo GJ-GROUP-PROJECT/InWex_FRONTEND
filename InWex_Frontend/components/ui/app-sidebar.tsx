@@ -27,10 +27,12 @@ const AppSidebar = ({ role }: { role: string }) => {
     const mainItems = role === "staff" ? staffItems : NonStaffItems
 
     return (
-        <Sidebar className="border-none">
+        <Sidebar className="border-none flex flex-col justify-between">
             {/* Logo */}
-            <SidebarHeader className="h-45 flex items-center text-4xl font-light mt-20 mr-3">
-                <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={130} height={130} priority />
+            <SidebarHeader className="h-45 flex items-center text-4xl font-light mt-15 mr-3">
+                <Link href="/">
+                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={110} height={110} priority />
+                </Link>
             </SidebarHeader>
 
             {/* Main */}
@@ -41,20 +43,20 @@ const AppSidebar = ({ role }: { role: string }) => {
                             {mainItems.map((item) => {
                                 const active = pathname === item.url
                                 return (
-                                    <SidebarMenuItem key={item.title} className="mb-3">
-                                        <SidebarMenuButton asChild className="">
+                                    <SidebarMenuItem key={item.title} className="mb-1">
+                                        <SidebarMenuButton asChild>
                                             <Link
                                                 href={item.url}
                                                 className={`
-                                                    flex text-lg! items-center gap-5
-                                                    px-4 py-7 transition-colors
+                                                    flex text-sm! items-center gap-5
+                                                    px-4 py-6 transition-colors
                                                     ${active
                                                         ? "text-white"
                                                         : "text-neutral-400 hover:text-white"
                                                     }
                                                 `}
                                             >
-                                                <item.icon className="h-5! w-5! ml-7" />
+                                                <item.icon className="h-4! w-4! ml-4" />
                                                 <span>{item.title}</span>
                                             </Link>
                                         </SidebarMenuButton>
@@ -69,26 +71,26 @@ const AppSidebar = ({ role }: { role: string }) => {
             {/* Bottom */}
             <SidebarFooter className="pb-10">
                 <SidebarMenu>
-                    <SidebarMenuItem className="mb-3">
+                    <SidebarMenuItem className="mb-1">
                         <SidebarMenuButton
-                            className="flex text-lg! items-center gap-5 px-4 py-7 transition-colors text-neutral-400 hover:text-white"
+                            className="flex text-sm! items-center gap-5 px-4 py-6 transition-colors text-neutral-400 hover:text-white"
                         >
-                            <Settings className="h-5! w-5! ml-7" />
+                            <Settings className="h-4! w-4! ml-4" />
                             <span>Settings</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
-                    <SidebarMenuItem className="mb-3">
+                    <SidebarMenuItem className="mb-1">
                         <SidebarMenuButton
                             onClick={logout}
-                            className="flex text-lg! items-center gap-5 px-4 py-7 transition-colors text-neutral-400 hover:text-white"
+                            className="flex text-sm! items-center gap-5 px-4 py-6 transition-colors text-neutral-400 hover:text-white"
                         >
-                            <LogOut className="h-5! w-5! ml-7" />
+                            <LogOut className="h-4! w-4! ml-4" />
                             <span>Log Out</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
-        </Sidebar>
+        </Sidebar >
     )
 }
 

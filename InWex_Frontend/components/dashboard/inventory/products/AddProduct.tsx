@@ -56,10 +56,10 @@ const AddProduct = () => {
     }
 
     return (
-        <div className="mx-auto max-w-4xl px-6 gap-20 w-full py-24">
-            <div className="mb-12 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold">Add New Product</h2>
-                <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+        <div className="mx-auto max-w-4xl px-6 w-full py-16">
+            <div className="mb-10 text-center">
+                <h2 className="text-xl md:text-3xl font-bold tracking-tight">Add New Product</h2>
+                <p className="mt-2 text-xs text-zinc-400 max-w-lg mx-auto">
                     Fill in the details below to register a new product in the warehouse management system.
                 </p>
             </div>
@@ -67,7 +67,7 @@ const AddProduct = () => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col gap-6 w-full max-w-sm mx-auto"
+                    className="flex flex-col gap-4 w-full max-w-sm mx-auto"
                 >
                     {textFields.map(({ name, type, placeholder }) => (
                         <FormField
@@ -81,13 +81,13 @@ const AddProduct = () => {
                                             type={type}
                                             placeholder={placeholder}
                                             autoComplete="off"
-                                            className="w-full py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-gray-400 placeholder:text-xs"
+                                            className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 text-[10px]! text-white"
                                             {...field}
                                             value={field.value as string | number | undefined}
                                             onChange={(e) => field.onChange(e)}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-[10px]" />
                                 </FormItem>
                             )}
                         />
@@ -101,19 +101,19 @@ const AddProduct = () => {
                             <FormItem>
                                 <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
-                                        <SelectTrigger className="w-full py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent! rounded-none focus:ring-0 text-xs text-gray-400">
+                                        <SelectTrigger className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus:ring-0 text-[10px] text-zinc-500 h-auto">
                                             <SelectValue placeholder="CATEGORY *" />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent position="popper" className="w-full">
+                                    <SelectContent position="popper" className="w-full bg-zinc-900 border-zinc-800 text-xs">
                                         {categories.map((cat) => (
-                                            <SelectItem key={cat.id} value={String(cat.id)}>
+                                            <SelectItem key={cat.id} value={String(cat.id)} className="text-[10px]">
                                                 {cat.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
+                                <FormMessage className="text-[10px]" />
                             </FormItem>
                         )}
                     />
@@ -129,14 +129,14 @@ const AddProduct = () => {
                                         ref={fileInputRef}
                                         type="file"
                                         accept="image/*"
-                                        className="w-full py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent rounded-none text-xs text-gray-400 file:bg-transparent file:border-0 file:text-white file:text-xs file:cursor-pointer cursor-pointer"
+                                        className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent rounded-none text-[10px] text-zinc-500 file:bg-transparent file:border-0 file:text-white file:text-[10px] file:cursor-pointer cursor-pointer"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0]
                                             if (file) onChange(file)
                                         }}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-[10px]" />
                             </FormItem>
                         )}
                     />
@@ -149,22 +149,22 @@ const AddProduct = () => {
                             <FormItem>
                                 <FormControl>
                                     <textarea
-                                        placeholder="PRODUCT DESCRIPTION*"
-                                        className="w-full min-h-30 py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent! rounded-none resize-none focus:outline-none placeholder:text-gray-400 placeholder:text-xs"
+                                        placeholder="PRODUCT DESCRIPTION *"
+                                        className="w-full min-h-24 py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none resize-none focus:outline-none text-[10px]! text-white"
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-[10px]" />
                             </FormItem>
                         )}
                     />
 
-                    <div className="flex items-center justify-center mt-4">
+                    <div className="flex items-center justify-center mt-2">
                         <Button
                             variant="ghost"
                             type="submit"
                             disabled={form.formState.isSubmitting}
-                            className="px-8 py-2 text-sm font-semibold border-0 border-l-2 border-r-2 border-white/60 rounded-none hover:bg-transparent! tracking-wider transition-colors cursor-pointer"
+                            className="px-6 h-8 text-[10px] font-semibold border-0 border-l-2 border-r-2 border-white/30 rounded-none hover:bg-transparent! tracking-widest transition-colors cursor-pointer text-zinc-400 hover:text-white"
                         >
                             {form.formState.isSubmitting ? "ADDING..." : "ADD PRODUCT"}
                         </Button>

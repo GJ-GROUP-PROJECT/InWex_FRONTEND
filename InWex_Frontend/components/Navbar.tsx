@@ -40,7 +40,7 @@ const Navbar = () => {
 
     return (
         <header className="fixed top-0 z-50 w-full bg-black/20 backdrop-blur-md">
-            <div className="relative h-16 w-full max-w-7xl mx-auto px-6 flex items-center">
+            <div className="relative h-20 w-full max-w-7xl mx-auto px-6 flex items-center">
 
                 {/* Logo */}
                 <div

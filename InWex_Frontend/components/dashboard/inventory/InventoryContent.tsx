@@ -53,15 +53,12 @@ const InventoryContent = () => {
             if (result) {
                 codeReader.reset()
                 const barcode = result.getText()
-
                 const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
                 router.push(`/dashboard/inventory/products/${res.data.slug}`)
             }
         })
 
-        return () => {
-            codeReader.reset()
-        }
+        return () => { codeReader.reset() }
     }, [router, showScanner])
 
     const handleSearch = useDebouncedCallback(async (value: string) => {
@@ -73,26 +70,28 @@ const InventoryContent = () => {
     }, 300)
 
     return (
-        <main className="mt-8 md:mt-12 w-full px-4 sm:px-6 md:px-10 pb-8">
+        <main className="mt-6 md:mt-10 w-full px-4 sm:px-6 md:px-10 pb-8">
 
-            <div className="mb-8 md:mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            {/* Header */}
+            <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Product List</h1>
-                    <p className="text-zinc-500 mt-1 flex items-center gap-2 text-sm md:text-base">
-                        <Package className="h-4 w-4" />
+                    <h1 className="text-2xl font-bold tracking-tight text-white">Product List</h1>
+                    <p className="text-zinc-500 mt-0.5 flex items-center gap-1.5 text-xs">
+                        <Package className="h-3 w-3" />
                         {count || 0} Total Items
                     </p>
                 </div>
                 <Button
                     onClick={() => router.push("/dashboard/inventory/products/new")}
-                    className="w-full lg:w-auto bg-white hover:bg-zinc-200 text-black font-medium px-8 py-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+                    className="w-full lg:w-auto bg-white hover:bg-zinc-200 text-black text-xs font-medium h-8 px-4 rounded-lg transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
                 >
-                    <Plus className="mr-2 h-5 w-5 stroke-3" />
+                    <Plus className="mr-1.5 h-3.5 w-3.5 stroke-3" />
                     Add New Product
                 </Button>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+            {/* Filters */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <div className="w-full">
                     <SearchbarWithFilter
                         filters={[
@@ -105,33 +104,33 @@ const InventoryContent = () => {
                     />
                 </div>
 
-                <Button onClick={() => setShowScanner(true)}>
+                <Button onClick={() => setShowScanner(true)} className="h-8 text-xs px-4 rounded-lg shrink-0">
                     Scan Barcode
                 </Button>
 
-                <div className="flex items-center gap-3 shrink-0 self-end md:self-auto">
-                    <p className="text-zinc-500 text-sm font-medium whitespace-nowrap hidden sm:block">Group By:</p>
+                <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+                    <p className="text-zinc-500 text-xs font-medium whitespace-nowrap hidden sm:block">Group By:</p>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 variant="secondary"
-                                className="h-11 px-5 cursor-pointer rounded-xl bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white border-none transition-all flex items-center gap-2 w-full md:w-auto justify-between"
+                                className="h-8 px-3 text-xs cursor-pointer rounded-lg bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white border-none transition-all flex items-center gap-1.5 w-full md:w-auto justify-between"
                             >
                                 {selected}
-                                <ChevronDown className="h-4 w-4 opacity-70 ml-2 text-zinc-500" />
+                                <ChevronDown className="h-3 w-3 opacity-70 text-zinc-500" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
                             side="bottom"
                             align="end"
-                            sideOffset={8}
-                            className="px-1.5 py-1.5 rounded-xl bg-zinc-950 text-zinc-100 border-none shadow-2xl min-w-45"
+                            sideOffset={6}
+                            className="px-1 py-1 rounded-lg bg-zinc-950 text-zinc-100 border-none shadow-2xl min-w-36"
                         >
                             {options.map((option) => (
                                 <DropdownMenuItem
                                     key={option}
                                     onClick={() => setSelected(option)}
-                                    className="rounded-lg cursor-pointer focus:bg-zinc-800 focus:text-white py-2.5 px-3 text-sm transition-colors"
+                                    className="rounded-md cursor-pointer focus:bg-zinc-800 focus:text-white py-2 px-3 text-xs transition-colors"
                                 >
                                     {option}
                                 </DropdownMenuItem>
@@ -141,50 +140,53 @@ const InventoryContent = () => {
                 </div>
             </div>
 
+            {/* Loading */}
             {isLoading && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {Array.from({ length: 8 }).map((_, index) => (
                         <ProductCardShimmer key={index} />
                     ))}
                 </div>
             )}
 
+            {/* Error */}
             {error && (
-                <div className="flex justify-center items-center py-20 border-2 border-dashed border-red-900/30 rounded-3xl bg-red-950/10">
+                <div className="flex justify-center items-center py-16 border-2 border-dashed border-red-900/30 rounded-2xl bg-red-950/10">
                     <Card className="bg-transparent border-none shadow-none">
-                        <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
-                            <div className="bg-red-500/10 rounded-full p-4">
-                                <AlertTriangle className="h-8 w-8 text-red-500" />
+                        <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
+                            <div className="bg-red-500/10 rounded-full p-3">
+                                <AlertTriangle className="h-6 w-6 text-red-500" />
                             </div>
-                            <div className="space-y-1">
-                                <p className="text-red-400 font-semibold text-lg">Failed to load inventory</p>
-                                <p className="text-red-500/70 text-sm max-w-xs">{error}</p>
+                            <div className="space-y-0.5">
+                                <p className="text-red-400 font-semibold text-sm">Failed to load inventory</p>
+                                <p className="text-red-500/70 text-xs max-w-xs">{error}</p>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
             )}
 
+            {/* Products */}
             {!isLoading && !error && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {products.length > 0 ? (
                             products.map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))
                         ) : (
-                            <div className="col-span-full flex flex-col items-center justify-center py-20 border-2 border-dashed border-zinc-800 rounded-3xl">
-                                <div className="bg-zinc-900/50 rounded-full p-5 mb-4 border border-zinc-800">
-                                    <Package className="h-8 w-8 text-zinc-500" />
+                            <div className="col-span-full flex flex-col items-center justify-center py-16 border-2 border-dashed border-zinc-800 rounded-2xl">
+                                <div className="bg-zinc-900/50 rounded-full p-4 mb-3 border border-zinc-800">
+                                    <Package className="h-6 w-6 text-zinc-500" />
                                 </div>
-                                <p className="text-zinc-300 font-medium text-lg">No products found</p>
-                                <p className="text-zinc-600 text-sm mt-1">Try adjusting your filters or add a new product.</p>
+                                <p className="text-zinc-300 font-medium text-sm">No products found</p>
+                                <p className="text-zinc-600 text-xs mt-0.5">Try adjusting your filters or add a new product.</p>
                             </div>
                         )}
                     </div>
 
                     {products.length > 0 && total_pages > 1 && (
-                        <div className="mt-10 mb-2 flex justify-center items-center">
+                        <div className="mt-8 mb-2 flex justify-center items-center">
                             <Pagination>
                                 <PaginationContent>
                                     <PaginationItem>
@@ -196,7 +198,7 @@ const InventoryContent = () => {
                                     {pages.map((page) => (
                                         <PaginationItem key={page}>
                                             <PaginationLink
-                                                className="cursor-pointer rounded-lg border-none active:bg-zinc-800"
+                                                className="cursor-pointer rounded-lg border-none active:bg-zinc-800 text-xs"
                                                 onClick={() => goToPage(page)}
                                                 isActive={current_page === page}
                                             >
@@ -217,13 +219,14 @@ const InventoryContent = () => {
                 </>
             )}
 
+            {/* Scanner */}
             {showScanner && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
                     <div className="relative">
-                        <video ref={videoRef} className="rounded-xl w-80 h-60" />
+                        <video ref={videoRef} className="rounded-xl w-72 h-52" />
                         <Button
                             onClick={() => setShowScanner(false)}
-                            className="absolute top-2 right-2"
+                            className="absolute top-2 right-2 h-7 text-xs px-3"
                         >
                             Close
                         </Button>

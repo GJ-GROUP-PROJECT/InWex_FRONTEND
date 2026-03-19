@@ -24,26 +24,10 @@ const Orders = () => {
     const returned = orders?.filter(o => o.status === "Returned").length ?? 0
 
     const cardsContent: StatusCardData[] = [
-        {
-            title: "Requested Orders",
-            value: requested,
-            status: "Requested"
-        },
-        {
-            title: "Returned Orders",
-            value: returned,
-            status: "Returned"
-        },
-        {
-            title: "In-Progress Orders",
-            value: inProgress,
-            status: "In_Progress"
-        },
-        {
-            title: "Delivered Orders",
-            value: delivered,
-            status: "Delivered"
-        },
+        { title: "Requested Orders", value: requested, status: "Requested" },
+        { title: "Returned Orders", value: returned, status: "Returned" },
+        { title: "In-Progress Orders", value: inProgress, status: "In_Progress" },
+        { title: "Delivered Orders", value: delivered, status: "Delivered" },
     ]
 
     // const handleSearch = useDebouncedCallback(async (value: string) => {
@@ -58,26 +42,26 @@ const Orders = () => {
         <>
             <Navbar />
 
-            <main className="mt-12 w-full px-4 md:px-10">
-                {/* Header Section */}
-                <div className="mb-10">
-                    <h1 className="text-4xl font-bold tracking-tight text-white">Orders Dashboard</h1>
-                    <p className="text-zinc-500 mt-1 flex items-center gap-2">
-                        <ShoppingCart className="h-4 w-4" />
+            <main className="mt-10 w-full px-4 md:px-10">
+                {/* Header */}
+                <div className="mb-6">
+                    <h1 className="text-3xl font-bold tracking-tight text-white">Orders Dashboard</h1>
+                    <p className="text-zinc-500 mt-0.5 flex items-center gap-1.5 text-xs">
+                        <ShoppingCart className="h-3 w-3" />
                         {orders.length} Total Orders
                     </p>
                 </div>
 
-                {/* Status Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                {/* Status Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     {cardsContent.map((content) => (
                         <StatusCard key={content.title} {...content} />
                     ))}
                 </div>
 
-                {/* Filter & Action Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex-1 w-full max-w-2xl">
+                {/* Filter Bar */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                    <div className="flex-1 w-full max-w-xl">
                         <SearchbarWithFilter
                             filters={[
                                 { label: "Id", value: "id" },
@@ -89,13 +73,13 @@ const Orders = () => {
                         />
                     </div>
 
-                    <div className="hidden lg:flex items-center gap-2 text-zinc-500 text-sm">
-                        <PackageSearch className="h-4 w-4" />
+                    <div className="hidden lg:flex items-center gap-1.5 text-zinc-500 text-xs">
+                        <PackageSearch className="h-3 w-3" />
                         <span>Real-time sync active</span>
                     </div>
                 </div>
 
-                {/* Table Section */}
+                {/* Table */}
                 <div className="overflow-hidden">
                     <OrdersTable />
                 </div>

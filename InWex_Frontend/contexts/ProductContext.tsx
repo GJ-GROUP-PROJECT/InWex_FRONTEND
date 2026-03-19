@@ -7,7 +7,7 @@ import { useAuth } from "./AuthContext"
 import { ProductValues } from "@/lib/schemas/product/addProduct.schema"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { PAGINATION_URL } from "@/components/config"
+import { PAGINATION_URL, PAGINATION_URL_FOR_SEARCH } from "@/components/config"
 
 type UpdateProductPayload = Omit<Partial<Product>, 'image'> & { image?: File }
 
@@ -46,6 +46,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         total_pages: null as number | null,
         current_page: 1
     })
+    const [searchQuery, setSearchQuery] = useState<string>("");
     const [count, setCount] = useState<number | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -54,7 +55,14 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     const router = useRouter()
 
     const goToPage = (page: number) => {
-        fetchProducts(true, `${PAGINATION_URL}?page=${page}`)
+        let url: string
+        if (searchQuery) {
+            url = `${PAGINATION_URL_FOR_SEARCH}?page=${page}&product=${searchQuery}&`
+        }
+        else {
+            url = `${PAGINATION_URL}?page=${page}`
+        }
+        fetchProducts(true, url);
     }
 
     const goToNextPage = () => {
@@ -85,6 +93,10 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
                 total_pages: res.data.total_pages,
                 current_page: res.data.current_page
             })
+
+            if (!url) {
+                setSearchQuery("");
+            }
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
@@ -113,9 +125,17 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     const fetchProductBySearch = useCallback(async (query: string, showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
+        setSearchQuery(query)
         try {
             const res = await api.get(`products/product-search?product=${query}`)
-            setProducts(res.data)
+            setProducts(res.data.results)
+
+            setPagination({
+                next: res.data.next,
+                prev: res.data.previous,
+                total_pages: res.data.total_pages,
+                current_page: res.data.current_page
+            })
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")

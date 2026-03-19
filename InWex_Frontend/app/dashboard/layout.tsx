@@ -2,7 +2,6 @@
 
 import AppSidebar from '@/components/ui/app-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/contexts/AuthContext'
 import React from 'react'
 
@@ -11,10 +10,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
     if (isLoading) return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
-            <div className="flex flex-col items-center gap-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <Skeleton className="h-4 w-32 rounded-md" />
-            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-zinc-700 border-t-white animate-spin" />
         </div>
     )
     if (!role) return null
@@ -22,12 +18,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const currentRole = role.business ? 'business' : role.manager ? 'manager' : 'staff'
 
     return (
-        <SidebarProvider>
+        <SidebarProvider style={{ "--sidebar-width": "230px" } as React.CSSProperties}>
             <div className="flex h-screen w-screen overflow-hidden">
                 <AppSidebar role={currentRole} />
 
                 <div className="flex flex-col w-full overflow-hidden">
-                    <main className="flex-1 px-20 pt-10 pb-4 overflow-y-auto overflow-x-hidden">
+                    <main className="flex-1 px-10 pt-6 pb-4 overflow-y-auto overflow-x-hidden">
                         {children}
                     </main>
                 </div>
