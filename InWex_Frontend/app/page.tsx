@@ -10,9 +10,7 @@ import Navbar from "@/components/Navbar";
 export default function Home() {
     return (
         <>
-            <div className="sticky top-0 z-50">
-                <Navbar />
-            </div>
+            <Navbar />
 
             <section id="home" className="relative h-screen w-full overflow-hidden scroll-mt-24">
                 <Hero />
@@ -29,7 +27,7 @@ export default function Home() {
             <section id="contact" className="relative min-h-screen flex items-center">
                 <Contact />
             </section>
-            <footer className="w-full bg-[#000000cb] text-gray border-t-2">
+            <footer className="w-full text-gray border-t-2">
                 <Footer />
             </footer>
         </>

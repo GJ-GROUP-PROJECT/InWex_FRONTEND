@@ -28,9 +28,9 @@ const features = [
 const Features = () => {
     return (
         <div className="mx-auto max-w-4xl px-6 w-full py-24">
-            <div className="mb-16 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold">Powerful Features</h2>
-                <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            <div className="mb-12 text-center">
+                <h2 className="text-xl md:text-4xl font-bold">Powerful Features</h2>
+                <p className="mt-2.5 text-xs text-zinc-400 leading-relaxed max-w-lg mx-auto">
                     Everything you need to manage, monitor, and optimize your warehouse
                     operations efficiently.
                 </p>
@@ -40,10 +40,10 @@ const Features = () => {
                 {features.map(({ title, description }) => (
                     <div
                         key={title}
-                        className="flex flex-col gap-3 bg-background p-8 hover:bg-white/5 transition-colors duration-300"
+                        className="flex flex-col gap-2 bg-background p-6 hover:bg-white/5 transition-colors duration-300"
                     >
-                        <h3 className="text-sm font-semibold">{title}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+                        <h3 className="text-xs font-semibold text-white">{title}</h3>
+                        <p className="text-xs text-zinc-400 leading-relaxed">{description}</p>
                     </div>
                 ))}
             </div>

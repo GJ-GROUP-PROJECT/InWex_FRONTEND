@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { Card, CardContent, CardHeader } from "./ui/card"
 import { Separator } from "./ui/separator"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Menu } from "lucide-react"
@@ -40,163 +39,229 @@ const Navbar = () => {
     }
 
     return (
-        <header className="h-20 w-full bg-black/60 backdrop-blur-sm">
-            <div className="h-full w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <header className="fixed top-0 z-50 w-full bg-black/20 backdrop-blur-md">
+            <div className="relative h-16 w-full max-w-7xl mx-auto px-6 flex items-center">
+
                 {/* Logo */}
                 <div
                     role="button"
                     tabIndex={0}
-                    className="cursor-pointer"
+                    className="cursor-pointer transition-opacity hover:opacity-80 z-10"
                     onClick={() => scrollTo("home")}
                 >
-                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={80} height={80} />
+                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={64} height={64} />
                 </div>
 
-                <NavigationMenu className="hidden md:flex">
-                    <NavigationMenuList>
-                        {navItems.map(({ label, id }) => (
-                            <NavigationMenuItem key={id}>
-                                <Button variant="ghost" onClick={() => scrollTo(id)}>
-                                    {label}
-                                </Button>
-                            </NavigationMenuItem>
-                        ))}
-                    </NavigationMenuList>
-                </NavigationMenu>
+                {/* Desktop Nav */}
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
+                    {navItems.map(({ label, id }) => (
+                        <button
+                            key={id}
+                            onClick={() => scrollTo(id)}
+                            className="text-xs text-zinc-400 hover:text-white transition-colors duration-150"
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </nav>
 
-                <div className="hidden md:flex w-50 justify-end">
-                    <NavigationMenu>
-                        {!isLoggedIn ? (
-                            <NavigationMenuList>
-                                <NavigationMenuItem>
-                                    <Button variant="ghost" asChild>
-                                        <Link href="/auth" className="px-4 py-2">Log in</Link>
-                                    </Button>
-                                </NavigationMenuItem>
-                                <NavigationMenuItem>
-                                    <NavigationMenuTrigger className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                                        Sign up
-                                    </NavigationMenuTrigger>
-                                    <NavigationMenuContent>
-                                        <ul className="grid w-48 gap-1">
-                                            <li>
-                                                <NavigationMenuLink asChild>
-                                                    <Link href="/auth/org/signup" className="p-3">As Business</Link>
-                                                </NavigationMenuLink>
-                                            </li>
-                                            <li>
-                                                <NavigationMenuLink asChild>
-                                                    <Link href="/auth?signup=true" className="p-3">As Employee</Link>
-                                                </NavigationMenuLink>
-                                            </li>
-                                        </ul>
-                                    </NavigationMenuContent>
-                                </NavigationMenuItem>
-                            </NavigationMenuList>
-                        ) : (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Avatar className="h-10 w-10 cursor-pointer">
-                                        <AvatarImage src={user.avatar} />
-                                        <AvatarFallback>
+                {/* Right side */}
+                <div className="ml-auto hidden md:flex items-center gap-3">
+                    {!isLoggedIn ? (
+                        <>
+                            {/* Log in */}
+                            <Button
+                                variant="ghost"
+                                className="text-zinc-400 hover:text-white hover:bg-transparent text-xs font-normal px-2.5 h-7"
+                                asChild
+                            >
+                                <Link href="/auth">Log in</Link>
+                            </Button>
+
+                            {/* Sign up dropdown */}
+                            <NavigationMenu>
+                                <NavigationMenuList>
+                                    <NavigationMenuItem>
+                                        <NavigationMenuTrigger
+                                            className="h-7 px-3 text-xs font-medium bg-white text-zinc-950 hover:bg-zinc-100 rounded-md data-[state=open]:bg-zinc-100"
+                                        >
+                                            Sign up
+                                        </NavigationMenuTrigger>
+                                        <NavigationMenuContent>
+                                            <ul className="w-48 p-1.5 space-y-0.5">
+                                                <li>
+                                                    <NavigationMenuLink asChild>
+                                                        <Link
+                                                            href="/auth/org/signup"
+                                                            className="block px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
+                                                        >
+                                                            As Business
+                                                        </Link>
+                                                    </NavigationMenuLink>
+                                                </li>
+                                                <li>
+                                                    <NavigationMenuLink asChild>
+                                                        <Link
+                                                            href="/auth?signup=true"
+                                                            className="block px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
+                                                        >
+                                                            As Employee
+                                                        </Link>
+                                                    </NavigationMenuLink>
+                                                </li>
+                                            </ul>
+                                        </NavigationMenuContent>
+                                    </NavigationMenuItem>
+                                </NavigationMenuList>
+                            </NavigationMenu>
+                        </>
+                    ) : (
+                        <DropdownMenu modal={false}>
+                            <DropdownMenuTrigger asChild>
+                                <div className="flex items-center cursor-pointer group">
+                                    <Avatar className="h-9 w-9 transition-all ring-1 ring-white/10 hover:ring-white/20">
+                                        <AvatarImage src={user.avatar} className="object-cover" />
+                                        <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-xs">
                                             {user.fullname?.slice(0, 2).toUpperCase() || "U"}
                                         </AvatarFallback>
                                     </Avatar>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="p-0 w-72">
-                                    <Card className="border-none shadow-none">
-                                        <CardHeader>
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-9 w-9">
-                                                    <AvatarImage src={user.avatar} />
-                                                    <AvatarFallback>
-                                                        {user.fullname?.slice(0, 2).toUpperCase() || "U"}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium truncate">{user.fullname}</p>
-                                                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <Separator />
-                                        <CardContent>
-                                            <Button variant="ghost" onClick={handleDashboard} className="w-full justify-start">
-                                                Dashboard
-                                            </Button>
-                                            <Button variant="ghost" onClick={logout} className="w-full justify-start">
-                                                Log Out
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
-                    </NavigationMenu>
+                                </div>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent
+                                align="end"
+                                sideOffset={12}
+                                className="w-72 p-0 bg-zinc-950 border border-zinc-800/60 rounded-2xl shadow-2xl overflow-hidden"
+                            >
+                                <div className="p-4 bg-zinc-900/40">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10 border border-white/5">
+                                            <AvatarImage src={user.avatar} />
+                                            <AvatarFallback className="bg-zinc-800 text-zinc-500 font-black text-xs">
+                                                {user.fullname?.slice(0, 2).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-semibold text-white truncate">{user.fullname}</p>
+                                            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-2 border-t border-zinc-800/60">
+                                    <Button
+                                        variant="ghost"
+                                        onClick={handleDashboard}
+                                        className="w-full justify-start text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-lg"
+                                    >
+                                        Dashboard
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        onClick={logout}
+                                        className="w-full justify-start text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
+                                    >
+                                        Log Out
+                                    </Button>
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
                 </div>
 
-                <div className="flex md:hidden items-center gap-3">
+                {/* Mobile Menu */}
+                <div className="flex md:hidden items-center gap-3 ml-auto">
                     {isLoggedIn && (
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-8 w-8 border border-white/10">
                             <AvatarImage src={user.avatar} />
-                            <AvatarFallback>
+                            <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-[10px]">
                                 {user.fullname?.slice(0, 2).toUpperCase() || "U"}
                             </AvatarFallback>
                         </Avatar>
                     )}
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <Menu size={22} />
+                            <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5">
+                                <Menu size={20} />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-64 flex flex-col gap-6 pt-12">
+                        <SheetContent side="right" className="w-72 bg-zinc-950 border-l border-zinc-800/60 text-white flex flex-col pt-10">
                             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+
                             {!isLoggedIn ? (
-                                <div className="flex flex-col gap-1">
-                                    <Button variant="ghost" className="justify-start" asChild>
-                                        <Link href="/auth">Log in</Link>
-                                    </Button>
-                                    <Button variant="ghost" className="justify-start" asChild>
-                                        <Link href="/auth/org/signup">Sign up as Business</Link>
-                                    </Button>
-                                    <Button variant="ghost" className="justify-start" asChild>
-                                        <Link href="/auth?signup=true">Sign up as Employee</Link>
-                                    </Button>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-1">
-                                    <div className="px-3 pb-2">
-                                        <p className="text-sm font-medium truncate">{user.fullname}</p>
-                                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex flex-col gap-1">
+                                <div className="flex flex-col h-full">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="px-3 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-2">
+                                            Navigation
+                                        </span>
                                         {navItems.map(({ label, id }) => (
-                                            <Button
+                                            <button
                                                 key={id}
-                                                variant="ghost"
-                                                className="justify-start"
+                                                className="text-left text-xs text-zinc-400 hover:text-white transition-colors px-3 py-2"
                                                 onClick={() => scrollTo(id)}
                                             >
                                                 {label}
-                                            </Button>
+                                            </button>
                                         ))}
                                     </div>
-                                    <Separator />
-                                    <Button variant="ghost" className="justify-start" onClick={handleDashboard}>
-                                        Dashboard
-                                    </Button>
-                                    <Button variant="ghost" className="justify-start" onClick={logout}>
-                                        Log Out
-                                    </Button>
+
+                                    <div className="mt-auto pb-8 flex flex-col gap-3">
+                                        <Separator className="bg-zinc-800/60" />
+                                        <Link href="/auth" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1">
+                                            Log in
+                                        </Link>
+                                        <Link href="/auth/org/signup" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1">
+                                            Sign up as Business
+                                        </Link>
+                                        <Link href="/auth?signup=true" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1">
+                                            Sign up as Employee
+                                        </Link>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col h-full">
+                                    <div className="px-3 pb-5">
+                                        <p className="text-sm font-semibold text-white truncate">{user.fullname}</p>
+                                        <p className="text-xs text-zinc-500 truncate mt-0.5">{user.email}</p>
+                                    </div>
+
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="px-3 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-2">
+                                            Navigation
+                                        </span>
+                                        {navItems.map(({ label, id }) => (
+                                            <button
+                                                key={id}
+                                                className="text-left text-xs text-zinc-400 hover:text-white transition-colors px-3 py-2"
+                                                onClick={() => scrollTo(id)}
+                                            >
+                                                {label}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-auto pb-8 flex flex-col gap-3">
+                                        <Separator className="bg-zinc-800/60" />
+                                        <button
+                                            className="text-left text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1"
+                                            onClick={handleDashboard}
+                                        >
+                                            Dashboard
+                                        </button>
+                                        <button
+                                            className="text-left text-xs text-red-400 hover:text-red-300 transition-colors px-3 py-1"
+                                            onClick={logout}
+                                        >
+                                            Log Out
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </SheetContent>
                     </Sheet>
                 </div>
             </div>
-        </header>
+        </header >
     )
 }
 

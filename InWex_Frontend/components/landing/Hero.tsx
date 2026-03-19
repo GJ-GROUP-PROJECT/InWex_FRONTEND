@@ -16,20 +16,20 @@ const Hero = () => {
             <div className="absolute inset-0 bg-black/70" />
 
             <div className="relative z-20 flex h-full items-center">
-                <div className="mx-auto max-w-6xl px-6 pb-6 text-white">
-                    <h1 className="text-4xl md:text-7xl font-bold leading-tight">
+                <div className="mx-auto max-w-4xl px-6 pb-6 text-white">
+                    <h1 className="text-xl md:text-6xl font-bold leading-tight">
                         Smart Warehouse <br />
                         Management System
                     </h1>
 
-                    <p className="mt-6 max-w-2xl text-lg text-gray-200">
+                    <p className="mt-2.5 max-w-xl text-xs text-zinc-400 leading-relaxed">
                         Track inventory in real-time, optimize storage, analyze product
                         movement, and manage roles securely — all from one powerful
                         dashboard.
                     </p>
 
-                    <div className="mt-6 flex gap-4">
-                        <Button size="lg" className="px-8">
+                    <div className="mt-4">
+                        <Button className="h-8 px-5.5 text-[11px]">
                             <Link href="/auth?signup=true">Get Started</Link>
                         </Button>
                     </div>

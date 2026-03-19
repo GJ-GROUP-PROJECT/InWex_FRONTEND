@@ -9,53 +9,54 @@ const About = () => {
 
     return (
         <div className="mx-auto max-w-4xl px-6 w-full py-24">
-            <div className="mb-16 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold">About Our System</h2>
-                <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            <div className="mb-12 text-center">
+                <h2 className="text-xl md:text-4xl font-bold tracking-tight">About Our System</h2>
+                <p className="mt-2.5 text-xs text-zinc-400 leading-relaxed max-w-xl mx-auto">
                     Built with modern technologies and best practices to help businesses
                     of all sizes manage their inventory efficiently.
                 </p>
             </div>
 
-            <div className="grid gap-20 md:grid-cols-2 items-center">
+            <div className="grid gap-16 md:grid-cols-2 items-center">
                 {/* Left Content */}
-                <div className="flex flex-col gap-4">
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                <div className="flex flex-col gap-3">
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                         Our Smart Warehouse Management System is designed to streamline
                         your inventory operations and provide real-time insights into
                         your warehouse performance.
                     </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                         We help businesses reduce costs and improve operational efficiency,
                         whether you&#39;re running a small warehouse or managing multiple
                         facilities.
                     </p>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                         Our system scales with your needs and provides the tools
                         you need to succeed at every stage of growth.
                     </p>
                 </div>
 
+                {/* Right Stats */}
                 <div className="flex flex-col">
                     {stats.map(({ value, label }) => (
                         <div key={label}>
-                            <div className="flex items-center justify-between py-5 group">
-                                <span className="text-sm text-muted-foreground tracking-widest uppercase">
+                            <div className="flex items-center justify-between py-4">
+                                <span className="text-[10px] text-zinc-500 tracking-widest uppercase">
                                     {label}
                                 </span>
-                                <span className="text-3xl font-bold tabular-nums">
+                                <span className="text-xl font-bold tabular-nums text-white">
                                     {value}
                                 </span>
                             </div>
-                            <Separator />
+                            <Separator className="bg-white/10" />
                         </div>
                     ))}
                     <div>
-                        <div className="flex items-center justify-between py-5 group">
-                            <span className="text-sm text-muted-foreground tracking-widest uppercase">
+                        <div className="flex items-center justify-between py-4">
+                            <span className="text-[10px] text-zinc-500 tracking-widest uppercase">
                                 Products Tracked
                             </span>
-                            <span className="text-3xl font-bold tabular-nums">
+                            <span className="text-xl font-bold tabular-nums text-white">
                                 50K+
                             </span>
                         </div>

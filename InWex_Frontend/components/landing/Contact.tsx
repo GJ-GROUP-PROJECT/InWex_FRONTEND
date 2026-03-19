@@ -62,8 +62,8 @@ const Contact = () => {
         <div className="mx-auto max-w-4xl px-6 gap-20 w-full py-24">
             {/* Section Header */}
             <div className="mb-12 text-center">
-                <h2 className="text-3xl md:text-4xl font-bold">Get In Touch</h2>
-                <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+                <h2 className="text-xl md:text-4xl font-bold tracking-tight">Get In Touch</h2>
+                <p className="mt-2.5 text-xs text-zinc-400 leading-relaxed max-w-lg mx-auto">
                     Have questions about our warehouse management system? We&#39;d love to
                     hear from you.
                 </p>
@@ -71,7 +71,7 @@ const Contact = () => {
 
             {/* Contact Form */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full max-w-sm mx-auto">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-sm mx-auto">
                     {formElements.map(({ name, type, placeholder, autocomplete }) => (
                         <FormField
                             key={name}
@@ -84,11 +84,11 @@ const Contact = () => {
                                             type={type}
                                             placeholder={placeholder}
                                             autoComplete={autocomplete}
-                                            className="w-full py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-gray-400 placeholder:text-xs"
+                                            className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-xs"
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-[10px]" />
                                 </FormItem>
                             )}
                         />
@@ -101,20 +101,20 @@ const Contact = () => {
                                 <FormControl>
                                     <textarea
                                         placeholder="YOUR MESSAGE *"
-                                        className="w-full min-h-30 py-3 px-3 border-0 border-l-2 border-b-2 border-white/60 bg-transparent! rounded-none resize-none focus:outline-none placeholder:text-gray-400 placeholder:text-xs"
+                                        className="w-full min-h-24 py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none resize-none focus:outline-none placeholder:text-zinc-500 placeholder:text-[10px] text-xs text-white"
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-[10px]" />
                             </FormItem>
                         ))}
                     />
-                    <div className="flex items-center justify-center mt-4">
+                    <div className="flex items-center justify-center mt-2">
                         <Button
                             variant="ghost"
                             type="submit"
                             disabled={form.formState.isSubmitting}
-                            className="px-8 py-2 text-sm font-semibold border-0 border-l-2 border-r-2 border-white/60 rounded-none hover:bg-transparent! tracking-wider transition-colors cursor-pointer"
+                            className="px-6 h-8 text-[10px] font-semibold border-0 border-l-2 border-r-2 border-white/30 rounded-none hover:bg-transparent! tracking-widest transition-colors cursor-pointer text-zinc-400 hover:text-white"
                         >
                             {form.formState.isSubmitting ? "SUBMITTING..." : "SUBMIT"}
                         </Button>
