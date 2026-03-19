@@ -47,7 +47,11 @@ const AuthContainer = () => {
 
 export default function AuthPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="h-screen w-full flex items-center justify-center bg-background">
+                <div className="w-5 h-5 rounded-full border-2 border-zinc-700 border-t-white animate-spin" />
+            </div>
+        }>
             <AuthContainer />
         </Suspense>
     )
