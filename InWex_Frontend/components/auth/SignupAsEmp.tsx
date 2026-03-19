@@ -20,17 +20,14 @@ type SignupFormProps = {
 
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const router = useRouter()
-
-    const [orgs, setOrgs] = useState<Array<({ id: string; name: string; })>>([])
+    const [orgs, setOrgs] = useState<Array<{ id: string; name: string }>>([])
 
     useEffect(() => {
         const fetchingOrg = async () => {
             try {
                 const res = await api.get("/accounts/companies")
-
                 setOrgs(res.data)
-            }
-            catch (error) {
+            } catch (error) {
                 if (axios.isAxiosError(error)) {
                     console.error("Fetching failed:", error.response?.data)
                 } else {
@@ -38,7 +35,6 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                 }
             }
         }
-
         fetchingOrg()
     }, [])
 
@@ -53,37 +49,13 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
             is_business: false,
             is_warehouse_staff: true,
         }
-    });
+    })
 
     const EmpFields = [
-        {
-            name: "fullname",
-            label: "Name",
-            placeholder: "Example Full Name",
-            type: "text",
-            autoComplete: "name",
-        },
-        {
-            name: "email",
-            label: "Email",
-            placeholder: "your@example.com",
-            type: "email",
-            autoComplete: "email",
-        },
-        {
-            name: "password",
-            label: "Password",
-            placeholder: "••••••••",
-            type: "password",
-            autoComplete: "current-password",
-        },
-        {
-            name: "contact_number",
-            label: "Contact",
-            placeholder: "9772122472",
-            type: "text",
-            autoComplete: undefined,
-        },
+        { name: "fullname", label: "Name", placeholder: "Example Full Name", type: "text", autoComplete: "name" },
+        { name: "email", label: "Email", placeholder: "your@example.com", type: "email", autoComplete: "email" },
+        { name: "password", label: "Password", placeholder: "••••••••", type: "password", autoComplete: "current-password" },
+        { name: "contact_number", label: "Contact", placeholder: "9772122472", type: "text", autoComplete: undefined },
     ] satisfies readonly {
         name: keyof SignupEmpValues
         label: string
@@ -92,23 +64,13 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         autoComplete?: string
     }[]
 
-    type SignupEmpResponse = {
-        message: string,
-        orgId: string,
-        token?: string
-    }
-
     const onSubmit = async (data: SignupEmpValues) => {
         try {
-            await api.post<SignupEmpResponse>("/accounts/register", data)
+            await api.post("/accounts/register", data)
             router.push("/auth/verify")
-        }
-        catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.error(
-                    error.response?.data?.message ||
-                    "Signup failed"
-                )
+                toast.error(error.response?.data?.message || "Signup failed")
             } else {
                 toast.error("Unexpected error occurred during signup")
             }
@@ -116,16 +78,16 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     }
 
     return (
-        <Card className='w-95 border-none bg-background'>
+        <Card className='w-90 border-none bg-background'>
             <CardHeader>
-                <CardTitle className='text-4xl'>SignUp</CardTitle>
-                <p className="text-m text-muted-foreground">
+                <CardTitle className='text-3xl tracking-tight'>Sign Up</CardTitle>
+                <p className="text-xs text-muted-foreground">
                     Enter your details to create your account
                 </p>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-5' noValidate>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-4' noValidate>
                         {EmpFields.map(({ name, label, placeholder, type, autoComplete }) => (
                             <FormField
                                 key={name}
@@ -133,17 +95,17 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                 name={name}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{label}</FormLabel>
+                                        <FormLabel className="text-xs text-zinc-300">{label}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type={type}
                                                 placeholder={placeholder}
                                                 autoComplete={autoComplete}
-                                                className="pl-4 border-none"
+                                                className="h-9 text-xs! pl-3 border-none"
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-[11px]" />
                                     </FormItem>
                                 )}
                             />
@@ -153,26 +115,23 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                             control={form.control}
                             name="company"
                             render={({ field }) => (
-                                <FormItem className="">
-                                    <FormLabel>Organization</FormLabel>
+                                <FormItem>
+                                    <FormLabel className="text-xs text-zinc-300">Organization</FormLabel>
                                     <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                            disabled={!orgs.length}
-                                        >
-                                            <SelectTrigger className="pl-4 border-none w-full">
+                                        <Select onValueChange={field.onChange} value={field.value} disabled={!orgs.length}>
+                                            <SelectTrigger className="h-8 text-xs pl-3 border-none w-full">
                                                 <SelectValue placeholder="Select Organization" />
                                             </SelectTrigger>
-
-                                            <SelectContent align="start" className="border-none w-full" position="popper" aria-placeholder="Select Organization">
+                                            <SelectContent align="start" className="border-none text-xs" position="popper">
                                                 {orgs.map((org) => (
-                                                    <SelectItem key={org.id} value={org.id.toString()}>{org.name}</SelectItem>
+                                                    <SelectItem key={org.id} value={org.id.toString()} className="text-xs">
+                                                        {org.name}
+                                                    </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-[11px]" />
                                 </FormItem>
                             )}
                         />
@@ -180,38 +139,28 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                         <Button
                             type='submit'
                             disabled={form.formState.isSubmitting}
-                            className='w-45 mb-2 self-center cursor-pointer'
+                            className='h-8 text-xs w-36 self-center cursor-pointer'
                         >
                             {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
                         </Button>
 
-                        <p className="flex items-center mb-0 justify-center gap-2 text-muted-foreground text-sm">
+                        <p className="flex items-center justify-center gap-1.5 mb-1 text-[11px] text-muted-foreground">
                             Already have an account?
-                            <Button
-                                type="button"
-                                variant="link"
-                                className="p-0 cursor-pointer"
-                                onClick={onSwitch}
-                            >
+                            <Button type="button" variant="link" className="p-0 text-[11px] h-auto cursor-pointer" onClick={onSwitch}>
                                 Login
                             </Button>
                         </p>
 
-                        <p className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
+                        <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
                             Don&#39;t see your organization?
-                            <Button
-                                type="button"
-                                variant="link"
-                                className="p-0 cursor-pointer"
-                                onClick={() => router.push("/auth/org/signup")}
-                            >
+                            <Button type="button" variant="link" className="p-0 text-[11px] h-auto cursor-pointer" onClick={() => router.push("/auth/org/signup")}>
                                 Create one
                             </Button>
                         </p>
                     </form>
                 </Form>
             </CardContent>
-        </Card >
+        </Card>
     )
 }
 

@@ -35,17 +35,12 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
         try {
             const res = await api.post("/accounts/login", data)
             toast.success("Login successful!")
-
             login(res.data, res.data.token)
-
             router.push("/dashboard")
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.error(
-                    error.response?.data?.message ||
-                    "Invalid email or password"
-                )
+                toast.error(error.response?.data?.message || "Invalid email or password")
             } else {
                 toast.error("Something went wrong")
             }
@@ -53,26 +48,26 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
     }
 
     return (
-        <Card className='w-95 border-none bg-background'>
+        <Card className='w-90 border-none bg-background'>
             <CardHeader>
-                <CardTitle className='text-4xl'>Login</CardTitle>
-                <p className="text-m text-muted-foreground">
+                <CardTitle className='text-3xl tracking-tight'>Login</CardTitle>
+                <p className="text-xs text-muted-foreground">
                     Enter your credentials
                 </p>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-5' noValidate>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col space-y-4' noValidate>
                         <FormField
                             control={form.control}
                             name='email'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel className="text-xs text-zinc-300">Email</FormLabel>
                                     <FormControl>
-                                        <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='pl-4 border-none' />
+                                        <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='h-8 text-xs! pl-3 border-none' />
                                     </FormControl>
-                                    <FormMessage className="transition-opacity duration-200" />
+                                    <FormMessage className="text-[11px]" />
                                 </FormItem>
                             )}
                         />
@@ -82,14 +77,16 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                             name='password'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
                                     <FormControl>
-                                        <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='pl-4 border-none' />
+                                        <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='h-8 text-xs! pl-3 border-none' />
                                     </FormControl>
-                                    <div className='flex justify-end'>
-                                        <Link href="/auth/forgot-password" className='text-sm text-muted-foreground hover:text-primary transition-colors'>Forgot Password?</Link>
+                                    <div className='flex justify-end mt-1'>
+                                        <Link href="/auth/forgot-password" className='text-[11px] text-muted-foreground hover:text-primary transition-colors'>
+                                            Forgot Password?
+                                        </Link>
                                     </div>
-                                    <FormMessage className="transition-opacity duration-200" />
+                                    <FormMessage className="text-[11px]" />
                                 </FormItem>
                             )}
                         />
@@ -97,17 +94,17 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                         <Button
                             type='submit'
                             disabled={form.formState.isSubmitting}
-                            className='w-45 mb-2 self-center cursor-pointer'
+                            className='h-8 text-xs w-36 mb-2 self-center cursor-pointer'
                         >
                             {form.formState.isSubmitting ? 'Logging in...' : 'Log In'}
                         </Button>
 
-                        <p className='flex items-center justify-center gap-2 text-sm text-muted-foreground'>
+                        <p className='flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground'>
                             Don&#39;t have an account?
                             <Button
                                 type="button"
                                 variant="link"
-                                className="p-0 text-sm cursor-pointer"
+                                className="p-0 text-[11px] h-auto cursor-pointer"
                                 onClick={onSwitch}
                             >
                                 Sign up

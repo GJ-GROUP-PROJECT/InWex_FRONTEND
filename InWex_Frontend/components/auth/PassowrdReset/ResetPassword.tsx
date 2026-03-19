@@ -19,63 +19,62 @@ const ResetPassword = () => {
             confirmPassword: ""
         }
     })
+
     const onSubmit = async (data: ResetPasswordType) => {
         console.log(data)
         router.push("/auth")
     }
 
     return (
-        <>
-            <div className="min-h-screen flex justify-center items-center">
-                <Card className="w-120 border-none bg-transparent">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-4xl">Set New Password</CardTitle>
-                        <p className="text-s text-muted-foreground">
-                            Please enter your new password below.
-                        </p>
-                    </CardHeader>
-                    <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-5" noValidate>
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-                                            <FormControl>
-                                                <Input type="password" autoComplete="new-password" placeholder="••••••••" {...field} className="py-5 pl-4 border-none" />
-                                            </FormControl>
-                                            <FormMessage className="transition-opacity duration-200" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="confirmPassword"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Confirm Password</FormLabel>
-                                            <FormControl>
-                                                <Input type="password" autoComplete="password" placeholder="••••••••" {...field} className="py-5 pl-4 border-none" />
-                                            </FormControl>
-                                            <FormMessage className="transition-opacity duration-200" />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={form.formState.isSubmitting}
-                                    className='w-40 mt-3 self-center cursor-pointer'
-                                >
-                                    {form.formState.isSubmitting ? "Changing" : "Change"}
-                                </Button>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-            </div>
-        </>
+        <div className="min-h-screen flex justify-center items-center">
+            <Card className="w-90 border-none bg-transparent">
+                <CardHeader className="text-center space-y-1">
+                    <CardTitle className="text-3xl tracking-tight">Set New Password</CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                        Please enter your new password below.
+                    </p>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4" noValidate>
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" autoComplete="new-password" placeholder="••••••••" {...field} className="h-8 text-xs! pl-3 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[11px] transition-opacity duration-200" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="confirmPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs text-zinc-300">Confirm Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" autoComplete="password" placeholder="••••••••" {...field} className="h-8 text-xs pl-3 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[11px] transition-opacity duration-200" />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button
+                                type="submit"
+                                disabled={form.formState.isSubmitting}
+                                className="h-8 text-xs w-36 mt-2 self-center cursor-pointer"
+                            >
+                                {form.formState.isSubmitting ? "Changing..." : "Change"}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
     )
 }
 

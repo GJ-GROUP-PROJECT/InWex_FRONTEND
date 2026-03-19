@@ -28,34 +28,10 @@ const SignupAsComp = () => {
     })
 
     const OrgFields = [
-        {
-            name: "fullname",
-            label: "Business Name",
-            placeholder: "Example Full Name",
-            type: "text",
-            autoComplete: "name",
-        },
-        {
-            name: "email",
-            label: "Business Email",
-            placeholder: "your@example.com",
-            type: "email",
-            autoComplete: "email",
-        },
-        {
-            name: "password",
-            label: "Password",
-            placeholder: "••••••••",
-            type: "password",
-            autoComplete: "current-password",
-        },
-        {
-            name: "contact_number",
-            label: "Business Contact",
-            placeholder: "9772122472",
-            type: "text",
-            autoComplete: undefined,
-        },
+        { name: "fullname", label: "Business Name", placeholder: "Example Full Name", type: "text", autoComplete: "name" },
+        { name: "email", label: "Business Email", placeholder: "your@example.com", type: "email", autoComplete: "email" },
+        { name: "password", label: "Password", placeholder: "••••••••", type: "password", autoComplete: "current-password" },
+        { name: "contact_number", label: "Business Contact", placeholder: "9772122472", type: "text", autoComplete: undefined },
     ] satisfies readonly {
         name: keyof SignupOrgValues
         label: string
@@ -79,10 +55,7 @@ const SignupAsComp = () => {
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.error(
-                    error.response?.data?.message ||
-                    "Signup failed:"
-                )
+                toast.error(error.response?.data?.message || "Signup failed:")
             } else {
                 toast.error("Unexpected error occurred during signup")
             }
@@ -91,16 +64,16 @@ const SignupAsComp = () => {
 
     return (
         <div className="h-screen flex items-center justify-center">
-            <Card className="w-full max-w-md border-none bg-background">
-                <CardHeader className="text-center space-y-2">
-                    <CardTitle className="text-[42px] m-0">Add Your Business</CardTitle>
-                    <p className="text-m text-muted-foreground">
+            <Card className="w-95 border-none bg-background">
+                <CardHeader className="text-center space-y-1">
+                    <CardTitle className="text-3xl tracking-tight">Add Your Business</CardTitle>
+                    <p className="text-xs text-muted-foreground">
                         Enter your business details to create your business account
                     </p>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col space-y-5' noValidate>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col space-y-4' noValidate>
                             {OrgFields.map(({ name, label, placeholder, type, autoComplete }) => (
                                 <FormField
                                     key={name}
@@ -108,17 +81,17 @@ const SignupAsComp = () => {
                                     name={name}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{label}</FormLabel>
+                                            <FormLabel className="text-xs text-zinc-300">{label}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type={type}
                                                     placeholder={placeholder}
                                                     autoComplete={autoComplete}
-                                                    className="pl-4 border-none"
+                                                    className="h-8 text-xs! pl-3 border-none"
                                                     {...field}
                                                 />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="text-[11px]" />
                                         </FormItem>
                                     )}
                                 />
@@ -127,17 +100,17 @@ const SignupAsComp = () => {
                             <Button
                                 type='submit'
                                 disabled={form.formState.isSubmitting}
-                                className='w-45 mb-2 self-center cursor-pointer'
+                                className='h-8 text-xs w-36 mb-2 self-center cursor-pointer'
                             >
                                 {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
                             </Button>
 
-                            <p className="flex items-center mb-0 justify-center gap-2 text-sm">
-                                Already have an business account created?
+                            <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+                                Already have a business account?
                                 <Button
                                     type="button"
                                     variant="link"
-                                    className="p-0 cursor-pointer"
+                                    className="p-0 text-[11px] h-auto cursor-pointer"
                                     onClick={() => router.push("/auth")}
                                 >
                                     Login
@@ -148,7 +121,6 @@ const SignupAsComp = () => {
                 </CardContent>
             </Card>
         </div>
-
     )
 }
 
