@@ -113,7 +113,7 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
 
     const updateWarehouse: WarehouseContextType['updateWarehouse'] = async (warehouseId, updatedWarehouse) => {
         try {
-            await api.put(`/warehouse/warehouse/${warehouseId}`, updatedWarehouse)
+            await api.patch(`/warehouse/warehouse/${warehouseId}`, updatedWarehouse)
             await fetchWarehouses(true)
             toast.success("Warehouse updated successfully")
             router.push("/dashboard/warehouses")

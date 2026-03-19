@@ -196,7 +196,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
                 if (value !== undefined) formData.append(key, value as string | Blob)
             })
 
-            await api.put(`/products/add-products/${productId}`, formData, {
+            await api.patch(`/products/add-products/${productId}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
             await fetchProducts(true)
