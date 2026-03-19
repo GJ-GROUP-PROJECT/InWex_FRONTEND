@@ -47,17 +47,15 @@ const SignupAsComp = () => {
     }
 
     const onSubmit = async (data: SignupOrgValues) => {
-        console.log(data)
         try {
-            const res = await api.post<SignupOrgResponse>("/accounts/register", data)
-            console.log("org signup data:", res.data)
+            await api.post<SignupOrgResponse>("/accounts/register", data)
             router.push("/dashboard")
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
-                toast.error(error.response?.data?.message || "Signup failed:")
+                toast.error(error.response?.data?.contact_number?.[0] || error.response?.data?.email?.[0] || "Signup failed")
             } else {
-                toast.error("Unexpected error occurred during signup")
+                toast.error("Something went wrong")
             }
         }
     }

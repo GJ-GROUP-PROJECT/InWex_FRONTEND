@@ -7,10 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import axios from 'axios'
-import { api } from '@/lib/api'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -19,7 +15,6 @@ type LoginFormProps = {
 }
 
 const LoginForm = ({ onSwitch }: LoginFormProps) => {
-    const router = useRouter()
     const { login } = useAuth()
 
     const form = useForm<LoginValues>({
@@ -32,19 +27,7 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
     })
 
     const onSubmit = async (data: LoginValues) => {
-        try {
-            const res = await api.post("/accounts/login", data)
-            toast.success("Login successful!")
-            login(res.data, res.data.token)
-            router.push("/dashboard")
-        }
-        catch (error) {
-            if (axios.isAxiosError(error)) {
-                toast.error(error.response?.data?.message || "Invalid email or password")
-            } else {
-                toast.error("Something went wrong")
-            }
-        }
+        login(data)
     }
 
     return (
@@ -81,12 +64,12 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                                     <FormControl>
                                         <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='h-8 text-xs! pl-3 border-none' />
                                     </FormControl>
+                                    <FormMessage className="text-[11px]" />
                                     <div className='flex justify-end mt-1'>
                                         <Link href="/auth/forgot-password" className='text-[11px] text-muted-foreground hover:text-primary transition-colors'>
                                             Forgot Password?
                                         </Link>
                                     </div>
-                                    <FormMessage className="text-[11px]" />
                                 </FormItem>
                             )}
                         />

@@ -1,6 +1,7 @@
 "use client"
 
 import { api } from "@/lib/api"
+import { LoginValues } from "@/lib/schemas/validation/login.schema"
 import { Roles, UserData } from "@/lib/types/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -11,7 +12,7 @@ type AuthContextType = {
     user: UserData | null
     role: Roles | null
     isLoading: boolean
-    login: (userData: UserData, token: string) => void
+    login: (data: LoginValues) => Promise<void>
     logout: () => void
 }
 
@@ -35,11 +36,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
-    const login = useCallback((userData: UserData, token: string) => {
-        localStorage.setItem("UserData", JSON.stringify(userData))
-        localStorage.setItem("token", token)
-        setUser(userData)
-    }, [])
+
+    const login = useCallback(async (data: LoginValues) => {
+        try {
+            const res = await api.post("/accounts/login", data)
+            toast.success("Login successful!")
+            localStorage.setItem("UserData", JSON.stringify(res.data))
+            localStorage.setItem("token", res.data.token)
+            setUser(res.data)
+            router.push("/dashboard")
+        }
+        catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(
+                    error.response?.data?.non_field_errors?.[0] || "Login failed"
+                )
+            } else {
+                toast.error("Something went wrong")
+            }
+        }
+    }, [router])
 
     const logout = useCallback(async () => {
         try {
