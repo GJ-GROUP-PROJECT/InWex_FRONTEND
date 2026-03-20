@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useOrder } from '@/contexts/OrderContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,27 +14,22 @@ import {
 import { OrderItems } from '@/lib/types/types'
 
 const OrderDetailsPage = () => {
-    const { id } = useParams()
     const router = useRouter()
-    const { orders, selectedOrder, fetchOrders, fetchOrderByReferenceId, isLoading, downloadOrder, shippingOrder, completeOrder } = useOrder()
-    const [initializing, setInitializing] = useState(orders.length === 0)
+    const { selectedOrder, fetchSelectedOrder, clearSelectedOrder, downloadOrder, shippingOrder, completeOrder } = useOrder()
+    const [loading, setLoading] = useState(true)
 
-    const currentOrder = orders.find(o => o.id === Number(id))
     const order = selectedOrder?.[0]
 
     useEffect(() => {
-        if (orders.length === 0) {
-            fetchOrders(false).finally(() => setInitializing(false))
-        }
-    }, [])
+        fetchSelectedOrder(false).finally(() => setLoading(false))
+    }, [fetchSelectedOrder])
 
-    useEffect(() => {
-        if (currentOrder?.reference) {
-            fetchOrderByReferenceId(currentOrder.reference, true)
-        }
-    }, [currentOrder?.reference, fetchOrderByReferenceId])
+    const handleBack = () => {
+        clearSelectedOrder()
+        router.back()
+    }
 
-    if (isLoading) {
+    if (loading) {
         return (
             <div className="flex h-[80vh] items-center justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
@@ -46,15 +41,7 @@ const OrderDetailsPage = () => {
         return (
             <div className="flex h-[80vh] flex-col items-center justify-center gap-3">
                 <p className="text-zinc-500 text-xs">Order not found</p>
-                <Button onClick={() => router.back()} className="h-8 text-xs px-4">Go Back</Button>
-            </div>
-        )
-    }
-
-    if (initializing || isLoading) {
-        return (
-            <div className="flex h-[80vh] items-center justify-center">
-                <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
+                <Button onClick={handleBack} className="h-8 text-xs px-4">Go Back</Button>
             </div>
         )
     }
@@ -64,7 +51,7 @@ const OrderDetailsPage = () => {
             {/* Header */}
             <div className="flex flex-col gap-3">
                 <button
-                    onClick={() => router.back()}
+                    onClick={handleBack}
                     className="flex items-center gap-1.5 text-zinc-500 hover:text-white transition-colors text-xs w-fit"
                 >
                     <ArrowLeft size={12} /> Back to Orders
@@ -93,7 +80,7 @@ const OrderDetailsPage = () => {
                             className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
                             onClick={async () => {
                                 await shippingOrder(order.id)
-                                await fetchOrderByReferenceId(order.reference, false)
+                                await fetchSelectedOrder(false)
                             }}
                         >
                             Ship Order
@@ -103,7 +90,7 @@ const OrderDetailsPage = () => {
                             className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
                             onClick={async () => {
                                 await completeOrder(order.id)
-                                await fetchOrderByReferenceId(order.reference, false)
+                                await fetchSelectedOrder(false)
                             }}
                         >
                             Complete Order

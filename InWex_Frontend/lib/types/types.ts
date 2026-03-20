@@ -37,6 +37,7 @@ export type Product = {
     selling_price: string
     image: string
     total_stock: number
+    warehouse_stocks: Stock
     created_at: string
     updated_at: string
     category: string
@@ -69,6 +70,15 @@ export type Section = {
     created_at: string
 }
 
+export type Assignment = {
+    id: number
+    staff: number
+    warehouse: number
+    can_manage_inventory: boolean
+    can_create_orders: boolean
+    assigned_at: string
+}
+
 export type Staff = {
     id: number
     fullname: string
@@ -77,7 +87,11 @@ export type Staff = {
     warehouse: number
     sections: number
     is_confirmed: boolean
+    is_manager: boolean
+    is_warehouse_staff: boolean
+    is_active: boolean
     user: Users
+    assignments: Assignment[]
 }
 
 export type Orders = {
@@ -87,6 +101,7 @@ export type Orders = {
     status: "Requested" | "In_Progress" | "Delivered" | "Returned" | "Cancelled"
     notes: string
     created_at: string
+    client: string
     items: OrderItems[]
 }
 
@@ -95,4 +110,4 @@ export type OrderItems = {
     product: Product
     quantity: number
     unit_price: string
-} 
+}

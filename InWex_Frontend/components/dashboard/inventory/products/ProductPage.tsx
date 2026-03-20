@@ -141,12 +141,12 @@ const ProductPage = ({ product, category }: { product: Product, category: Catego
                             <div className="p-5 flex items-center justify-between bg-zinc-900/10">
                                 <div className="space-y-1.5">
                                     <p className="text-zinc-500 text-xs font-medium">Inventory Status</p>
-                                    <p className={`text-xl font-bold ${product.total_stock < 10 ? "text-orange-500" : "text-white"}`}>
-                                        {product.total_stock ?? 1} <span className="text-xs font-normal text-zinc-500 ml-1">Units in hand</span>
+                                    <p className={`text-xl font-bold ${product.warehouse_stocks?.quantity < 10 ? "text-orange-500" : "text-white"}`}>
+                                        {product.warehouse_stocks?.quantity ?? 1} <span className="text-xs font-normal text-zinc-500 ml-1">Units in hand</span>
                                     </p>
                                 </div>
-                                <Badge className={`${product.total_stock < 10 ? "bg-orange-500/10 text-orange-500" : "bg-emerald-500/10 text-emerald-500"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider`}>
-                                    {product.total_stock < 10 ? "Low Stock" : "In Stock"}
+                                <Badge className={`${product.warehouse_stocks?.quantity < 10 ? "bg-orange-500/10 text-orange-500" : "bg-emerald-500/10 text-emerald-500"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider`}>
+                                    {product.warehouse_stocks?.quantity < 10 ? "Low Stock" : "In Stock"}
                                 </Badge>
                             </div>
                         </CardContent>

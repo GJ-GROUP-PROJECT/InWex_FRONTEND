@@ -7,13 +7,21 @@ import { OrderValues } from "@/lib/schemas/order/addOrders.schema"
 
 export type OrderContextType = {
     orders: Orders[]
+    count: number | null
+    nextUrl: string | null
+    isFetchingMore: boolean
     selectedOrder: Orders[]
     pendingOrder: OrderValues | null
     productCache: Record<string, Product>
     isLoading: boolean
     error: string | null
     fetchOrders: (showLoading: boolean) => Promise<void>
+    loadMore: () => void
+    selectOrder: (reference: string) => void
+    clearSelectedOrder: () => void
+    fetchSelectedOrder: (showLoading?: boolean) => Promise<void>
     fetchOrderByReferenceId: (query: string, showLoading?: boolean) => Promise<void>
+    fetchOrderByClientId: (query: string, showLoading?: boolean) => Promise<void>
     shippingOrder: (orderId: number) => Promise<void>
     completeOrder: (orderId: number) => Promise<void>
     downloadOrder: (orderId: number) => Promise<void>
@@ -28,6 +36,9 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined)
 
 export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const [orders, setOrders] = useState<Orders[]>([])
+    const [count, setCount] = useState<number | null>(null)
+    const [nextUrl, setNextUrl] = useState<string | null>(null)
+    const [isFetchingMore, setIsFetchingMore] = useState(false)
     const [selectedOrder, setSelectedOrder] = useState<Orders[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -69,18 +80,47 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("inwex_product_cache")
     }
 
-    const fetchOrders = useCallback(async (showLoading = true) => {
-        if (showLoading) setIsLoading(true)
-        setError(null)
+    // Called from OrdersTable "View Details" — just stores the reference
+    const selectOrder = useCallback((reference: string) => {
+        localStorage.setItem("inwex_selected_order_ref", reference)
+    }, [])
+
+    // Called from detail page "Back" button — clears ref and state
+    const clearSelectedOrder = useCallback(() => {
+        localStorage.removeItem("inwex_selected_order_ref")
+        setSelectedOrder([])
+    }, [])
+
+    const fetchOrders = useCallback(async (reset = false) => {
+        if (reset) setIsLoading(true)
         try {
-            const res = await api.get("/products/get-orders")
-            setOrders(res.data.results)
+            const res = await api.get("products/get-orders")
+            const data = res.data
+            setOrders(data.results)
+            setCount(data.count)
+            setNextUrl(data.next ?? null)
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
         } finally {
-            if (showLoading) setIsLoading(false)
+            setIsLoading(false)
         }
     }, [])
+
+    const loadMore = useCallback(async () => {
+        if (!nextUrl || isFetchingMore) return
+        setIsFetchingMore(true)
+        try {
+            const url = nextUrl.replace(/^https?:\/\/[^/]+/, "")
+            const res = await api.get(url)
+            const data = res.data
+            setOrders(prev => [...prev, ...data.results])
+            setNextUrl(data.next ?? null)
+        } catch {
+            console.error("Failed to load more orders")
+        } finally {
+            setIsFetchingMore(false)
+        }
+    }, [nextUrl, isFetchingMore])
 
     const fetchOrderByReferenceId = useCallback(async (query: string, showLoading = true) => {
         if (showLoading) setIsLoading(true)
@@ -88,6 +128,26 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const res = await api.get(`/products/get-order-detail?id=${query}`)
             setSelectedOrder(res.data.results)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred")
+        } finally {
+            if (showLoading) setIsLoading(false)
+        }
+    }, [])
+
+    // Reads ref from localStorage and fetches — called on detail page mount & refresh
+    const fetchSelectedOrder = useCallback(async (showLoading = true) => {
+        const ref = localStorage.getItem("inwex_selected_order_ref")
+        if (!ref) return
+        await fetchOrderByReferenceId(ref, showLoading)
+    }, [fetchOrderByReferenceId])
+
+    const fetchOrderByClientId = useCallback(async (query: string, showLoading = true) => {
+        if (showLoading) setIsLoading(true)
+        setError(null)
+        try {
+            const res = await api.get(`/products/client-orders?search=${query}`)
+            setOrders(res.data.results)
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
         } finally {
@@ -125,17 +185,14 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             const res = await api.get(`/products/download-order-report?order_id=${orderId}`, {
                 responseType: "blob",
             })
-
             const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }))
             const link = document.createElement('a')
-
             link.href = url
             link.download = `invoice-${orderId || "file"}.pdf`
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
             window.URL.revokeObjectURL(url)
-
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
         }
@@ -173,13 +230,21 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         <OrderContext.Provider
             value={{
                 orders,
+                count,
+                nextUrl,
+                isFetchingMore,
                 selectedOrder,
                 pendingOrder,
                 productCache,
                 isLoading,
                 error,
                 fetchOrders,
+                loadMore,
+                selectOrder,
+                clearSelectedOrder,
+                fetchSelectedOrder,
                 fetchOrderByReferenceId,
+                fetchOrderByClientId,
                 shippingOrder,
                 completeOrder,
                 downloadOrder,
@@ -187,7 +252,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 deleteOrder,
                 stageOrder,
                 cacheProducts,
-                clearPendingOrder
+                clearPendingOrder,
             }}
         >
             {children}

@@ -36,6 +36,7 @@ const CartDrawer = () => {
             order_type: "Inbound",
             status: "Requested",
             notes: "",
+            client: "",
             items: [],
         }
     })
@@ -43,6 +44,7 @@ const CartDrawer = () => {
     const { fields, append, remove } = useFieldArray({ control: form.control, name: "items" })
     const watchOrderType = useWatch({ control: form.control, name: "order_type" })
     const watchItems = useWatch({ control: form.control, name: "items" })
+    const watchClient = useWatch({ control: form.control, name: "client" })
 
     const totalPrice = watchItems?.reduce((acc, item) => {
         return acc + (Number(item.unit_price || 0) * Number(item.quantity || 0))
@@ -172,6 +174,25 @@ const CartDrawer = () => {
                                             </FormItem>
                                         )}
                                     />
+
+                                    {/* Client field — Outbound only */}
+                                    {watchOrderType === "Outbound" && (
+                                        <FormField
+                                            control={form.control}
+                                            name="client"
+                                            render={({ field }) => (
+                                                <FormItem className="space-y-1.5">
+                                                    <FormLabel className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">
+                                                        Client <span className="normal-case text-zinc-600">(optional)</span>
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} placeholder="e.g. Acme Corp" className="h-9 text-xs! rounded-lg px-3 border-none" />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
                                 </div>
 
                                 {/* Search */}
@@ -238,6 +259,15 @@ const CartDrawer = () => {
                                             <p className="text-xs font-bold text-white">Requested</p>
                                         </div>
                                     </div>
+
+                                    {/* Client — shown in review only for Outbound with a value */}
+                                    {watchOrderType === "Outbound" && watchClient && (
+                                        <div className="mt-2 p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                                            <p className="text-[10px] text-zinc-500 uppercase">Client</p>
+                                            <p className="text-xs font-bold text-white">{watchClient}</p>
+                                        </div>
+                                    )}
+
                                     {form.getValues("notes") && (
                                         <div className="mt-2 p-2.5 rounded-lg bg-zinc-900/30 border border-dashed border-zinc-800">
                                             <p className="text-[10px] text-zinc-500 uppercase">Notes</p>

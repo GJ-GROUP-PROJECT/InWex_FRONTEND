@@ -17,7 +17,7 @@ type StatusCardData = {
 }
 
 const Orders = () => {
-    const { orders, fetchOrders, fetchOrderByReferenceId } = useOrder()
+    const { orders, count, fetchOrders, fetchOrderByClientId } = useOrder()
     const requested = orders?.filter(o => o.status === "Requested").length ?? 0
     const inProgress = orders?.filter(o => o.status === "In_Progress").length ?? 0
     const delivered = orders?.filter(o => o.status === "Delivered").length ?? 0
@@ -30,13 +30,13 @@ const Orders = () => {
         { title: "Delivered Orders", value: delivered, status: "Delivered" },
     ]
 
-    // const handleSearch = useDebouncedCallback(async (value: string) => {
-    //     if (!value.trim()) {
-    //         fetchOrders(true)
-    //         return
-    //     }
-    //     fetchOrderByReferenceId(value, true)
-    // }, 300)
+    const handleSearch = useDebouncedCallback(async (value: string) => {
+        if (!value.trim()) {
+            fetchOrders(true)
+            return
+        }
+        fetchOrderByClientId(value, true)
+    }, 300)
 
     return (
         <>
@@ -48,7 +48,7 @@ const Orders = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-white">Orders Dashboard</h1>
                     <p className="text-zinc-500 mt-0.5 flex items-center gap-1.5 text-xs">
                         <ShoppingCart className="h-3 w-3" />
-                        {orders.length} Total Orders
+                        {count} Total Orders
                     </p>
                 </div>
 
@@ -69,7 +69,7 @@ const Orders = () => {
                                 { label: "Date Created", value: "date" }
                             ]}
                             onFilterSelect={(value) => console.log("Filter:", value)}
-                        // onSearch={handleSearch}
+                            onSearch={handleSearch}
                         />
                     </div>
 

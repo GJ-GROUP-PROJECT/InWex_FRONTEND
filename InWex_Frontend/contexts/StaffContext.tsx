@@ -6,13 +6,20 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AssignWarehouseValues } from "@/lib/schemas/staff/assignWarehouse.schema"
 
+export type AssignRoleValues = {
+    is_manager: boolean
+    is_warehouse_staff: boolean
+    is_active: boolean
+}
+
 export type StaffContextType = {
     staffs: Staff[]
     isLoading: boolean
     error: string | null
     fetchStaff: (showLoading?: boolean) => Promise<void>
     fetchStaffBySearch: (query: string, showLoading?: boolean) => Promise<void>
-    assignWarehouse: (payload: AssignWarehouseValues) => Promise<void>
+    assignWarehouse: (payload: AssignWarehouseValues, assignmentId?: number) => Promise<void>
+    assignRole: (staffId: number, payload: AssignRoleValues) => Promise<void>
     updateStaff: (staffId: number) => Promise<void>
     deleteStaff: (staffId: number) => Promise<void>
 }
@@ -65,9 +72,15 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [user])
 
-    const assignWarehouse = useCallback(async (payload: AssignWarehouseValues) => {
+    const assignWarehouse = useCallback(async (payload: AssignWarehouseValues, assignmentId?: number) => {
         try {
-            await api.post('warehouse/warehouse-staff', payload)
+            if (assignmentId) {
+                // ✅ Existing assignment — use PUT with assignment ID
+                await api.put(`warehouse/warehouse-staff/${assignmentId}`, payload)
+            } else {
+                // New assignment — POST to base endpoint
+                await api.post('warehouse/warehouse-staff', payload)
+            }
             await fetchStaff(false)
             toast.success("Warehouse assigned successfully")
         } catch (err) {
@@ -75,12 +88,22 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [fetchStaff])
 
+    const assignRole = useCallback(async (staffId: number, payload: AssignRoleValues) => {
+        try {
+            await api.post(`accounts/assign-role/${staffId}`, payload)
+            await fetchStaff(false)
+            toast.success("Role updated successfully")
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Failed to update role")
+        }
+    }, [fetchStaff])
+
     const updateStaff = useCallback(async (staffId: number) => {
         try {
-            await api.put(`warehouse/warehouse/${staffId}`)
+            await api.post(`warehouse/warehouse-staff/${staffId}`)
             await fetchStaff(true)
-            toast.success("Warehouse updated successfully")
-            router.push("/dashboard/warehouses")
+            toast.success("Staff updated successfully")
+            router.push("/dashboard/staff")
         }
         catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred")
@@ -89,13 +112,13 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
 
     const deleteStaff = useCallback(async (staffId: number) => {
         try {
-            await api.delete(`/warehouse/warehouse/${staffId}`)
+            await api.delete(`accounts/appoint-staff/${staffId}`)
             await fetchStaff(true)
-            toast.success("Warehouse deleted successfully")
-            router.push("/dashboard/warehouses")
+            toast.success("Staff deleted successfully")
+            router.push("/dashboard/staff")
         }
         catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to delete warehouse")
+            toast.error(err instanceof Error ? err.message : "Failed to delete staff")
         }
     }, [fetchStaff, router])
 
@@ -108,6 +131,7 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
                 fetchStaff,
                 fetchStaffBySearch,
                 assignWarehouse,
+                assignRole,
                 updateStaff,
                 deleteStaff
             }}

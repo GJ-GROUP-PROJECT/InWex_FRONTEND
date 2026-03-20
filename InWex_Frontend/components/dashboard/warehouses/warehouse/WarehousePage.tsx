@@ -1,32 +1,47 @@
 "use client"
 
-import { Warehouse } from "@/lib/types/types"
-import { Calendar, Layers, Loader2, Package, Users, Edit3, Trash2, ArrowLeft, Building2 } from "lucide-react"
+import { Staff, Warehouse } from "@/lib/types/types"
+import { Calendar, Loader2, Package, Users, Edit3, Trash2, ArrowLeft, Building2, UserRound, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useWarehouse } from "@/contexts/WarehouseContext"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-
-const dummySections = [
-    { id: 1, name: "Refrigerated" },
-    { id: 2, name: "Dry Goods" },
-    { id: 3, name: "Electronics" },
-]
-
-const dummyStaff = [
-    { id: 1, name: "John Doe", role: "Manager" },
-    { id: 2, name: "Jane Smith", role: "Staff" },
-    { id: 3, name: "Bob Johnson", role: "Staff" },
-]
+import { useEffect, useState } from "react"
+import { api } from "@/lib/api"
+import { getLatestAssignment } from "@/components/dashboard/staff/StaffPage"
 
 const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
     const { products, isLoading, error, fetchProducts, deleteWarehouse } = useWarehouse()
     const router = useRouter()
 
+    const [warehouseStaff, setWarehouseStaff] = useState<Staff[]>([])
+    const [staffLoading, setStaffLoading] = useState(false)
+
     useEffect(() => {
         fetchProducts(warehouse.id, true)
     }, [fetchProducts, warehouse.id])
+
+    useEffect(() => {
+        const loadStaff = async () => {
+            setStaffLoading(true)
+            try {
+                const res = await api.get(`api/warehouse/get-staff-for-warehouse?warehouse_id=${warehouse.id}`)
+                // ✅ Deduplicate by staff ID — API may return the same staff multiple times
+                const seen = new Set<number>()
+                const unique = (res.data as Staff[]).filter(s => {
+                    if (seen.has(s.id)) return false
+                    seen.add(s.id)
+                    return true
+                })
+                setWarehouseStaff(unique)
+            } catch {
+                setWarehouseStaff([])
+            } finally {
+                setStaffLoading(false)
+            }
+        }
+        loadStaff()
+    }, [warehouse.id])
 
     return (
         <div className="mt-6 md:mt-10 w-full px-4 sm:px-6 md:px-10 pb-16 space-y-6">
@@ -51,7 +66,9 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3 text-zinc-500 text-xs">
-                            <span className="flex items-center gap-1"><Calendar size={11} /> Created {new Date(warehouse.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                            <span className="flex items-center gap-1">
+                                <Calendar size={11} /> Created {new Date(warehouse.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </span>
                             <span className="flex items-center gap-1"><Building2 size={11} /> ID: {warehouse.company}</span>
                         </div>
                     </div>
@@ -93,34 +110,76 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                     <div className="xl:col-span-2 space-y-6">
 
-                        {/* Sections */}
+                        {/* Personnel */}
                         <section>
                             <h2 className="text-sm font-bold text-white mb-3 flex items-center gap-1.5">
-                                <Layers size={14} className="text-zinc-500" /> Infrastructure Sections
+                                <Users size={14} className="text-zinc-500" />
+                                Personnel Assigned
+                                <Badge className="bg-zinc-900 text-zinc-400 border-zinc-800 rounded-full text-[10px] px-2 ml-1">
+                                    {warehouseStaff.length}
+                                </Badge>
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                {dummySections.map((section) => (
-                                    <div key={section.id} className="p-4 bg-zinc-950 rounded-xl border-none">
-                                        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Storage Zone</p>
-                                        <p className="text-xs font-semibold text-zinc-100 mt-1">{section.name}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
 
-                        {/* Staff */}
-                        <section>
-                            <h2 className="text-sm font-bold text-white mb-3 flex items-center gap-1.5">
-                                <Users size={14} className="text-zinc-500" /> Personnel Assigned
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                {dummyStaff.map((staff) => (
-                                    <div key={staff.id} className="p-4 bg-zinc-900/40 rounded-xl border-none group hover:bg-zinc-900/60 transition-colors">
-                                        <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">{staff.role}</p>
-                                        <p className="text-xs font-semibold text-zinc-100 mt-1">{staff.name}</p>
-                                    </div>
-                                ))}
-                            </div>
+                            {staffLoading ? (
+                                <div className="flex items-center justify-center py-10 gap-2 bg-zinc-900/20 rounded-xl border border-zinc-800/50">
+                                    <Loader2 size={14} className="text-zinc-600 animate-spin" />
+                                    <p className="text-zinc-500 text-xs">Loading staff...</p>
+                                </div>
+                            ) : warehouseStaff.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    {warehouseStaff.map((s) => {
+                                        const latest = getLatestAssignment(s)
+                                        const role = s.is_manager ? "Manager" : s.is_warehouse_staff ? "Warehouse Staff" : "No Role"
+                                        return (
+                                            <div
+                                                key={s.id}
+                                                onClick={() => router.push(`/dashboard/staff/${s.id}`)}
+                                                className="p-4 bg-zinc-900/40 rounded-xl border border-zinc-800/50 group hover:bg-zinc-900/70 hover:border-zinc-700 transition-all cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
+                                                        <UserRound size={14} className="text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-bold text-zinc-100 truncate group-hover:text-white transition-colors">
+                                                            {s.user.fullname}
+                                                        </p>
+                                                        <p className="text-[10px] text-zinc-500 truncate">{s.user.email}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${s.is_manager ? "text-blue-400" : s.is_warehouse_staff ? "text-emerald-400" : "text-zinc-600"}`}>
+                                                        <ShieldCheck size={10} />
+                                                        {role}
+                                                    </span>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider ${s.user.user_status === "active" ? "text-emerald-500" : "text-zinc-600"}`}>
+                                                        {s.user.user_status ?? "offline"}
+                                                    </span>
+                                                </div>
+                                                {(latest?.can_manage_inventory || latest?.can_create_orders) && (
+                                                    <div className="flex gap-1 mt-2 flex-wrap">
+                                                        {latest?.can_manage_inventory && (
+                                                            <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                                                Inventory
+                                                            </span>
+                                                        )}
+                                                        {latest?.can_create_orders && (
+                                                            <span className="text-[9px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                                                Orders
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="py-10 text-center bg-zinc-900/20 rounded-xl border border-zinc-800/50">
+                                    <Users size={24} className="mx-auto text-zinc-800 mb-2" />
+                                    <p className="text-zinc-500 text-xs">No staff assigned to this warehouse.</p>
+                                </div>
+                            )}
                         </section>
                     </div>
 
@@ -153,7 +212,7 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                                                 </span>
                                             </div>
                                             <div className="text-right shrink-0">
-                                                <span className="text-[10px] font-bold text-white block">{product.total_stock || 1}</span>
+                                                <span className="text-[10px] font-bold text-white block">{product.warehouse_stocks?.quantity || 1}</span>
                                                 <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-tighter">qty</span>
                                             </div>
                                         </div>
