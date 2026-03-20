@@ -148,6 +148,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
     })
 
     const [selectedRole, setSelectedRole] = useState<RoleKey>(getRoleKey(liveStaff))
+    const [savedRole, setSavedRole] = useState<RoleKey>(getRoleKey(liveStaff))
 
     const watchWarehouse = useWatch({ control: form.control, name: "warehouse" })
     const watchCanManage = useWatch({ control: form.control, name: "can_manage_inventory" })
@@ -197,8 +198,9 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
         }
         await Promise.all([
             assignWarehouse(data, latestAssignment?.id),
-            assignRole(liveStaff.id, rolePayload),
+            assignRole(liveStaff.user.id, rolePayload),
         ])
+        setSavedRole(selectedRole)
     })
 
     const handleDelete = async () => {
@@ -206,7 +208,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
         router.back()
     }
 
-    const activeRoleKey = getRoleKey(liveStaff)
+    const activeRoleKey = savedRole
 
     return (
         <div className="mt-6 md:mt-10 w-full px-4 sm:px-6 md:px-10 pb-16 space-y-6 max-w-7xl mx-auto">
@@ -239,7 +241,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                             <SheetHeader className="space-y-0.5 px-5 pt-4 shrink-0">
                                 <SheetTitle className="text-xl! font-bold text-white">Manage Staff</SheetTitle>
                                 <SheetDescription className="text-xs text-zinc-500">
-                                    Update roles, warehouse, and status for {liveStaff.user.fullname}.
+                                    Update roles, warehouse, and status for {liveStaff.user?.fullname ?? "this staff member"}.
                                 </SheetDescription>
                             </SheetHeader>
 
@@ -315,7 +317,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                                         <AlertDialogContent className="bg-zinc-950 border border-zinc-800 text-white">
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle className="text-white text-base font-bold">
-                                                    Remove {liveStaff.user.fullname}?
+                                                    Remove {liveStaff.user?.fullname ?? "this staff member"}?
                                                 </AlertDialogTitle>
                                                 <AlertDialogDescription className="text-zinc-500 text-xs">
                                                     This will permanently delete their staff account and revoke all access. This cannot be undone.
@@ -385,8 +387,8 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                             </div>
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-zinc-500 flex items-center gap-2.5 font-medium"><Activity size={14} /> Status</span>
-                                <span className={`font-black uppercase text-[10px] tracking-[0.15em] ${liveStaff.user.user_status === "active" ? "text-emerald-500" : "text-red-400"}`}>
-                                    {liveStaff.user.user_status ?? "offline"}
+                                <span className={`font-black uppercase text-[10px] tracking-[0.15em] ${liveStaff.user?.user_status === "active" ? "text-emerald-500" : "text-red-400"}`}>
+                                    {liveStaff.user?.user_status ?? "offline"}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
@@ -432,8 +434,8 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full content-start">
                                 <RoleBadge label="Manager" active={activeRoleKey === "is_manager"} />
                                 <RoleBadge label="Warehouse Staff" active={activeRoleKey === "is_warehouse_staff"} />
-                                <RoleBadge label="Can Create Orders" active={watchCanCreate} />
-                                <RoleBadge label="Can Manage Inventory" active={watchCanManage} />
+                                <RoleBadge label="Can Create Orders" active={latestAssignment?.can_create_orders ?? false} />
+                                <RoleBadge label="Can Manage Inventory" active={latestAssignment?.can_manage_inventory ?? false} />
                             </div>
                         </CardContent>
                     </Card>

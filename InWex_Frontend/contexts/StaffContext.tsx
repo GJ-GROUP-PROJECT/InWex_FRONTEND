@@ -75,10 +75,8 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     const assignWarehouse = useCallback(async (payload: AssignWarehouseValues, assignmentId?: number) => {
         try {
             if (assignmentId) {
-                // ✅ Existing assignment — use PUT with assignment ID
                 await api.put(`warehouse/warehouse-staff/${assignmentId}`, payload)
             } else {
-                // New assignment — POST to base endpoint
                 await api.post('warehouse/warehouse-staff', payload)
             }
             await fetchStaff(false)
@@ -90,7 +88,7 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
 
     const assignRole = useCallback(async (staffId: number, payload: AssignRoleValues) => {
         try {
-            await api.post(`accounts/assign-role/${staffId}`, payload)
+            await api.patch(`accounts/assign-role/${staffId}`, payload)
             await fetchStaff(false)
             toast.success("Role updated successfully")
         } catch (err) {
