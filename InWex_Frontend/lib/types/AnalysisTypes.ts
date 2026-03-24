@@ -43,3 +43,35 @@ export type MostSoldItem = {
     product__sku: string
     total_sold: number
 }
+
+export type ProductProfit = {
+    product_id: number
+    product_name: string
+    total_sold: number
+    revenue: number
+    cost: number
+    profit: number
+}
+
+export type WarehouseProfit = {
+    warehouse_id: number
+    warehouse_name: string
+    total_revenue: number
+    total_cost: number
+    total_profit: number
+}
+
+export type TopProduct = {
+    product_id: number
+    product_name: string
+    profit: number
+    total_sold: number
+}
+
+export type WarehouseEfficiency = {
+    profit_per_unit: number
+    total_profit: number
+    total_qty: number
+    warehouse_id: number
+    warehouse_name: string
+}

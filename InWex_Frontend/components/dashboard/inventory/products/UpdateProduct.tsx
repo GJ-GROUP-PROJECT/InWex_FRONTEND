@@ -28,6 +28,7 @@ const UpdateProduct = ({ product }: { product: Product }) => {
             selling_price: undefined,
             description: "",
             image: undefined,
+            is_perishable: false,
         },
     })
 
@@ -43,6 +44,7 @@ const UpdateProduct = ({ product }: { product: Product }) => {
                 selling_price: String(product.selling_price),
                 description: product.description,
                 image: undefined,
+                is_perishable: product.is_perishable,
             });
         }
     }, [product, categories, category, form]);
@@ -60,7 +62,7 @@ const UpdateProduct = ({ product }: { product: Product }) => {
             { name: "selling_price", type: "number", placeholder: "SELLING PRICE (INR) *" },
         ];
 
-    const isSubmitSuccessful = form.formState.isSubmitSuccessful;
+    const { isSubmitSuccessful } = form.formState
 
     useEffect(() => {
         if (isSubmitSuccessful && fileInputRef.current) {
@@ -71,7 +73,6 @@ const UpdateProduct = ({ product }: { product: Product }) => {
     const onSubmit = async (data: UpdateProductValues) => {
         if (!product) return;
         await updateProduct(product.id, { ...data, status: product.status });
-        form.reset();
     }
 
     return (
@@ -178,6 +179,37 @@ const UpdateProduct = ({ product }: { product: Product }) => {
                                         className="w-full min-h-24 py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none resize-none focus:outline-none text-[10px]! text-white"
                                         {...field}
                                     />
+                                </FormControl>
+                                <FormMessage className="text-[10px]" />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Is Perishable */}
+                    <FormField
+                        control={form.control}
+                        name="is_perishable"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <label className="flex items-center gap-3 cursor-pointer group/check">
+                                        <div className="relative">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={field.value}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                            />
+                                            <div className="h-4 w-4 border-l-2 border-b-2 border-white/30 bg-transparent peer-checked:border-amber-500 transition-colors flex items-center justify-center">
+                                                {field.value && (
+                                                    <div className="h-2 w-2 bg-amber-500" />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <span className="text-[10px] tracking-widest text-zinc-500 group-hover/check:text-zinc-300 transition-colors">
+                                            PERISHABLE PRODUCT
+                                        </span>
+                                    </label>
                                 </FormControl>
                                 <FormMessage className="text-[10px]" />
                             </FormItem>

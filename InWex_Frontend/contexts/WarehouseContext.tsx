@@ -7,6 +7,7 @@ import { useAuth } from "./AuthContext"
 import { useRouter } from "next/navigation"
 import { api } from "@/lib/api"
 import { toast } from "sonner"
+import axios from "axios"
 
 export type WarehouseContextType = {
     warehouses: Warehouse[]
@@ -26,6 +27,16 @@ export type WarehouseContextType = {
 
 const WarehouseContext = createContext<WarehouseContextType | undefined>(undefined)
 
+const extractErrorMessage = (err: unknown, fallback: string): string => {
+    if (axios.isAxiosError(err)) {
+        const data = err.response?.data
+        return Array.isArray(data)
+            ? data[0]
+            : data?.detail ?? data?.[0] ?? fallback
+    }
+    return fallback
+}
+
 export const WarehouseProvider = ({ children }: { children: React.ReactNode }) => {
     const [warehouses, setWarehouses] = useState<Warehouse[]>([])
     const [products, setProducts] = useState<Product[]>([])
@@ -39,16 +50,13 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
     const fetchWarehouses = useCallback(async (showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
-
         try {
             const res = await api.get("/warehouse/warehouse")
             setWarehouses(res.data.results)
             setCount(res.data.count)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch warehouses"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -56,15 +64,12 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
     const fetchProducts = useCallback(async (warehouseId: number, showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
-
         try {
             const res = await api.get(`api/warehouse/get-warehouse-products?warehouse_id=${warehouseId}`)
             setProducts(res.data.results)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch warehouse products"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -74,11 +79,9 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
         try {
             const res = await api.get(`/api/warehouse/warehouses-search?name=${query}`)
             setWarehouses(res.data)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to search warehouses"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -89,9 +92,8 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
             await fetchWarehouses(true)
             toast.success("Warehouse added successfully")
             router.push("/dashboard/warehouses")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to add warehouse")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to add warehouse"))
         }
     }
 
@@ -101,9 +103,8 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
             await fetchWarehouses(true)
             toast.success("Warehouse updated successfully")
             router.push("/dashboard/warehouses")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to update warehouse")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to update warehouse"))
         }
     }
 
@@ -113,9 +114,8 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
             await fetchWarehouses(true)
             toast.success("Warehouse deleted successfully")
             router.push("/dashboard/warehouses")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to delete warehouse")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to delete warehouse"))
         }
     }
 

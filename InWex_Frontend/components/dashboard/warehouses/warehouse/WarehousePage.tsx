@@ -26,7 +26,6 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
             setStaffLoading(true)
             try {
                 const res = await api.get(`api/warehouse/get-staff-for-warehouse?warehouse_id=${warehouse.id}`)
-                // ✅ Deduplicate by staff ID — API may return the same staff multiple times
                 const seen = new Set<number>()
                 const unique = (res.data as Staff[]).filter(s => {
                     if (seen.has(s.id)) return false
@@ -129,7 +128,7 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                     {warehouseStaff.map((s) => {
                                         const latest = getLatestAssignment(s)
-                                        const role = s.is_manager ? "Manager" : s.is_warehouse_staff ? "Warehouse Staff" : "No Role"
+                                        const role = s.user.is_manager ? "Manager" : s.user.is_warehouse_staff ? "Warehouse Staff" : "No Role"
                                         return (
                                             <div
                                                 key={s.id}
@@ -148,7 +147,7 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center justify-between">
-                                                    <span className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${s.is_manager ? "text-blue-400" : s.is_warehouse_staff ? "text-emerald-400" : "text-zinc-600"}`}>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${s.user.is_manager ? "text-blue-400" : s.user.is_warehouse_staff ? "text-emerald-400" : "text-zinc-600"}`}>
                                                         <ShieldCheck size={10} />
                                                         {role}
                                                     </span>

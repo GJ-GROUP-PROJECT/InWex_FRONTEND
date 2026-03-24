@@ -73,9 +73,16 @@ const ProductPage = ({ product, category }: { product: Product, category: Catego
                     </div>
                     <CardContent className="p-5 space-y-4 grow flex flex-col justify-between">
                         <div className="space-y-2.5">
-                            <Badge className="bg-emerald-500/10 text-emerald-500 border-none px-2.5 py-0.5 rounded-md text-[10px] w-fit">
-                                {category.name}
-                            </Badge>
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <Badge className="bg-emerald-500/10 text-emerald-500 border-none px-2.5 py-0.5 rounded-md text-[10px] w-fit">
+                                    {category.name}
+                                </Badge>
+                                {product.is_perishable && (
+                                    <Badge className="bg-amber-500/10 text-amber-500 border-none px-2.5 py-0.5 rounded-md text-[10px] w-fit">
+                                        Perishable
+                                    </Badge>
+                                )}
+                            </div>
                             <h1 className="text-xl font-bold text-white tracking-tight leading-tight">{product.name}</h1>
                             <p className="text-zinc-500 text-xs leading-relaxed">
                                 {product.description || "No description available."}
@@ -89,7 +96,7 @@ const ProductPage = ({ product, category }: { product: Product, category: Catego
                             </div>
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-zinc-500 flex items-center gap-2"><Barcode size={12} /> Barcode</span>
-                                <span className="text-zinc-300 font-mono text-[10px]">{product.barcode || "null"}</span>
+                                <span className="text-zinc-300 font-mono text-[10px]">{product.barcode || "—"}</span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-zinc-500 flex items-center gap-2"><Box size={12} /> Unit</span>
@@ -142,7 +149,7 @@ const ProductPage = ({ product, category }: { product: Product, category: Catego
                                 <div className="space-y-1.5">
                                     <p className="text-zinc-500 text-xs font-medium">Inventory Status</p>
                                     <p className={`text-xl font-bold ${product.warehouse_stocks?.quantity < 10 ? "text-orange-500" : "text-white"}`}>
-                                        {product.warehouse_stocks?.quantity ?? 1} <span className="text-xs font-normal text-zinc-500 ml-1">Units in hand</span>
+                                        {product.warehouse_stocks?.quantity ?? 0} <span className="text-xs font-normal text-zinc-500 ml-1">Units in hand</span>
                                     </p>
                                 </div>
                                 <Badge className={`${product.warehouse_stocks?.quantity < 10 ? "bg-orange-500/10 text-orange-500" : "bg-emerald-500/10 text-emerald-500"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider`}>

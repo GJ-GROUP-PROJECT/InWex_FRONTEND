@@ -1,4 +1,7 @@
+"use client"
+
 import Image from "next/image"
+import { Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -16,17 +19,23 @@ type ProductCardProps = {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
     const router = useRouter()
+    const stock = product.total_stock ?? 0
+    const isLowStock = stock < 10
 
     return (
         <Card className="w-full rounded-xl overflow-hidden bg-[#121212] p-0 border-none flex flex-col group transition-all hover:border-zinc-700/50">
             <div className="relative h-40 bg-zinc-900/50 flex items-center justify-center overflow-hidden">
-                <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
-                    priority
-                />
+                {product.image ? (
+                    <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
+                        priority
+                    />
+                ) : (
+                    <Package className="h-10 w-10 text-zinc-700" />
+                )}
             </div>
 
             <CardContent className="flex-1 px-4 pt-4 space-y-2">
@@ -48,11 +57,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                     </CardDescription>
                 </div>
 
-                <div className="flex items-center gap-1.5 pt-0.5">
-                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                    <p className="text-zinc-400 text-[10px] font-medium">
-                        Stock: {product.total_stock || 1} units
-                    </p>
+                <div className="flex items-center justify-between pt-0.5">
+                    <div className="flex items-center gap-1.5">
+                        <div className={`h-1.5 w-1.5 rounded-full shrink-0 ${isLowStock ? "bg-orange-500" : "bg-emerald-500"}`} />
+                        <p className={`text-[10px] font-medium ${isLowStock ? "text-orange-400" : "text-zinc-400"}`}>
+                            Stock: {stock} units
+                        </p>
+                    </div>
+                    {product.is_perishable && (
+                        <span className="text-[10px] text-amber-500 font-medium">Perishable</span>
+                    )}
                 </div>
             </CardContent>
 

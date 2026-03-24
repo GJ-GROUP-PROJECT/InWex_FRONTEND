@@ -53,12 +53,12 @@ const Navbar = () => {
                 </div>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10">
                     {navItems.map(({ label, id }) => (
                         <button
                             key={id}
                             onClick={() => scrollTo(id)}
-                            className="text-xs text-zinc-400 hover:text-white transition-colors duration-150"
+                            className="text-xs text-zinc-400 hover:text-white transition-colors duration-150 p-5"
                         >
                             {label}
                         </button>
@@ -119,7 +119,7 @@ const Navbar = () => {
                         <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
                                 <div className="flex items-center cursor-pointer group">
-                                    <Avatar className="h-9 w-9 transition-all ring-1 ring-white/10 hover:ring-white/20">
+                                    <Avatar className="h-9 w-9 transition-all">
                                         <AvatarImage src={user.avatar} className="object-cover" />
                                         <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-xs">
                                             {user.fullname?.slice(0, 2).toUpperCase() || "U"}
@@ -242,18 +242,18 @@ const Navbar = () => {
 
                                     <div className="mt-auto pb-8 flex flex-col gap-3">
                                         <Separator className="bg-zinc-800/60" />
-                                        <button
-                                            className="text-left text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1"
+                                        <Button
+                                            className="text-left text-xs! text-zinc-400 transition-colors px-3 py-1"
                                             onClick={handleDashboard}
                                         >
                                             Dashboard
-                                        </button>
-                                        <button
-                                            className="text-left text-xs text-red-400 hover:text-red-300 transition-colors px-3 py-1"
+                                        </Button>
+                                        <Button
+                                            className="text-left text-xs! text-red-400 transition-colors px-3 py-1"
                                             onClick={logout}
                                         >
                                             Log Out
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             )}

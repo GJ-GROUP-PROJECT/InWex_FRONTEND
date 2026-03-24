@@ -10,6 +10,7 @@ export const productSchema = z.object({
     selling_price: z.string().min(1, "Selling price is required"),
     image: z.instanceof(File).optional(),
     category: z.string().min(1, "Category is required"),
+    is_perishable: z.boolean(),
 })
 
 export type ProductValues = z.infer<typeof productSchema>

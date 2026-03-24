@@ -10,6 +10,7 @@ export const AddOrdersSchema = z.object({
         product: z.number(),
         quantity: z.number().min(1),
         unit_price: z.string(),
+        expiry_date: z.string().optional(),
     })).min(1, "Add at least one item"),
 })
 

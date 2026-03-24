@@ -5,6 +5,7 @@ import { useAuth } from "./AuthContext"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { AssignWarehouseValues } from "@/lib/schemas/staff/assignWarehouse.schema"
+import axios from "axios"
 
 export type AssignRoleValues = {
     is_manager: boolean
@@ -26,6 +27,16 @@ export type StaffContextType = {
 
 export const StaffContext = createContext<StaffContextType | undefined>(undefined)
 
+const extractErrorMessage = (err: unknown, fallback: string): string => {
+    if (axios.isAxiosError(err)) {
+        const data = err.response?.data
+        return Array.isArray(data)
+            ? data[0]
+            : data?.detail ?? data?.[0] ?? fallback
+    }
+    return fallback
+}
+
 export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     const [staffs, setStaffs] = useState<Staff[]>([])
     const [isLoading, setIsLoading] = useState(false)
@@ -36,15 +47,12 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchStaff = useCallback(async (showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
-
         try {
             const res = await api.get('api/warehouse/get-staff')
             setStaffs(res.data)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch staff"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -52,15 +60,12 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchStaffBySearch = useCallback(async (query: string, showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
-
         try {
             const res = await api.get(`api/warehouse/staff-search?name=${query}`)
             setStaffs(res.data)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to search staff"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -82,7 +87,7 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchStaff(false)
             toast.success("Warehouse assigned successfully")
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to assign warehouse")
+            toast.error(extractErrorMessage(err, "Failed to assign warehouse"))
         }
     }, [fetchStaff])
 
@@ -92,7 +97,7 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchStaff(false)
             toast.success("Role updated successfully")
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to update role")
+            toast.error(extractErrorMessage(err, "Failed to update role"))
         }
     }, [fetchStaff])
 
@@ -102,9 +107,9 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchStaff(true)
             toast.success("Staff updated successfully")
             router.push("/dashboard/staff")
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to update staff"))
+            toast.error(extractErrorMessage(err, "Failed to update staff"))
         }
     }, [fetchStaff, router])
 
@@ -114,9 +119,8 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchStaff(true)
             toast.success("Staff deleted successfully")
             router.push("/dashboard/staff")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to delete staff")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to delete staff"))
         }
     }, [fetchStaff, router])
 

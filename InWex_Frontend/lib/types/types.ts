@@ -38,9 +38,10 @@ export type Product = {
     image: string
     total_stock: number
     warehouse_stocks: Stock
+    is_perishable: boolean
     created_at: string
     updated_at: string
-    category: string
+    category: number
     owner: number
     status: string
 }
@@ -110,4 +111,5 @@ export type OrderItems = {
     product: Product
     quantity: number
     unit_price: string
+    expiry_date?: string
 }

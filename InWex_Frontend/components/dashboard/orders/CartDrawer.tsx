@@ -50,6 +50,12 @@ const CartDrawer = () => {
         return acc + (Number(item.unit_price || 0) * Number(item.quantity || 0))
     }, 0) || 0
 
+    const hasPerishableItems = fields.some((_, idx) => {
+        const productId = watchItems[idx]?.product
+        const product = searchResults.find(p => String(p.id) === String(productId)) ?? productCache[String(productId)]
+        return product?.is_perishable
+    })
+
     useEffect(() => {
         const subscription = form.watch((value) => { stageOrder(value as OrderValues) })
         return () => subscription.unsubscribe()
@@ -86,12 +92,25 @@ const CartDrawer = () => {
 
     const handleAddProduct = (product: Product) => {
         cacheProducts([product])
+
         const currentItems = form.getValues("items")
-        const existingIndex = currentItems.findIndex(i => i.product === product.id)
+
+        const existingIndex = currentItems.findIndex(
+            i => i.product === product.id
+        )
+
         if (existingIndex !== -1) {
-            form.setValue(`items.${existingIndex}.quantity`, currentItems[existingIndex].quantity + 1)
+            form.setValue(
+                `items.${existingIndex}.quantity`,
+                currentItems[existingIndex].quantity + 1
+            )
         } else {
-            append({ product: product.id, quantity: 1, unit_price: String(product.cost_price) })
+            append({
+                product: product.id,
+                quantity: 1,
+                unit_price: String(product.cost_price),
+                expiry_date: "",
+            })
         }
     }
 
@@ -175,7 +194,6 @@ const CartDrawer = () => {
                                         )}
                                     />
 
-                                    {/* Client field — Outbound only */}
                                     {watchOrderType === "Outbound" && (
                                         <FormField
                                             control={form.control}
@@ -229,7 +247,14 @@ const CartDrawer = () => {
                                                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 hover:border-zinc-600 transition-colors group"
                                             >
                                                 <div className="text-left">
-                                                    <p className="text-xs font-medium text-white">{product.name}</p>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <p className="text-xs font-medium text-white">{product.name}</p>
+                                                        {product.is_perishable && (
+                                                            <span className="text-[9px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-full">
+                                                                Perishable
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <p className="text-[10px] text-zinc-500 mt-0.5">₹{product.cost_price}</p>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
@@ -260,7 +285,6 @@ const CartDrawer = () => {
                                         </div>
                                     </div>
 
-                                    {/* Client — shown in review only for Outbound with a value */}
                                     {watchOrderType === "Outbound" && watchClient && (
                                         <div className="mt-2 p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
                                             <p className="text-[10px] text-zinc-500 uppercase">Client</p>
@@ -281,7 +305,7 @@ const CartDrawer = () => {
                                         <h3 className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">Items Breakdown</h3>
                                         <span className="text-[10px] text-zinc-500 font-mono">{fields.length} SKUs</span>
                                     </div>
-                                    <div>
+                                    <div className="space-y-2">
                                         {fields.map((field, index) => {
                                             const productId = watchItems[index]?.product
                                             const productDetail = searchResults.find(p => String(p.id) === String(productId)) ?? productCache[String(productId)]
@@ -289,9 +313,16 @@ const CartDrawer = () => {
                                                 <div key={field.id} className="group p-3 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-all">
                                                     <div className="flex justify-between items-start">
                                                         <div className="space-y-1.5">
-                                                            <p className="text-xs font-semibold text-white leading-tight">
-                                                                {productDetail?.name || "Unknown product"}
-                                                            </p>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <p className="text-xs font-semibold text-white leading-tight">
+                                                                    {productDetail?.name || "Unknown product"}
+                                                                </p>
+                                                                {productDetail?.is_perishable && (
+                                                                    <span className="text-[9px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded-full">
+                                                                        Perishable
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                             <p className="text-[10px] text-zinc-500">
                                                                 {watchItems[index]?.quantity} units x ₹{Number(watchItems[index]?.unit_price).toLocaleString()}
                                                             </p>
@@ -310,6 +341,48 @@ const CartDrawer = () => {
                                         })}
                                     </div>
                                 </section>
+
+                                {/* Expiry Dates — perishable items only */}
+                                {hasPerishableItems && (
+                                    <section>
+                                        <h3 className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider mb-2">Expiry Dates</h3>
+                                        <div className="space-y-2">
+                                            {fields.map((field, index) => {
+                                                const productId = watchItems[index]?.product
+                                                const productDetail = searchResults.find(p => String(p.id) === String(productId)) ?? productCache[String(productId)]
+                                                if (!productDetail?.is_perishable) return null
+                                                return (
+                                                    <div key={field.id} className="p-3 rounded-xl bg-zinc-900/50 border border-amber-500/20">
+                                                        <div className="flex items-center justify-between gap-3">
+                                                            <div className="min-w-0">
+                                                                <p className="text-xs font-semibold text-white truncate">{productDetail.name}</p>
+                                                                <p className="text-[10px] text-amber-500 mt-0.5">Expiry date required</p>
+                                                            </div>
+                                                            <FormField
+                                                                control={form.control}
+                                                                name={`items.${index}.expiry_date`}
+                                                                render={({ field }) => (
+                                                                    <FormItem className="space-y-0 shrink-0">
+                                                                        <FormControl>
+                                                                            <Input
+                                                                                {...field}
+                                                                                value={field.value || ""}
+                                                                                type="date"
+                                                                                className="h-8 text-xs! rounded-lg border-zinc-700 bg-zinc-900 text-white w-36"
+                                                                                min={new Date().toISOString().split('T')[0]}
+                                                                            />
+                                                                        </FormControl>
+                                                                        <FormMessage />
+                                                                    </FormItem>
+                                                                )}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </section>
+                                )}
                             </div>
                         )}
 

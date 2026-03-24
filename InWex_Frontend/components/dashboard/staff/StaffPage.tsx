@@ -182,7 +182,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
         }, 0)
 
         return () => clearTimeout(timer)
-    }, [liveStaff])
+    }, [form, liveStaff])
 
     useEffect(() => {
         if (warehouses.length === 0) fetchWarehouses()

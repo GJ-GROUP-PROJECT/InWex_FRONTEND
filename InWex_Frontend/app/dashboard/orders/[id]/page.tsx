@@ -1,21 +1,29 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrder } from '@/contexts/OrderContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
-    ArrowLeft, Package, Calendar, FileText, Loader2, Download,
+    ArrowLeft, Package, Calendar, FileText, Loader2, Download, RotateCcw,
 } from 'lucide-react'
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table"
 import { OrderItems } from '@/lib/types/types'
 
+const statusStyles: Record<string, string> = {
+    Requested: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20",
+    In_Progress: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    Delivered: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    Returned: "bg-red-500/10 text-red-400 border-red-500/20",
+    Cancelled: "bg-red-500/10 text-red-400 border-red-500/20",
+}
+
 const OrderDetailsPage = () => {
     const router = useRouter()
-    const { selectedOrder, fetchSelectedOrder, clearSelectedOrder, downloadOrder, shippingOrder, completeOrder } = useOrder()
+    const { selectedOrder, fetchSelectedOrder, clearSelectedOrder, downloadOrder, shippingOrder, completeOrder, returnOrder } = useOrder()
     const [loading, setLoading] = useState(true)
 
     const order = selectedOrder?.[0]
@@ -46,6 +54,9 @@ const OrderDetailsPage = () => {
         )
     }
 
+    const isDelivered = order.status === "Delivered"
+    const isInProgress = order.status === "In_Progress"
+
     return (
         <div className="p-6 max-w-7xl mx-auto space-y-6">
             {/* Header */}
@@ -75,26 +86,46 @@ const OrderDetailsPage = () => {
                             <Download className="w-3.5! h-3.5! mr-1" />
                             Download Invoice
                         </Button>
-                        <Button
-                            size="sm"
-                            className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
-                            onClick={async () => {
-                                await shippingOrder(order.id)
-                                await fetchSelectedOrder(false)
-                            }}
-                        >
-                            Ship Order
-                        </Button>
-                        <Button
-                            size="sm"
-                            className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
-                            onClick={async () => {
-                                await completeOrder(order.id)
-                                await fetchSelectedOrder(false)
-                            }}
-                        >
-                            Complete Order
-                        </Button>
+
+                        {isDelivered && (
+                            <Button
+                                size="sm"
+                                className="h-8 text-xs bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20"
+                                onClick={async () => {
+                                    await returnOrder(order.id)
+                                    await fetchSelectedOrder(false)
+                                }}
+                            >
+                                <RotateCcw className="w-3 h-3 mr-1" />
+                                Return Order
+                            </Button>
+                        )}
+
+                        {order.status === "Requested" && (
+                            <Button
+                                size="sm"
+                                className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
+                                onClick={async () => {
+                                    await shippingOrder(order.id)
+                                    await fetchSelectedOrder(false)
+                                }}
+                            >
+                                Ship Order
+                            </Button>
+                        )}
+
+                        {isInProgress && (
+                            <Button
+                                size="sm"
+                                className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
+                                onClick={async () => {
+                                    await completeOrder(order.id)
+                                    await fetchSelectedOrder(false)
+                                }}
+                            >
+                                Complete Order
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -105,8 +136,8 @@ const OrderDetailsPage = () => {
                     <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
                         <Package size={11} /> Status
                     </div>
-                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 rounded-full px-3 text-[10px]">
-                        {order.status}
+                    <Badge className={`rounded-full px-3 text-[10px] border ${statusStyles[order.status] ?? statusStyles.Requested}`}>
+                        {order.status.replace("_", " ")}
                     </Badge>
                 </div>
 
@@ -145,6 +176,7 @@ const OrderDetailsPage = () => {
                                 <TableHead className="h-9 pl-5 text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Product Details</TableHead>
                                 <TableHead className="h-9 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-center">SKU</TableHead>
                                 <TableHead className="h-9 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-center">Unit Price</TableHead>
+                                <TableHead className="h-9 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-center">Expiry Date</TableHead>
                                 <TableHead className="h-9 text-zinc-500 uppercase text-[10px] font-bold tracking-widest text-right pr-5">Quantity</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -166,6 +198,17 @@ const OrderDetailsPage = () => {
                                     </TableCell>
                                     <TableCell className="text-zinc-300 text-xs text-center">
                                         ₹{item.product.cost_price}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {item.expiry_date ? (
+                                            <span className="text-[10px] font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                                                {new Date(item.expiry_date).toLocaleDateString('en-IN', {
+                                                    day: '2-digit', month: 'short', year: 'numeric'
+                                                })}
+                                            </span>
+                                        ) : (
+                                            <span className="text-[10px] text-zinc-600">—</span>
+                                        )}
                                     </TableCell>
                                     <TableCell className="text-right pr-5 text-white font-bold text-xs">
                                         {item.quantity}

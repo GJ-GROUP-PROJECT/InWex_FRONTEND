@@ -4,6 +4,7 @@ import { useAuth } from "./AuthContext"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
 import { OrderValues } from "@/lib/schemas/order/addOrders.schema"
+import axios from "axios"
 
 export type OrderContextType = {
     orders: Orders[]
@@ -24,6 +25,7 @@ export type OrderContextType = {
     fetchOrderByClientId: (query: string, showLoading?: boolean) => Promise<void>
     shippingOrder: (orderId: number) => Promise<void>
     completeOrder: (orderId: number) => Promise<void>
+    returnOrder: (orderId: number) => Promise<void>
     downloadOrder: (orderId: number) => Promise<void>
     addOrder: (order: OrderValues) => Promise<void>
     deleteOrder: (orderId: number) => Promise<void>
@@ -34,6 +36,16 @@ export type OrderContextType = {
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined)
 
+const extractErrorMessage = (err: unknown, fallback: string): string => {
+    if (axios.isAxiosError(err)) {
+        const data = err.response?.data
+        return Array.isArray(data)
+            ? data[0]
+            : data?.detail ?? data?.[0] ?? fallback
+    }
+    return fallback
+}
+
 export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const [orders, setOrders] = useState<Orders[]>([])
     const [count, setCount] = useState<number | null>(null)
@@ -42,7 +54,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const [selectedOrder, setSelectedOrder] = useState<Orders[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const { user } = useAuth()
+    const { user, isLoading: authLoading } = useAuth()
 
     const [pendingOrder, setPendingOrder] = useState<OrderValues | null>(() => {
         if (typeof window !== 'undefined') {
@@ -60,32 +72,30 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         return {}
     })
 
-    const stageOrder = (order: OrderValues) => {
+    const stageOrder = useCallback((order: OrderValues) => {
         setPendingOrder(order)
         localStorage.setItem("inwex_draft_order", JSON.stringify(order))
-    }
+    }, [])
 
-    const cacheProducts = (products: Product[]) => {
+    const cacheProducts = useCallback((products: Product[]) => {
         setProductCache(prev => {
             const updated = { ...prev, ...Object.fromEntries(products.map(p => [p.id, p])) }
             localStorage.setItem("inwex_product_cache", JSON.stringify(updated))
             return updated
         })
-    }
+    }, [])
 
-    const clearPendingOrder = () => {
+    const clearPendingOrder = useCallback(() => {
         setPendingOrder(null)
         setProductCache({})
         localStorage.removeItem("inwex_draft_order")
         localStorage.removeItem("inwex_product_cache")
-    }
+    }, [])
 
-    // Called from OrdersTable "View Details" — just stores the reference
     const selectOrder = useCallback((reference: string) => {
         localStorage.setItem("inwex_selected_order_ref", reference)
     }, [])
 
-    // Called from detail page "Back" button — clears ref and state
     const clearSelectedOrder = useCallback(() => {
         localStorage.removeItem("inwex_selected_order_ref")
         setSelectedOrder([])
@@ -100,7 +110,9 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             setCount(data.count)
             setNextUrl(data.next ?? null)
         } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+            const message = extractErrorMessage(err, "Failed to fetch orders")
+            setError(message)
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }
@@ -129,13 +141,13 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             const res = await api.get(`/products/get-order-detail?id=${query}`)
             setSelectedOrder(res.data.results)
         } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+            const message = extractErrorMessage(err, "Failed to fetch order")
+            setError(message)
         } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
 
-    // Reads ref from localStorage and fetches — called on detail page mount & refresh
     const fetchSelectedOrder = useCallback(async (showLoading = true) => {
         const ref = localStorage.getItem("inwex_selected_order_ref")
         if (!ref) return
@@ -149,7 +161,9 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             const res = await api.get(`/products/client-orders?search=${query}`)
             setOrders(res.data.results)
         } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+            const message = extractErrorMessage(err, "Failed to fetch orders")
+            setError(message)
+            toast.error(message)
         } finally {
             if (showLoading) setIsLoading(false)
         }
@@ -161,7 +175,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             toast.success("Order marked as in-progress")
             await fetchOrders(false)
         } catch (err) {
-            const message = err instanceof Error ? err.message : "Failed to mark order"
+            const message = extractErrorMessage(err, "Failed to mark order")
             setError(message)
             toast.error(message)
         }
@@ -173,7 +187,19 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             toast.success("Order marked as delivered")
             await fetchOrders(false)
         } catch (err) {
-            const message = err instanceof Error ? err.message : "Failed to complete order"
+            const message = extractErrorMessage(err, "Failed to complete order")
+            setError(message)
+            toast.error(message)
+        }
+    }, [fetchOrders])
+
+    const returnOrder = useCallback(async (orderId: number) => {
+        try {
+            await api.post(`/products/order/${orderId}/return_order`)
+            toast.success("Order returned successfully")
+            await fetchOrders(false)
+        } catch (err) {
+            const message = extractErrorMessage(err, "Failed to return order")
             setError(message)
             toast.error(message)
         }
@@ -194,37 +220,41 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             document.body.removeChild(link)
             window.URL.revokeObjectURL(url)
         } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+            const message = extractErrorMessage(err, "Failed to download invoice")
+            setError(message)
+            toast.error(message)
         }
     }, [])
 
-    useEffect(() => {
-        if (!user) {
-            setOrders([])
-            setSelectedOrder([])
-            clearPendingOrder()
-        }
-    }, [user])
-
-    const addOrder: OrderContextType['addOrder'] = async (order) => {
+    const addOrder: OrderContextType['addOrder'] = useCallback(async (order) => {
         try {
             await api.post("/products/order", order)
             toast.success("Order added successfully")
             await fetchOrders(true)
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to add product")
+            const message = extractErrorMessage(err, "Failed to add order")
+            toast.error(message)
         }
-    }
+    }, [fetchOrders])
 
-    const deleteOrder: OrderContextType['deleteOrder'] = async (orderId: number) => {
+    const deleteOrder: OrderContextType['deleteOrder'] = useCallback(async (orderId: number) => {
         try {
             await api.delete(`/products/order/${orderId}`)
             toast.success("Order deleted successfully")
             await fetchOrders(true)
         } catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to delete product")
+            const message = extractErrorMessage(err, "Failed to delete order")
+            toast.error(message)
         }
-    }
+    }, [fetchOrders])
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            setOrders([])
+            setSelectedOrder([])
+            clearPendingOrder()
+        }
+    }, [user, authLoading, clearPendingOrder])
 
     return (
         <OrderContext.Provider
@@ -247,6 +277,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 fetchOrderByClientId,
                 shippingOrder,
                 completeOrder,
+                returnOrder,
                 downloadOrder,
                 addOrder,
                 deleteOrder,

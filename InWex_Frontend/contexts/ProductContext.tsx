@@ -8,8 +8,9 @@ import { ProductValues } from "@/lib/schemas/product/addProduct.schema"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { PAGINATION_URL, PAGINATION_URL_FOR_SEARCH } from "@/components/config"
+import axios from "axios"
 
-type UpdateProductPayload = Omit<Partial<Product>, 'image'> & { image?: File }
+type UpdateProductPayload = Omit<Partial<Product>, 'image' | 'category'> & { image?: File }
 
 type ProductContextType = {
     products: Product[]
@@ -37,6 +38,16 @@ type ProductContextType = {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined)
 
+const extractErrorMessage = (err: unknown, fallback: string): string => {
+    if (axios.isAxiosError(err)) {
+        const data = err.response?.data
+        return Array.isArray(data)
+            ? data[0]
+            : data?.detail ?? data?.[0] ?? fallback
+    }
+    return fallback
+}
+
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
     const [products, setProducts] = useState<Product[]>([])
     const [categories, setCategories] = useState<Category[]>([])
@@ -46,7 +57,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         total_pages: null as number | null,
         current_page: 1
     })
-    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [searchQuery, setSearchQuery] = useState<string>("")
     const [count, setCount] = useState<number | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -58,23 +69,18 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         let url: string
         if (searchQuery) {
             url = `${PAGINATION_URL_FOR_SEARCH}?page=${page}&product=${searchQuery}&`
-        }
-        else {
+        } else {
             url = `${PAGINATION_URL}?page=${page}`
         }
-        fetchProducts(true, url);
+        fetchProducts(true, url)
     }
 
     const goToNextPage = () => {
-        if (pagination.next) {
-            fetchProducts(true, pagination.next)
-        }
+        if (pagination.next) fetchProducts(true, pagination.next)
     }
 
     const goToPrevPage = () => {
-        if (pagination.prev) {
-            fetchProducts(true, pagination.prev)
-        }
+        if (pagination.prev) fetchProducts(true, pagination.prev)
     }
 
     const fetchProducts = useCallback(async (showLoading = true, url?: string) => {
@@ -83,25 +89,18 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         try {
             const endPoint = url || '/products/get-products'
             const res = await api.get(endPoint)
-
             setProducts(res.data.results)
             setCount(res.data.count)
-
             setPagination({
                 next: res.data.next,
                 prev: res.data.previous,
                 total_pages: res.data.total_pages,
                 current_page: res.data.current_page
             })
-
-            if (!url) {
-                setSearchQuery("");
-            }
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+            if (!url) setSearchQuery("")
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch products"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -109,15 +108,12 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     const fetchProductBySlug = useCallback(async (showLoading = true, slug: string) => {
         if (showLoading) setIsLoading(true)
         setError(null)
-
         try {
             const res = await api.get(`/api/warehouse/get-product?slug=${slug}`)
             setSelectedProduct(res.data)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch product"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -129,18 +125,15 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         try {
             const res = await api.get(`products/product-search?product=${query}`)
             setProducts(res.data.results)
-
             setPagination({
                 next: res.data.next,
                 prev: res.data.previous,
                 total_pages: res.data.total_pages,
                 current_page: res.data.current_page
             })
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
-        }
-        finally {
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to search products"))
+        } finally {
             if (showLoading) setIsLoading(false)
         }
     }, [])
@@ -149,9 +142,8 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         try {
             const res = await api.get('/products/get-categories')
             setCategories(res.data)
-        }
-        catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch categories"))
         }
     }, [])
 
@@ -160,12 +152,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             setProducts([])
             setCategories([])
             setCount(null)
-            setPagination({
-                next: null,
-                prev: null,
-                total_pages: null,
-                current_page: 1
-            })
+            setPagination({ next: null, prev: null, total_pages: null, current_page: 1 })
             setError(null)
         }
     }, [user])
@@ -176,16 +163,14 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             Object.entries(product).forEach(([key, value]) => {
                 if (value !== undefined) formData.append(key, value as string | Blob)
             })
-
             await api.post("/products/add-products", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
             toast.success("Product added successfully")
             await fetchProducts(true)
             router.push("/dashboard/inventory/")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to add product")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to add product"))
         }
     }
 
@@ -195,28 +180,25 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
             Object.entries(updatedProduct).forEach(([key, value]) => {
                 if (value !== undefined) formData.append(key, value as string | Blob)
             })
-
             await api.patch(`/products/add-products/${productId}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
             await fetchProducts(true)
             toast.success("Product updated successfully")
             router.push("/dashboard/inventory/")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to update product")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to update product"))
         }
     }
 
     const deleteProduct: ProductContextType['deleteProduct'] = async (productId) => {
         try {
             await api.delete(`/products/add-products/${productId}`)
-            await fetchProducts(true);
+            await fetchProducts(true)
             toast.success("Product deleted successfully")
             router.push("/dashboard/inventory/")
-        }
-        catch (err) {
-            toast.error(err instanceof Error ? err.message : "Failed to delete product")
+        } catch (err) {
+            toast.error(extractErrorMessage(err, "Failed to delete product"))
         }
     }
 
