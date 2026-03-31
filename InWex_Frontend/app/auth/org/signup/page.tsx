@@ -49,7 +49,7 @@ const SignupAsComp = () => {
     const onSubmit = async (data: SignupOrgValues) => {
         try {
             await api.post<SignupOrgResponse>("/accounts/register", data)
-            router.push("/dashboard")
+            router.push("/auth/verify")
         }
         catch (error) {
             if (axios.isAxiosError(error)) {
