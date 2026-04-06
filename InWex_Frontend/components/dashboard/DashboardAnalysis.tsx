@@ -54,6 +54,12 @@ export default function DashboardAnalysis() {
         return productProfit.reduce((acc, item) => acc + item.profit, 0)
     }, [productProfit])
 
+    const stats = useMemo(() => {
+        const totalQuantity = mostSoldItems.reduce((acc, item) => acc + (item.total_sold || 0), 0);
+        const aov = totalQuantity > 0 ? totalRevenue / totalQuantity : 0;
+        return { aov };
+    }, [mostSoldItems, totalRevenue]);
+
     const salesChartConfig: ChartConfig = {
         total_sold: { label: "Total Units Sold", color: "#ffffff" }
     }
@@ -113,10 +119,10 @@ export default function DashboardAnalysis() {
                     icon={<AlertTriangle className="text-amber-500" size={14} />}
                 />
                 <KPICard
-                    title="Inventory Health"
-                    value="94%"
-                    subValue="System efficiency"
-                    icon={<Warehouse className="text-blue-500" size={14} />}
+                    title="Avg. Revenue / Unit"
+                    value={`₹${stats.aov.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                    subValue="Based on current sales volume"
+                    icon={<TrendingUp className="text-emerald-500" size={14} />}
                 />
             </div>
 

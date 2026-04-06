@@ -21,18 +21,16 @@ const About = () => {
                 {/* Left Content */}
                 <div className="flex flex-col gap-3">
                     <p className="text-xs text-zinc-400 leading-relaxed">
-                        Our Smart Warehouse Management System is designed to streamline
-                        your inventory operations and provide real-time insights into
-                        your warehouse performance.
+                        Our Inventory Management System helps businesses gain complete visibility
+                        over their stock, orders, and product performance in real time.
                     </p>
                     <p className="text-xs text-zinc-400 leading-relaxed">
-                        We help businesses reduce costs and improve operational efficiency,
-                        whether you&#39;re running a small warehouse or managing multiple
-                        facilities.
+                        From small businesses to large-scale operations, we simplify inventory
+                        tracking, reduce losses, and improve decision-making with actionable insights.
                     </p>
                     <p className="text-xs text-zinc-400 leading-relaxed">
-                        Our system scales with your needs and provides the tools
-                        you need to succeed at every stage of growth.
+                        Designed for scalability, our platform grows with your business and adapts
+                        to your operational needs effortlessly.
                     </p>
                 </div>
 

@@ -15,7 +15,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
     title: "Inwex",
-    description: "Intelligent Network Warehouse and Inventory Management System",
+    description: "Intelligent Network Inventory Management System",
 };
 
 export default function RootLayout({

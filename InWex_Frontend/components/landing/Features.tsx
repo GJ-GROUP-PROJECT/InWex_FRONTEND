@@ -1,27 +1,27 @@
 const features = [
     {
         title: "Role-Based Access",
-        description: "Secure access control for Admins, Managers, and Staff with fine-grained permissions.",
+        description: "Control access across Admins, Managers, and Staff with secure and customizable permissions.",
     },
     {
-        title: "Real-Time Inventory",
-        description: "Track stock levels instantly and avoid overstocking or shortages with live updates.",
+        title: "Real-Time Inventory Tracking",
+        description: "Monitor stock levels instantly across multiple locations and prevent stockouts or overstocking.",
     },
     {
-        title: "Product Sitting Analysis",
-        description: "Identify slow-moving products and optimize warehouse storage efficiency.",
+        title: "Multi-Location Management",
+        description: "Manage inventory across warehouses, stores, or branches from a single unified dashboard.",
     },
     {
-        title: "Category Performance",
-        description: "Analyze category-wise performance and make data-driven decisions.",
+        title: "Analytics & Reporting",
+        description: "Generate detailed reports and visual insights to track KPIs and make data-driven decisions.",
     },
     {
-        title: "Analytics Dashboard",
-        description: "Visual insights with charts and reports to monitor warehouse KPIs in one place.",
+        title: "Order & Stock Management",
+        description: "Track incoming and outgoing stock with seamless order management workflows.",
     },
     {
         title: "Secure & Scalable",
-        description: "Built with modern security standards and scalable architecture for growing operations.",
+        description: "Built with modern architecture to ensure data security and seamless scalability.",
     },
 ]
 

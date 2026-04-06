@@ -64,7 +64,7 @@ const Contact = () => {
             <div className="mb-12 text-center">
                 <h2 className="text-xl md:text-4xl font-bold tracking-tight">Get In Touch</h2>
                 <p className="mt-2.5 text-xs text-zinc-400 leading-relaxed max-w-lg mx-auto">
-                    Have questions about our warehouse management system? We&#39;d love to
+                    Have questions about our inventory management system? We&#39;d love to
                     hear from you.
                 </p>
             </div>

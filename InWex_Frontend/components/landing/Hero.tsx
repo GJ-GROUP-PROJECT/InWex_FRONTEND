@@ -18,14 +18,13 @@ const Hero = () => {
             <div className="relative z-20 flex h-full items-center">
                 <div className="mx-auto max-w-4xl px-6 pb-6 text-white">
                     <h1 className="text-xl md:text-6xl font-bold leading-tight">
-                        Smart Warehouse <br />
+                        <span className="text-2xl md:text-7xl">Inventory</span> <br />
                         Management System
                     </h1>
 
                     <p className="mt-2.5 max-w-xl text-xs text-zinc-400 leading-relaxed">
-                        Track inventory in real-time, optimize storage, analyze product
-                        movement, and manage roles securely — all from one powerful
-                        dashboard.
+                        Manage stock, track product movement, forecast demand, and gain real-time
+                        insights — all in one powerful inventory management system built for modern businesses.
                     </p>
 
                     <div className="mt-4">
