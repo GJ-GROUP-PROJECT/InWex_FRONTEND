@@ -9,6 +9,9 @@ import {
 import { useAuth } from "@/contexts/AuthContext"
 import NotificationBell from "./NotificationBell"
 import CartDrawer from "../orders/CartDrawer"
+import { useState, useEffect } from "react"
+import { Switch } from "../../ui/switch"
+import { api } from "@/lib/api"
 
 interface NavbarProps {
     leftContent?: React.ReactNode
@@ -16,6 +19,29 @@ interface NavbarProps {
 
 const Navbar = ({ leftContent }: NavbarProps) => {
     const { user, role } = useAuth()
+    const [notificationSound, setNotificationSound] = useState(true)
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get("/accounts/settings")
+                setNotificationSound(res.data.notification_sound)
+            } catch (err) {
+                console.error("Failed to fetch settings", err)
+            }
+        }
+        if (user) fetchSettings()
+    }, [user])
+
+    const toggleNotificationSound = async (value: boolean) => {
+        setNotificationSound(value)
+        try {
+            await api.patch("/accounts/settings", { notification_sound: value })
+        } catch (err) {
+            console.error("Failed to update notification sound", err)
+            setNotificationSound(!value)
+        }
+    }
 
     const userRole = role?.manager
         ? "Manager"
@@ -49,7 +75,7 @@ const Navbar = ({ leftContent }: NavbarProps) => {
                     <DropdownMenuContent
                         align="end"
                         sideOffset={10}
-                        className="w-64 p-0 bg-zinc-950 border border-zinc-900 rounded-xl shadow-2xl overflow-hidden"
+                        className="w-70 p-0 bg-zinc-950 border border-zinc-900 rounded-xl shadow-2xl overflow-hidden"
                     >
                         <div className="p-4 bg-zinc-900/30">
                             <div className="flex items-center gap-3">
@@ -72,6 +98,15 @@ const Navbar = ({ leftContent }: NavbarProps) => {
                                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-md">
                                     {userRole}
                                 </span>
+                            </div>
+
+                            <div className="flex justify-between items-center bg-zinc-900/50 p-2.5 rounded-lg">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Notification Sound</span>
+                                <Switch
+                                    checked={notificationSound}
+                                    onCheckedChange={toggleNotificationSound}
+                                    className="scale-75 origin-right"
+                                />
                             </div>
                         </div>
                     </DropdownMenuContent>

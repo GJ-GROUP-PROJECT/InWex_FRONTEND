@@ -14,7 +14,6 @@ import {
     SidebarGroupContent,
 } from "./sidebar"
 import {
-    Settings,
     LogOut,
 } from "lucide-react"
 import { NonStaffItems, staffItems } from "../config/sidebar/sidebarItems"
@@ -71,14 +70,6 @@ const AppSidebar = ({ role }: { role: string }) => {
             {/* Bottom */}
             <SidebarFooter className="pb-10">
                 <SidebarMenu>
-                    <SidebarMenuItem className="mb-1">
-                        <SidebarMenuButton
-                            className="flex text-sm! items-center gap-5 px-4 py-6 transition-colors text-neutral-400 hover:text-white"
-                        >
-                            <Settings className="h-4! w-4! ml-4" />
-                            <span>Settings</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
                     <SidebarMenuItem className="mb-1">
                         <SidebarMenuButton
                             onClick={logout}
