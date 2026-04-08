@@ -23,6 +23,7 @@ export type Users = {
     user_status: string
     is_warehouse_staff: boolean
     is_manager: boolean
+    is_active: boolean
 }
 
 export type Product = {

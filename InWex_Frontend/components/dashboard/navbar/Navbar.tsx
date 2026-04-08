@@ -13,11 +13,7 @@ import { useState, useEffect } from "react"
 import { Switch } from "../../ui/switch"
 import { api } from "@/lib/api"
 
-interface NavbarProps {
-    leftContent?: React.ReactNode
-}
-
-const Navbar = ({ leftContent }: NavbarProps) => {
+const Navbar = () => {
     const { user, role } = useAuth()
     const [notificationSound, setNotificationSound] = useState(true)
 
@@ -52,9 +48,7 @@ const Navbar = ({ leftContent }: NavbarProps) => {
     if (!user) return null
 
     return (
-        <div className="flex items-center justify-between w-full px-4 py-3 bg-black/50 backdrop-blur-md">
-            <div className="flex-1 text-white">{leftContent}</div>
-
+        <div className="flex items-center justify-end w-full px-4 py-3 bg-black/50 backdrop-blur-md">
             <div className="flex items-center gap-1.5">
                 <CartDrawer />
 

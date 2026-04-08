@@ -225,8 +225,8 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                 </Button>
 
                 <div className="flex items-center gap-3">
-                    <Badge className={`${liveStaff.is_confirmed ? "bg-blue-500/10 text-blue-400" : "bg-orange-500/10 text-orange-400"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest`}>
-                        {liveStaff.is_confirmed ? "Verified Member" : "Verification Pending"}
+                    <Badge className={`${liveStaff.user?.is_active ? "bg-blue-500/10 text-blue-400" : "bg-orange-500/10 text-orange-400"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest`}>
+                        {liveStaff.user?.is_active ? "Verified Member" : "Verification Pending"}
                     </Badge>
 
                     <Sheet>
