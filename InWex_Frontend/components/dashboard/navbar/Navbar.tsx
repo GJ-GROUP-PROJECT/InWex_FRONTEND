@@ -58,7 +58,7 @@ const Navbar = ({ leftContent }: NavbarProps) => {
             <div className="flex items-center gap-1.5">
                 <CartDrawer />
 
-                <NotificationBell />
+                <NotificationBell sound={notificationSound} />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

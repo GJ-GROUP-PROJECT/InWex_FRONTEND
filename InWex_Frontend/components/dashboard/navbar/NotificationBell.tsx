@@ -7,7 +7,8 @@ import { api } from "@/lib/api"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/components/ui/button"
 
-const NotificationBell = () => {
+
+const NotificationBell = ({ sound }: { sound?: boolean }) => {
     const [notifications, setNotifications] = useState<{ id: number, title: string, message: string, created_at: string, is_read: boolean }[]>([])
     const unreadCount = notifications.filter((n) => !n.is_read).length
 
@@ -21,9 +22,10 @@ const NotificationBell = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data)
             setNotifications((prev) => [data, ...prev])
-            new Audio("/sound/notification_v2.mp3").play().catch(() => { })
+            console.log(sound)
+            if (sound) new Audio("/sound/notification_v2.mp3").play().catch(() => { })
         }
-    }, [])
+    }, [sound])
 
     const markAllRead = () => {
         api.get("/network/notifications?is_read=true")
@@ -36,6 +38,7 @@ const NotificationBell = () => {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
+                    size="icon"
                     className="relative bg-zinc-900/50 hover:bg-zinc-900 border-none rounded-lg transition-all group outline-none"
                 >
                     <Bell className="h-3 w-3 text-zinc-500 group-hover:text-white transition-colors" />

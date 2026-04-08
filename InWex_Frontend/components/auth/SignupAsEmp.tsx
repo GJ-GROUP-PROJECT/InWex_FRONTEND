@@ -13,6 +13,7 @@ import { api } from "@/lib/api"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { Eye, EyeOff } from "lucide-react"
 
 type SignupFormProps = {
     onSwitch: () => void
@@ -21,6 +22,7 @@ type SignupFormProps = {
 const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const router = useRouter()
     const [orgs, setOrgs] = useState<Array<{ id: string; name: string }>>([])
+    const [showPassword, setShowPassword] = useState(false)
 
     useEffect(() => {
         const fetchingOrg = async () => {
@@ -54,7 +56,6 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
     const EmpFields = [
         { name: "fullname", label: "Name", placeholder: "Example Full Name", type: "text", autoComplete: "name" },
         { name: "email", label: "Email", placeholder: "your@example.com", type: "email", autoComplete: "email" },
-        { name: "password", label: "Password", placeholder: "••••••••", type: "password", autoComplete: "current-password" },
         { name: "contact_number", label: "Contact", placeholder: "9772122472", type: "text", autoComplete: undefined },
     ] satisfies readonly {
         name: keyof SignupEmpValues
@@ -111,6 +112,37 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
                                 )}
                             />
                         ))}
+
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ? "text" : "password"}
+                                                placeholder="••••••••"
+                                                autoComplete="current-password"
+                                                className="h-9 text-xs! pl-3 border-none"
+                                                {...field}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(prev => !prev)}
+                                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                                            >
+                                                {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
+                                            </button>
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="text-[11px]" />
+                                </FormItem>
+                            )}
+                        >
+
+                        </FormField>
 
                         <FormField
                             control={form.control}

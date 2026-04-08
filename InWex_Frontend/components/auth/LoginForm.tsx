@@ -9,6 +9,10 @@ import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import { toast } from 'sonner'
+import axios from 'axios'
+import { useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
 type LoginFormProps = {
     onSwitch: () => void
@@ -16,6 +20,7 @@ type LoginFormProps = {
 
 const LoginForm = ({ onSwitch }: LoginFormProps) => {
     const { login } = useAuth()
+    const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
@@ -27,7 +32,15 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
     })
 
     const onSubmit = async (data: LoginValues) => {
-        login(data)
+        try {
+            await login(data)
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.non_field_errors?.[0] || "Login failed")
+            } else {
+                toast.error("Something went wrong")
+            }
+        }
     }
 
     return (
@@ -62,7 +75,16 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                                 <FormItem>
                                     <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
                                     <FormControl>
-                                        <Input type='password' autoComplete="current-password" placeholder='••••••••' {...field} className='h-8 text-xs! pl-3 border-none' />
+                                        <div className="relative">
+                                            <Input type={showPassword ? 'text' : 'password'} autoComplete="current-password" placeholder='••••••••' {...field} className='h-8 text-xs! pl-3 border-none' />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(prev => !prev)}
+                                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                                            >
+                                                {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
+                                            </button>
+                                        </div>
                                     </FormControl>
                                     <FormMessage className="text-[11px]" />
                                     <div className='flex justify-end mt-1'>

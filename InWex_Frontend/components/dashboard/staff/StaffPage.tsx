@@ -278,13 +278,18 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                                 <div className="space-y-3">
                                     <p className="text-[10px] uppercase tracking-[0.2em] font-black text-zinc-600">Warehouse Assignment</p>
 
-                                    <div className="p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 space-y-2">
+                                    <div className={`p-4 rounded-2xl bg-zinc-900/40 border transition-colors space-y-2 ${form.formState.errors.warehouse ? "border-red-500/40" : "border-zinc-800"
+                                        }`}>
                                         <Label className="text-xs text-zinc-500">Assigned warehouse</Label>
                                         <Select
                                             value={watchWarehouse ? String(watchWarehouse) : "unassigned"}
-                                            onValueChange={(val) => form.setValue("warehouse", val === "unassigned" ? (undefined as unknown as number) : Number(val))}
+                                            onValueChange={(val) => {
+                                                form.setValue("warehouse", val === "unassigned" ? (undefined as unknown as number) : Number(val))
+                                                form.clearErrors("warehouse")
+                                            }}
                                         >
-                                            <SelectTrigger className="w-full bg-zinc-900 border-zinc-700 text-zinc-200 text-xs rounded-lg h-9 focus:ring-1 focus:ring-emerald-500/50">
+                                            <SelectTrigger className={`w-full bg-zinc-900 text-zinc-200 text-xs rounded-lg h-9 focus:ring-1 focus:ring-emerald-500/50 border transition-colors ${form.formState.errors.warehouse ? "border-red-500/40 focus:ring-red-500/30" : "border-zinc-700"
+                                                }`}>
                                                 <SelectValue placeholder="Unassigned" />
                                             </SelectTrigger>
                                             <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
@@ -296,6 +301,12 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                                                 ))}
                                             </SelectContent>
                                         </Select>
+
+                                        {form.formState.errors.warehouse && (
+                                            <p className="text-[10px] text-red-400 font-medium pt-0.5">
+                                                {form.formState.errors.warehouse.message}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -329,6 +340,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction
                                                     onClick={handleDelete}
+                                                    disabled={form.formState.isSubmitting}
                                                     className="bg-red-500 hover:bg-red-600 text-white text-xs h-9 rounded-lg font-bold"
                                                 >
                                                     Yes, Remove
@@ -343,9 +355,10 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                             <SheetFooter className="px-5 py-4 border-t border-zinc-800 bg-zinc-950 shrink-0">
                                 <Button
                                     onClick={handleSave}
-                                    className="w-full h-8 text-xs rounded-lg bg-zinc-100 text-zinc-950 font-bold hover:bg-white"
+                                    disabled={form.formState.isSubmitting}
+                                    className="w-full h-8 text-xs rounded-lg bg-zinc-100 text-zinc-950 font-bold hover:bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
-                                    Save Changes
+                                    {form.formState.isSubmitting ? "Saving changes..." : "Save Changes"}
                                 </Button>
                             </SheetFooter>
                         </SheetContent>
