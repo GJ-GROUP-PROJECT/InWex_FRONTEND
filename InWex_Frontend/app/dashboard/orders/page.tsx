@@ -6,6 +6,7 @@ import { StatusCard } from "@/components/dashboard/orders/StatusCard"
 import SearchbarWithFilter from "@/components/ui/SearchbarWithFilter"
 import { useOrder } from "@/contexts/OrderContext"
 import { ShoppingCart, PackageSearch } from "lucide-react"
+import { useEffect } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
 type OrderStatus = "Requested" | "In_Progress" | "Delivered" | "Returned"
@@ -17,17 +18,18 @@ type StatusCardData = {
 }
 
 const Orders = () => {
-    const { orders, count, fetchOrders, fetchOrderByClientId } = useOrder()
-    const requested = orders?.filter(o => o.status === "Requested").length ?? 0
-    const inProgress = orders?.filter(o => o.status === "In_Progress").length ?? 0
-    const delivered = orders?.filter(o => o.status === "Delivered").length ?? 0
-    const returned = orders?.filter(o => o.status === "Returned").length ?? 0
+    const { orderStatusCount, count, fetchOrders, fetchOrderByClientId, fetchOrderStatusCount } = useOrder()
+
+    useEffect(() => {
+        fetchOrderStatusCount()
+    }, [])
+
 
     const cardsContent: StatusCardData[] = [
-        { title: "Requested Orders", value: requested, status: "Requested" },
-        { title: "Returned Orders", value: returned, status: "Returned" },
-        { title: "In-Progress Orders", value: inProgress, status: "In_Progress" },
-        { title: "Delivered Orders", value: delivered, status: "Delivered" },
+        { title: "Requested Orders", value: orderStatusCount.request, status: "Requested" },
+        { title: "Returned Orders", value: orderStatusCount.return, status: "Returned" },
+        { title: "In-Progress Orders", value: orderStatusCount.in_progress, status: "In_Progress" },
+        { title: "Delivered Orders", value: orderStatusCount.delivered, status: "Delivered" },
     ]
 
     const handleSearch = useDebouncedCallback(async (value: string) => {

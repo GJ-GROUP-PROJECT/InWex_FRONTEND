@@ -5,11 +5,11 @@ type OrderStatus = "Requested" | "In_Progress" | "Delivered" | "Returned"
 
 type StatusCardProps = {
     title: string
-    value: number | string
+    value: number
     status: OrderStatus
 }
 
-export function StatusCard({ title, value, status }: StatusCardProps) {
+export const StatusCard = ({ title, value, status }: StatusCardProps) => {
     const style = statusStyles[status]
     const Icon = style.icon
 

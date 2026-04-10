@@ -1,4 +1,4 @@
-import { Orders, Product } from "@/lib/types/types"
+import { Orders, OrderStatusCount, Product } from "@/lib/types/types"
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useAuth } from "./AuthContext"
 import { toast } from "sonner"
@@ -14,6 +14,7 @@ export type OrderContextType = {
     selectedOrder: Orders[]
     pendingOrder: OrderValues | null
     productCache: Record<string, Product>
+    orderStatusCount: OrderStatusCount
     isLoading: boolean
     error: string | null
     fetchOrders: (showLoading: boolean) => Promise<void>
@@ -23,6 +24,7 @@ export type OrderContextType = {
     fetchSelectedOrder: (showLoading?: boolean) => Promise<void>
     fetchOrderByReferenceId: (query: string, showLoading?: boolean) => Promise<void>
     fetchOrderByClientId: (query: string, showLoading?: boolean) => Promise<void>
+    fetchOrderStatusCount: () => Promise<void>
     shippingOrder: (orderId: number) => Promise<void>
     completeOrder: (orderId: number) => Promise<void>
     returnOrder: (orderId: number) => Promise<void>
@@ -47,6 +49,7 @@ const extractErrorMessage = (err: unknown, fallback: string): string => {
 }
 
 export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
+    const [orderStatusCount, setOrderStatusCount] = useState<OrderStatusCount>({ request: 0, in_progress: 0, delivered: 0, return: 0 })
     const [orders, setOrders] = useState<Orders[]>([])
     const [count, setCount] = useState<number | null>(null)
     const [nextUrl, setNextUrl] = useState<string | null>(null)
@@ -169,6 +172,18 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
+    const fetchOrderStatusCount = useCallback(async () => {
+        try {
+            const res = await api.get("/products/get-count-for-dashboard")
+            setOrderStatusCount(res.data)
+
+        } catch (err) {
+            const message = extractErrorMessage(err, "Failed to fetch order type count")
+            setError(message)
+            toast.error(message)
+        }
+    }, [])
+
     const shippingOrder = useCallback(async (orderId: number) => {
         try {
             await api.post(`/products/order/${orderId}/shipping`)
@@ -252,6 +267,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         if (!authLoading && !user) {
             setOrders([])
             setSelectedOrder([])
+            setOrderStatusCount({ request: 0, in_progress: 0, delivered: 0, return: 0 })
             clearPendingOrder()
         }
     }, [user, authLoading, clearPendingOrder])
@@ -266,6 +282,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 selectedOrder,
                 pendingOrder,
                 productCache,
+                orderStatusCount,
                 isLoading,
                 error,
                 fetchOrders,
@@ -275,6 +292,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 fetchSelectedOrder,
                 fetchOrderByReferenceId,
                 fetchOrderByClientId,
+                fetchOrderStatusCount,
                 shippingOrder,
                 completeOrder,
                 returnOrder,

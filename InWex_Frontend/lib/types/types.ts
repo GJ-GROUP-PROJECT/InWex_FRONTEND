@@ -114,3 +114,10 @@ export type OrderItems = {
     unit_price: string
     expiry_date?: string
 }
+
+export type OrderStatusCount = {
+    request: number
+    in_progress: number
+    delivered: number
+    return: number
+}

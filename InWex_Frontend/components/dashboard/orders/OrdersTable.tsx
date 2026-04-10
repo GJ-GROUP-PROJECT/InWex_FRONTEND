@@ -78,6 +78,16 @@ const OrdersTable = () => {
                                 </div>
                             </TableCell>
                         </TableRow>
+                    ) : orders.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={8} className="py-20">
+                                <div className="flex flex-col items-center justify-center gap-2">
+                                    <FileText className="h-6 w-6 text-zinc-700" />
+                                    <p className="text-zinc-500 text-xs font-medium">No orders found</p>
+                                    <p className="text-zinc-700 text-[10px]">Orders will appear here once created</p>
+                                </div>
+                            </TableCell>
+                        </TableRow>
                     ) : (
                         <>
                             {orders.map((order) => (
