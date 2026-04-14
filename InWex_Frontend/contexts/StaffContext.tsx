@@ -15,9 +15,11 @@ export type AssignRoleValues = {
 
 export type StaffContextType = {
     staffs: Staff[]
+    selectedStaff: Staff | null
     isLoading: boolean
     error: string | null
-    fetchStaff: (showLoading?: boolean) => Promise<void>
+    fetchStaffs: (showLoading?: boolean) => Promise<void>
+    fetchStaff: (staffId: number, showLoading?: boolean) => Promise<void>
     fetchStaffBySearch: (query: string, showLoading?: boolean) => Promise<void>
     assignWarehouse: (payload: AssignWarehouseValues, assignmentId?: number) => Promise<void>
     assignRole: (staffId: number, payload: AssignRoleValues) => Promise<void>
@@ -39,12 +41,13 @@ const extractErrorMessage = (err: unknown, fallback: string): string => {
 
 export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     const [staffs, setStaffs] = useState<Staff[]>([])
+    const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const { user } = useAuth()
     const router = useRouter()
 
-    const fetchStaff = useCallback(async (showLoading = true) => {
+    const fetchStaffs = useCallback(async (showLoading = true) => {
         if (showLoading) setIsLoading(true)
         setError(null)
         try {
@@ -52,6 +55,20 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
             setStaffs(res.data)
         } catch (err) {
             setError(extractErrorMessage(err, "Failed to fetch staff"))
+        } finally {
+            if (showLoading) setIsLoading(false)
+        }
+    }, [])
+
+    const fetchStaff = useCallback(async (staffId: number, showLoading = true) => {
+        if (showLoading) setIsLoading(true)
+        setError(null)
+        try {
+            const res = await api.get(`api/warehouse/get-staff-detail-for-warehouse?staff=${staffId}`)
+            const data = Array.isArray(res.data) ? res.data[0] : res.data
+            setSelectedStaff(data ?? null)
+        } catch (err) {
+            setError(extractErrorMessage(err, "Failed to fetch staff details"))
         } finally {
             if (showLoading) setIsLoading(false)
         }
@@ -73,69 +90,60 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (!user) {
             setStaffs([])
+            setSelectedStaff(null)
             setError(null)
         }
     }, [user])
 
     const assignWarehouse = useCallback(async (payload: AssignWarehouseValues, assignmentId?: number) => {
-        try {
-            if (assignmentId) {
-                await api.put(`warehouse/warehouse-staff/${assignmentId}`, payload)
-            } else {
-                await api.post('warehouse/warehouse-staff', payload)
-            }
-            await fetchStaff(false)
-            toast.success("Warehouse assigned successfully")
-        } catch (err) {
-            toast.error(extractErrorMessage(err, "Failed to assign warehouse"))
+        if (assignmentId) {
+            await api.put(`warehouse/warehouse-staff/${assignmentId}`, payload)
+        } else {
+            await api.post('warehouse/warehouse-staff', payload)
         }
-    }, [fetchStaff])
+        toast.success("Warehouse assigned successfully")
+    }, [])
 
     const assignRole = useCallback(async (staffId: number, payload: AssignRoleValues) => {
-        try {
-            await api.patch(`accounts/assign-role/${staffId}`, payload)
-            await fetchStaff(false)
-            toast.success("Role updated successfully")
-        } catch (err) {
-            toast.error(extractErrorMessage(err, "Failed to update role"))
-        }
-    }, [fetchStaff])
+        await api.patch(`accounts/assign-role/${staffId}`, payload)
+        toast.success("Role updated successfully")
+    }, [])
 
     const updateStaff = useCallback(async (staffId: number) => {
         try {
             await api.post(`warehouse/warehouse-staff/${staffId}`)
-            await fetchStaff(true)
+            await fetchStaffs(true)
             toast.success("Staff updated successfully")
             router.push("/dashboard/staff")
         } catch (err) {
             setError(extractErrorMessage(err, "Failed to update staff"))
             toast.error(extractErrorMessage(err, "Failed to update staff"))
         }
-    }, [fetchStaff, router])
+    }, [fetchStaffs, router])
 
     const deleteStaff = useCallback(async (staffId: number) => {
         try {
             await api.delete(`accounts/appoint-staff/${staffId}`)
-            await fetchStaff(true)
             toast.success("Staff deleted successfully")
-            router.push("/dashboard/staff")
         } catch (err) {
             toast.error(extractErrorMessage(err, "Failed to delete staff"))
         }
-    }, [fetchStaff, router])
+    }, [])
 
     return (
         <StaffContext.Provider
             value={{
                 staffs,
+                selectedStaff,
                 isLoading,
                 error,
+                fetchStaffs,
                 fetchStaff,
                 fetchStaffBySearch,
                 assignWarehouse,
                 assignRole,
                 updateStaff,
-                deleteStaff
+                deleteStaff,
             }}
         >
             {children}

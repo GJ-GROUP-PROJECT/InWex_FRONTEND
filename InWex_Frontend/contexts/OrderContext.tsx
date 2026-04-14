@@ -26,6 +26,7 @@ export type OrderContextType = {
     fetchOrderByClientId: (query: string, showLoading?: boolean) => Promise<void>
     fetchOrderStatusCount: () => Promise<void>
     shippingOrder: (orderId: number) => Promise<void>
+    cancelOrder: (orderId: number) => Promise<void>
     completeOrder: (orderId: number) => Promise<void>
     returnOrder: (orderId: number) => Promise<void>
     downloadOrder: (orderId: number) => Promise<void>
@@ -176,7 +177,6 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const res = await api.get("/products/get-count-for-dashboard")
             setOrderStatusCount(res.data)
-
         } catch (err) {
             const message = extractErrorMessage(err, "Failed to fetch order type count")
             setError(message)
@@ -191,6 +191,18 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchOrders(false)
         } catch (err) {
             const message = extractErrorMessage(err, "Failed to mark order")
+            setError(message)
+            toast.error(message)
+        }
+    }, [fetchOrders])
+
+    const cancelOrder = useCallback(async (orderId: number) => {
+        try {
+            await api.post(`/products/order/${orderId}/cancel`)
+            toast.success("Order marked as cancelled")
+            await fetchOrders(false)
+        } catch (err) {
+            const message = extractErrorMessage(err, "Failed to cancel order")
             setError(message)
             toast.error(message)
         }
@@ -294,6 +306,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
                 fetchOrderByClientId,
                 fetchOrderStatusCount,
                 shippingOrder,
+                cancelOrder,
                 completeOrder,
                 returnOrder,
                 downloadOrder,

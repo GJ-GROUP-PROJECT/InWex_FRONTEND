@@ -25,7 +25,7 @@ const Page = () => {
                 <p className="text-white/60 text-xs leading-relaxed max-w-xs mx-auto">
                     Your account is pending approval.
                     <br />
-                    Please wait for verification from your organization.
+                    Please wait for verification.
                 </p>
 
                 <div className="pt-2">

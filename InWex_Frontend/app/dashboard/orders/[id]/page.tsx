@@ -23,7 +23,7 @@ const statusStyles: Record<string, string> = {
 
 const OrderDetailsPage = () => {
     const router = useRouter()
-    const { selectedOrder, fetchSelectedOrder, clearSelectedOrder, downloadOrder, shippingOrder, completeOrder, returnOrder } = useOrder()
+    const { selectedOrder, fetchSelectedOrder, clearSelectedOrder, downloadOrder, shippingOrder, cancelOrder, completeOrder, returnOrder } = useOrder()
     const [loading, setLoading] = useState(true)
 
     const order = selectedOrder?.[0]
@@ -115,16 +115,29 @@ const OrderDetailsPage = () => {
                         )}
 
                         {isInProgress && (
-                            <Button
-                                size="sm"
-                                className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
-                                onClick={async () => {
-                                    await completeOrder(order.id)
-                                    await fetchSelectedOrder(false)
-                                }}
-                            >
-                                Complete Order
-                            </Button>
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="h-8 text-xs bg-white text-black hover:bg-zinc-200"
+                                    onClick={async () => {
+                                        await completeOrder(order.id)
+                                        await fetchSelectedOrder(false)
+                                    }}
+                                >
+                                    Complete Order
+                                </Button>
+
+                                <Button
+                                    size="sm"
+                                    className="h-8 text-xs bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20"
+                                    onClick={async () => {
+                                        await cancelOrder(order.id)
+                                        await fetchSelectedOrder(false)
+                                    }}
+                                >
+                                    Cancel Order
+                                </Button>
+                            </>
                         )}
                     </div>
                 </div>

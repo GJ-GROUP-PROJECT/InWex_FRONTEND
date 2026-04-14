@@ -10,15 +10,15 @@ import { useDebouncedCallback } from "use-debounce"
 
 const StaffContent = () => {
     const router = useRouter()
-    const { staffs, isLoading, error, fetchStaff, fetchStaffBySearch } = useStaff()
+    const { staffs, isLoading, error, fetchStaffs, fetchStaffBySearch } = useStaff()
 
     useEffect(() => {
-        fetchStaff(true)
-    }, [fetchStaff])
+        fetchStaffs(true)
+    }, [fetchStaffs])
 
     const handleSearch = useDebouncedCallback(async (value: string) => {
         if (!value.trim()) {
-            fetchStaff(true)
+            fetchStaffs(true)
             return
         }
         fetchStaffBySearch(value)

@@ -68,7 +68,7 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                             <span className="flex items-center gap-1">
                                 <Calendar size={11} /> Created {new Date(warehouse.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </span>
-                            <span className="flex items-center gap-1"><Building2 size={11} /> ID: {warehouse.company}</span>
+                            <span className="flex items-center gap-1"><Building2 size={11} /> ID: {warehouse.id}</span>
                         </div>
                     </div>
                 </div>

@@ -10,12 +10,11 @@ import { use, useEffect } from "react"
 const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = use(params)
 
-    const { staffs, isLoading, fetchStaff } = useStaff()
-    const staff = staffs.find(s => s.id === Number(id))
+    const { selectedStaff, isLoading, fetchStaff } = useStaff()
 
     useEffect(() => {
-        if (staffs.length === 0) fetchStaff(true)
-    }, [staffs.length, fetchStaff])
+        fetchStaff(Number(id))
+    }, [id, fetchStaff])
 
     if (isLoading) return (
         <div className="flex justify-center items-center h-screen">
@@ -33,7 +32,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
     )
 
-    if (!staff) return (
+    if (!selectedStaff || selectedStaff.id !== Number(id)) return (
         <div className="flex justify-center items-center h-screen">
             <Card className="bg-transparent w-full max-w-xs border-none shadow-none">
                 <CardContent className="flex flex-col items-center gap-3 py-8 text-center">
@@ -52,7 +51,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     return (
         <>
             <Navbar />
-            <StaffPage staff={staff} />
+            <StaffPage staff={selectedStaff} />
         </>
     )
 }
