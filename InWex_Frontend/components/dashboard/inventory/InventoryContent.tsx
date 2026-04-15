@@ -18,7 +18,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 import { ProductCardShimmer } from "./ProductCardShimmer"
-import { BrowserMultiFormatReader } from '@zxing/library'
+import Quagga from "@ericblade/quagga2"
 import { api } from "@/lib/api"
 import { useDebouncedCallback } from "use-debounce"
 import { toast } from "sonner"
@@ -44,39 +44,45 @@ const InventoryContent = () => {
     }, [fetchProducts, fetchCategory])
 
 
-    const videoRef = useRef<HTMLVideoElement | null>(null)
-    const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null)
+    const videoRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         if (!showScanner || !videoRef.current) return
 
-        const codeReader = new BrowserMultiFormatReader()
-        codeReaderRef.current = codeReader
-
-        codeReader
-            .decodeFromVideoDevice(null, videoRef.current, async (result) => {
-                if (result) {
-                    const barcode = result.getText()
-
-                    codeReader.reset()
-                    setShowScanner(false)
-
-                    try {
-                        const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
-                        router.push(`/dashboard/inventory/products/${res.data.slug}`)
-                    } catch {
-                        toast.error("Failed to fetch product from barcode")
-                    }
-                }
-            })
-            .catch(() => {
+        Quagga.init({
+            inputStream: {
+                type: "LiveStream",
+                target: videoRef.current,
+                constraints: { facingMode: "environment" }
+            },
+            decoder: {
+                readers: ["ean_reader"]
+            }
+        }, (err) => {
+            if (err) {
                 toast.error("Camera access denied or not available")
                 setShowScanner(false)
-            })
+                return
+            }
+            Quagga.start()
+        })
 
-        return () => {
-            codeReader.reset()
-        }
+        Quagga.onDetected(async (result) => {
+            const barcode = result.codeResult.code
+            if (!barcode || barcode.length !== 13) return
+
+            Quagga.stop()
+            setShowScanner(false)
+
+            try {
+                const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
+                router.push(`/dashboard/inventory/products/${res.data.slug}`)
+            } catch {
+                toast.error("Failed to fetch product from barcode")
+            }
+        })
+
+        return () => { Quagga.stop() }
     }, [router, showScanner])
 
     const handleSearch = useDebouncedCallback(async (value: string) => {
@@ -241,7 +247,7 @@ const InventoryContent = () => {
             {showScanner && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
                     <div className="relative">
-                        <video ref={videoRef} className="rounded-xl w-72 h-52" />
+                        <div ref={videoRef} className="rounded-xl w-72 h-52 overflow-hidden" />
                         <Button
                             onClick={() => setShowScanner(false)}
                             className="absolute top-2 right-2 h-7 text-xs px-3"
