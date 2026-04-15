@@ -1,8 +1,27 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Clock } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 const Page = () => {
+    const router = useRouter()
+    const [verified, setVerified] = useState(false)
+
+    useEffect(() => {
+        const pendingVerification = sessionStorage.getItem("pendingVerification")
+        if (!pendingVerification) {
+            router.push("/auth")
+        }
+        else {
+            setInterval(() => setVerified(true), 0)
+        }
+    }, [router])
+
+    if (!verified) return null
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
             <div className="max-w-sm w-full text-center space-y-8">
@@ -35,7 +54,9 @@ const Page = () => {
                         className="h-8 px-6 text-xs backdrop-blur-sm transition-all duration-300"
                         asChild
                     >
-                        <Link href="/">Return To Home</Link>
+                        <Link onClick={() => sessionStorage.removeItem("pendingVerification")}
+                            href="/"
+                        >Return To Home</Link>
                     </Button>
                 </div>
 
@@ -45,7 +66,7 @@ const Page = () => {
                     <div className="w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse" style={{ animationDelay: '0.4s' }} />
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

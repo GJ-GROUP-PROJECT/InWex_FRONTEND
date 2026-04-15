@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             toast.success("Login successful!")
             localStorage.setItem("UserData", JSON.stringify(res.data))
             localStorage.setItem("token", res.data.token)
+            document.cookie = `token=${res.data.token}; path=/;`
             setUser(res.data)
             router.push("/dashboard")
         }
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         finally {
             localStorage.removeItem("UserData")
             localStorage.removeItem("token")
+            document.cookie = "token=; path=/; max-age=0"
             setUser(null)
             router.push("/auth")
         }
