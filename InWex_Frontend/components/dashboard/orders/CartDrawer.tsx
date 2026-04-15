@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { ShoppingCart, Search, Trash2, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,13 +19,11 @@ import { useOrder } from "@/contexts/OrderContext"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
-import Quagga from "@ericblade/quagga2"
 
 const CartDrawer = () => {
     const [step, setStep] = useState<"build" | "review">("build")
     const [searchResults, setSearchResults] = useState<Product[]>([])
     const [isSearching, setIsSearching] = useState(false)
-    const [showScanner, setShowScanner] = useState(false)
     const [query, setQuery] = useState("")
 
     const { pendingOrder, stageOrder, productCache, cacheProducts, addOrder } = useOrder()
@@ -98,48 +96,6 @@ const CartDrawer = () => {
             setIsSearching(false)
         }
     }, 300)
-
-    const videoRef = useRef<HTMLDivElement | null>(null)
-
-    useEffect(() => {
-        if (!showScanner || !videoRef.current) return
-
-        Quagga.init({
-            inputStream: {
-                type: "LiveStream",
-                target: videoRef.current,
-                constraints: { facingMode: "environment" }
-            },
-            decoder: {
-                readers: ["ean_reader"]
-            }
-        }, (err) => {
-            if (err) {
-                toast.error("Camera access denied or not available")
-                setShowScanner(false)
-                return
-            }
-            Quagga.start()
-        })
-
-        Quagga.onDetected(async (result) => {
-            const barcode = result.codeResult.code
-            if (!barcode || barcode.length !== 13) return
-
-            Quagga.stop()
-            setShowScanner(false)
-
-            try {
-                const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
-                setSearchResults(res.data)
-                setQuery(barcode)
-            } catch {
-                toast.error("Failed to fetch product from barcode")
-            }
-        })
-
-        return () => { Quagga.stop() }
-    }, [showScanner])
 
     const handleAddProduct = (product: Product) => {
         cacheProducts([product])
@@ -237,7 +193,9 @@ const CartDrawer = () => {
                                             name="notes"
                                             render={({ field }) => (
                                                 <FormItem className="space-y-1.5">
-                                                    <FormLabel className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">Notes (optional)</FormLabel>
+                                                    <FormLabel className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">
+                                                        Notes <span className="normal-case text-zinc-600">(optional)</span>
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Input {...field} placeholder="e.g. Stock purchased from supplier" className="h-9 text-xs! rounded-lg px-3 border-none" />
                                                     </FormControl>
@@ -267,13 +225,7 @@ const CartDrawer = () => {
 
                                     {/* Search */}
                                     <div className="px-5 pt-4 pb-2 shrink-0">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <Label className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">Add Products</Label>
-
-                                            <Button onClick={() => setShowScanner(true)} className="h-8 text-xs px-4 rounded-lg shrink-0">
-                                                Scan Barcode
-                                            </Button>
-                                        </div>
+                                        <Label className="text-[10px]! text-zinc-400 font-medium uppercase mb-2 tracking-wider">Add Products</Label>
 
                                         <InputGroup className="bg-zinc-900/50 border-none w-full h-8 pl-3 rounded-lg focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
                                             <InputGroupInput
@@ -470,21 +422,6 @@ const CartDrawer = () => {
                     </Form>
                 </SheetContent>
             </Sheet>
-
-            {/* Scanner */}
-            {showScanner && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                    <div className="relative">
-                        <div ref={videoRef} className="rounded-xl w-72 h-52 overflow-hidden" />
-                        <Button
-                            onClick={() => setShowScanner(false)}
-                            className="absolute top-2 right-2 h-7 text-xs px-3"
-                        >
-                            Close
-                        </Button>
-                    </div>
-                </div>
-            )}
         </>
     )
 }
