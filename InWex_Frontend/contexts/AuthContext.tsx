@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             toast.success("Login successful!")
             localStorage.setItem("UserData", JSON.stringify(res.data))
             localStorage.setItem("token", res.data.token)
-            document.cookie = `token=${res.data.token}; path=/;`
+            document.cookie = `token=${res.data.token}; path=/; SameSite=Lax`
             setUser(res.data)
             router.push("/dashboard")
         }
