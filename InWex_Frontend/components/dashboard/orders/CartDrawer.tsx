@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ShoppingCart, Search, Trash2, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,11 +19,13 @@ import { useOrder } from "@/contexts/OrderContext"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { api } from "@/lib/api"
+import { BrowserMultiFormatReader } from "@zxing/library"
 
 const CartDrawer = () => {
     const [step, setStep] = useState<"build" | "review">("build")
     const [searchResults, setSearchResults] = useState<Product[]>([])
     const [isSearching, setIsSearching] = useState(false)
+    const [showScanner, setShowScanner] = useState(false)
     const [query, setQuery] = useState("")
 
     const { pendingOrder, stageOrder, productCache, cacheProducts, addOrder } = useOrder()
@@ -67,11 +69,13 @@ const CartDrawer = () => {
         const data = form.getValues()
         if (data.items.length === 0) return toast.error("Cart is empty")
 
-        if (data.order_type === "Inbound") {
+        try {
             await addOrder(data)
             form.reset()
             setStep("build")
             return
+        } catch (e) {
+            toast.error("Failed to create order")
         }
 
         stageOrder(data)
@@ -80,7 +84,12 @@ const CartDrawer = () => {
 
     const handleSearch = useDebouncedCallback(async (value: string) => {
         setQuery(value)
-        if (!value.trim()) return
+
+        if (!value.trim()) {
+            setSearchResults([])
+            return
+        }
+
         setIsSearching(true)
         try {
             const res = await api.get(`products/product-search?product=${value}`)
@@ -89,6 +98,41 @@ const CartDrawer = () => {
             setIsSearching(false)
         }
     }, 300)
+
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null)
+
+    useEffect(() => {
+        if (!showScanner || !videoRef.current) return
+
+        const codeReader = new BrowserMultiFormatReader()
+        codeReaderRef.current = codeReader
+
+        codeReader
+            .decodeFromVideoDevice(null, videoRef.current, async (result) => {
+                if (result) {
+                    const barcode = result.getText()
+
+                    codeReader.reset()
+                    setShowScanner(false)
+
+                    try {
+                        const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
+                        setSearchResults(res.data)
+                    } catch {
+                        toast.error("Failed to fetch product from barcode")
+                    }
+                }
+            })
+            .catch(() => {
+                toast.error("Camera access denied or not available")
+                setShowScanner(false)
+            })
+
+        return () => {
+            codeReader.reset()
+        }
+    }, [showScanner])
 
     const handleAddProduct = (product: Product) => {
         cacheProducts([product])
@@ -215,7 +259,14 @@ const CartDrawer = () => {
 
                                 {/* Search */}
                                 <div className="px-5 pt-4 pb-2 shrink-0">
-                                    <Label className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider mb-2 block">Add Products</Label>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <Label className="text-[10px]! text-zinc-400 font-medium uppercase tracking-wider">Add Products</Label>
+
+                                        <Button onClick={() => setShowScanner(true)} className="h-8 text-xs px-4 rounded-lg shrink-0">
+                                            Scan Barcode
+                                        </Button>
+                                    </div>
+
                                     <InputGroup className="bg-zinc-900/50 border-none w-full h-8 pl-3 rounded-lg focus-within:ring-1 focus-within:ring-zinc-700 transition-all">
                                         <InputGroupInput
                                             placeholder="Search products..."
@@ -410,6 +461,21 @@ const CartDrawer = () => {
                     </form>
                 </Form>
             </SheetContent>
+
+            {/* Scanner */}
+            {showScanner && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                    <div className="relative">
+                        <video ref={videoRef} className="rounded-xl w-72 h-52" />
+                        <Button
+                            onClick={() => setShowScanner(false)}
+                            className="absolute top-2 right-2 h-7 text-xs px-3"
+                        >
+                            Close
+                        </Button>
+                    </div>
+                </div>
+            )}
         </Sheet>
     )
 }

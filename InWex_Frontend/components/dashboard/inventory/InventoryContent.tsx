@@ -21,6 +21,7 @@ import { ProductCardShimmer } from "./ProductCardShimmer"
 import { BrowserMultiFormatReader } from '@zxing/library'
 import { api } from "@/lib/api"
 import { useDebouncedCallback } from "use-debounce"
+import { toast } from "sonner"
 
 const InventoryContent = () => {
     const [selected, setSelected] = useState("Product")
@@ -42,23 +43,40 @@ const InventoryContent = () => {
         fetchCategory()
     }, [fetchProducts, fetchCategory])
 
-    const videoRef = useRef(null)
+
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null)
 
     useEffect(() => {
         if (!showScanner || !videoRef.current) return
 
         const codeReader = new BrowserMultiFormatReader()
+        codeReaderRef.current = codeReader
 
-        codeReader.decodeFromVideoDevice(null, videoRef.current, async (result) => {
-            if (result) {
-                codeReader.reset()
-                const barcode = result.getText()
-                const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
-                router.push(`/dashboard/inventory/products/${res.data.slug}`)
-            }
-        })
+        codeReader
+            .decodeFromVideoDevice(null, videoRef.current, async (result) => {
+                if (result) {
+                    const barcode = result.getText()
 
-        return () => { codeReader.reset() }
+                    codeReader.reset()
+                    setShowScanner(false)
+
+                    try {
+                        const res = await api.get(`/products/get-product-from-barcode?barcode=${barcode}`)
+                        router.push(`/dashboard/inventory/products/${res.data.slug}`)
+                    } catch {
+                        toast.error("Failed to fetch product from barcode")
+                    }
+                }
+            })
+            .catch(() => {
+                toast.error("Camera access denied or not available")
+                setShowScanner(false)
+            })
+
+        return () => {
+            codeReader.reset()
+        }
     }, [router, showScanner])
 
     const handleSearch = useDebouncedCallback(async (value: string) => {
