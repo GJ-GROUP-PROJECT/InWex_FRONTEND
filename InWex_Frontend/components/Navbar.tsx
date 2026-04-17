@@ -152,14 +152,14 @@ const Navbar = () => {
                                     <Button
                                         variant="ghost"
                                         onClick={handleDashboard}
-                                        className="w-full justify-start text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-lg"
+                                        className="w-full justify-start text-xs text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-lg"
                                     >
                                         Dashboard
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         onClick={logout}
-                                        className="w-full justify-start text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
+                                        className="w-full justify-start text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
                                     >
                                         Log Out
                                     </Button>
