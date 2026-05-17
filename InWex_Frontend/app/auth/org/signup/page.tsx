@@ -13,6 +13,9 @@ import axios from "axios"
 import { toast } from "sonner"
 import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
+import { fraunces } from "@/lib/fonts"
+
+const inputClass = "h-8 w-full text-xs pl-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-white transition-all duration-300 hover:border-violet-500/60 hover:shadow-[-4px_4px_20px_rgba(124,58,237,0.2)] focus:border-violet-500/60 focus:shadow-[-4px_4px_24px_rgba(124,58,237,0.3)]"
 
 const SignupAsComp = () => {
     const router = useRouter()
@@ -53,8 +56,7 @@ const SignupAsComp = () => {
             await api.post<SignupOrgResponse>("/accounts/register", data)
             sessionStorage.setItem("pendingVerification", "true")
             router.push("/auth/verify")
-        }
-        catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.error(error.response?.data?.contact_number?.[0] || error.response?.data?.email?.[0] || "Signup failed")
             } else {
@@ -67,10 +69,12 @@ const SignupAsComp = () => {
         <div className="h-screen flex items-center justify-center">
             <Card className="w-95 border-none bg-background">
                 <CardHeader className="text-center space-y-1">
-                    <CardTitle className="text-3xl tracking-tight">Add Your Business</CardTitle>
-                    <p className="text-xs text-muted-foreground">
-                        Enter your business details to create your business account
+                    <p className="text-xs text-violet-400 uppercase tracking-widest font-medium mb-1">
+                        Business Account
                     </p>
+                    <CardTitle className={`${fraunces.className} text-4xl font-bold italic tracking-tight text-white leading-tight`}>
+                        Add Your Business.
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -88,7 +92,7 @@ const SignupAsComp = () => {
                                                     type={type}
                                                     placeholder={placeholder}
                                                     autoComplete={autoComplete}
-                                                    className="h-8 text-xs! pl-3 border-none"
+                                                    className={inputClass}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -110,7 +114,7 @@ const SignupAsComp = () => {
                                                     type={showPassword ? "text" : "password"}
                                                     placeholder="••••••••"
                                                     autoComplete="current-password"
-                                                    className="h-9 text-xs! pl-3 border-none"
+                                                    className={inputClass}
                                                     {...field}
                                                 />
                                                 <button
@@ -125,12 +129,12 @@ const SignupAsComp = () => {
                                         <FormMessage className="text-[11px]" />
                                     </FormItem>
                                 )}
-                            ></FormField>
+                            />
 
                             <Button
                                 type='submit'
                                 disabled={form.formState.isSubmitting}
-                                className='h-8 text-xs w-36 mb-2 self-center cursor-pointer'
+                                className='h-8 text-xs w-36 mb-2 self-center cursor-pointer duration-300'
                             >
                                 {form.formState.isSubmitting ? 'Creating account...' : 'Create Account'}
                             </Button>

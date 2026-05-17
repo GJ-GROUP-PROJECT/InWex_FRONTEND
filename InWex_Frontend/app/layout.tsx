@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 import { AppProviders } from "@/providers/app-providers";
 import ScrollOnRefresh from "@/components/scroll/ScrollOnRefresh";
 import ScrollTracker from "@/components/scroll/ScrollTracker";
-
-const poppins = Poppins({
-    subsets: ["latin"],
-    variable: "--font-poppins",
-    weight: ["400", "500", "600", "700"],
-});
+import { poppins } from "@/lib/fonts";
 
 export const metadata: Metadata = {
     title: "Inwex",
@@ -25,7 +19,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={poppins.className} >
+            <body className={`${poppins.className}`} >
                 <ThemeProvider>
                     <AppProviders>
                         <ScrollOnRefresh />

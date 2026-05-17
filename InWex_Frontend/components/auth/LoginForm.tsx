@@ -13,10 +13,13 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { fraunces } from '@/lib/fonts'
 
 type LoginFormProps = {
     onSwitch: () => void
 }
+
+const inputClass = "h-8 w-full text-xs pl-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-white transition-all duration-300 hover:border-violet-500/60 hover:shadow-[-4px_4px_20px_rgba(124,58,237,0.2)] focus:border-violet-500/60 focus:shadow-[-4px_4px_24px_rgba(124,58,237,0.3)]"
 
 const LoginForm = ({ onSwitch }: LoginFormProps) => {
     const { login } = useAuth()
@@ -46,10 +49,12 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
     return (
         <Card className='w-90 border-none bg-background'>
             <CardHeader>
-                <CardTitle className='text-3xl tracking-tight'>Login</CardTitle>
-                <p className="text-xs text-muted-foreground">
-                    Enter your credentials
+                <p className="text-xs text-violet-400 uppercase tracking-widest font-medium mb-1">
+                    Account Access
                 </p>
+                <CardTitle className={`${fraunces.className} text-4xl font-bold italic tracking-tight text-white leading-tight`}>
+                    Log In.
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -61,7 +66,13 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                                 <FormItem>
                                     <FormLabel className="text-xs text-zinc-300">Email</FormLabel>
                                     <FormControl>
-                                        <Input type='email' autoComplete="email" placeholder='your@example.com' {...field} className='h-8 text-xs! pl-3 border-none' />
+                                        <Input
+                                            type='email'
+                                            autoComplete="email"
+                                            placeholder='your@example.com'
+                                            {...field}
+                                            className={inputClass}
+                                        />
                                     </FormControl>
                                     <FormMessage className="text-[11px]" />
                                 </FormItem>
@@ -76,7 +87,13 @@ const LoginForm = ({ onSwitch }: LoginFormProps) => {
                                     <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
                                     <FormControl>
                                         <div className="relative">
-                                            <Input type={showPassword ? 'text' : 'password'} autoComplete="current-password" placeholder='••••••••' {...field} className='h-8 text-xs! pl-3 border-none' />
+                                            <Input
+                                                type={showPassword ? 'text' : 'password'}
+                                                autoComplete="current-password"
+                                                placeholder='••••••••'
+                                                {...field}
+                                                className={inputClass}
+                                            />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(prev => !prev)}

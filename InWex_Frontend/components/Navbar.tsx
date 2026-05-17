@@ -18,6 +18,7 @@ import { Separator } from "./ui/separator"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Menu } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
+import { fraunces } from "@/lib/fonts"
 
 const navItems = [
     { label: "Features", id: "features" },
@@ -40,27 +41,29 @@ const Navbar = () => {
 
     return (
         <header className="fixed top-0 z-50 w-full bg-black/20 backdrop-blur-md">
-            <div className="relative h-20 w-full max-w-7xl mx-auto px-6 flex items-center">
+            <div className="relative h-20 w-full max-w-7xl mx-auto px-8 flex items-center">
 
                 {/* Logo */}
                 <div
                     role="button"
                     tabIndex={0}
-                    className="cursor-pointer transition-opacity hover:opacity-80 z-10"
+                    className="cursor-pointer z-10 transition-all duration-300 hover:drop-shadow-[0_0_12px_rgba(167,139,250,0.8)]"
                     onClick={() => scrollTo("home")}
                 >
-                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={64} height={64} />
+                    <Image src="/logo/InwexUpdatedTransparent.png" alt="InWex Logo" width={52} height={52} />
                 </div>
 
                 {/* Desktop Nav */}
-                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10">
+                <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
                     {navItems.map(({ label, id }) => (
                         <button
                             key={id}
                             onClick={() => scrollTo(id)}
-                            className="text-xs text-zinc-400 hover:text-white transition-colors duration-150 p-5"
+                            className="text-xs text-zinc-500 hover:text-white transition-all duration-300 tracking-wide group"
                         >
-                            {label}
+                            <span className="group-hover:[text-shadow:0_0_8px_rgba(167,139,250,1),0_0_20px_rgba(167,139,250,0.9),0_0_40px_rgba(124,58,237,0.7)]">
+                                {label}
+                            </span>
                         </button>
                     ))}
                 </nav>
@@ -69,31 +72,28 @@ const Navbar = () => {
                 <div className="ml-auto hidden md:flex items-center gap-3">
                     {!isLoggedIn ? (
                         <>
-                            {/* Log in */}
-                            <Button
-                                variant="ghost"
-                                className="text-zinc-400 hover:text-white hover:bg-transparent text-xs font-normal px-2.5 h-7"
-                                asChild
+                            <Link
+                                href="/auth"
+                                className="text-xs text-zinc-500 hover:text-white transition-all duration-300 px-2.5 group"
                             >
-                                <Link href="/auth">Log in</Link>
-                            </Button>
+                                <span className="group-hover:[text-shadow:0_0_8px_rgba(167,139,250,1),0_0_20px_rgba(167,139,250,0.9),0_0_40px_rgba(124,58,237,0.7)]">
+                                    Log in
+                                </span>
+                            </Link>
 
-                            {/* Sign up dropdown */}
                             <NavigationMenu>
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
-                                        <NavigationMenuTrigger
-                                            className="h-7 px-3 text-xs font-medium bg-white text-zinc-950 hover:bg-zinc-100 rounded-md data-[state=open]:bg-zinc-100"
-                                        >
+                                        <NavigationMenuTrigger className="nav-trigger h-7 px-3 text-xs font-medium bg-white text-zinc-950 hover:bg-zinc-100 rounded-md shadow-[0_0_16px_rgba(255,255,255,0.15)] hover:shadow-[0_0_24px_rgba(255,255,255,0.25)] transition-all duration-300">
                                             Sign up
                                         </NavigationMenuTrigger>
-                                        <NavigationMenuContent>
-                                            <ul className="w-48 p-1.5 space-y-0.5">
+                                        <NavigationMenuContent className="bg-zinc-950 border border-violet-500/20 shadow-[0_0_24px_rgba(124,58,237,0.25)]">
+                                            <ul className="w-48 p-1.5 space-y-0.5 bg-zinc-950">
                                                 <li>
                                                     <NavigationMenuLink asChild>
                                                         <Link
                                                             href="/auth/org/signup"
-                                                            className="block px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
+                                                            className="block px-3 py-2 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-md transition-colors"
                                                         >
                                                             As Business
                                                         </Link>
@@ -103,7 +103,7 @@ const Navbar = () => {
                                                     <NavigationMenuLink asChild>
                                                         <Link
                                                             href="/auth?signup=true"
-                                                            className="block px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
+                                                            className="block px-3 py-2 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-md transition-colors"
                                                         >
                                                             As Employee
                                                         </Link>
@@ -118,14 +118,12 @@ const Navbar = () => {
                     ) : (
                         <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
-                                <div className="flex items-center cursor-pointer group">
-                                    <Avatar className="h-9 w-9 transition-all">
-                                        <AvatarImage src={user.avatar} className="object-cover" />
-                                        <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-xs">
-                                            {user.fullname?.slice(0, 2).toUpperCase() || "U"}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                </div>
+                                <Avatar className="h-8 w-8 cursor-pointer hover:shadow-[0_0_16px_rgba(124,58,237,0.4)] transition-all duration-300">
+                                    <AvatarImage src={user.avatar} className="object-cover" />
+                                    <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-xs">
+                                        {user.fullname?.slice(0, 2).toUpperCase() || "U"}
+                                    </AvatarFallback>
+                                </Avatar>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent
@@ -135,7 +133,7 @@ const Navbar = () => {
                             >
                                 <div className="p-4 bg-zinc-900/40">
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-10 w-10 border border-white/5">
+                                        <Avatar className="h-10 w-10">
                                             <AvatarImage src={user.avatar} />
                                             <AvatarFallback className="bg-zinc-800 text-zinc-500 font-black text-xs">
                                                 {user.fullname?.slice(0, 2).toUpperCase()}
@@ -172,7 +170,7 @@ const Navbar = () => {
                 {/* Mobile Menu */}
                 <div className="flex md:hidden items-center gap-3 ml-auto">
                     {isLoggedIn && (
-                        <Avatar className="h-8 w-8 border border-white/10">
+                        <Avatar className="h-8 w-8">
                             <AvatarImage src={user.avatar} />
                             <AvatarFallback className="bg-zinc-900 text-zinc-400 font-black text-[10px]">
                                 {user.fullname?.slice(0, 2).toUpperCase() || "U"}
@@ -182,7 +180,7 @@ const Navbar = () => {
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-white/5">
-                                <Menu size={20} />
+                                <Menu size={18} />
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="right" className="w-72 bg-zinc-950 border-l border-zinc-800/60 text-white flex flex-col pt-10">
@@ -221,7 +219,7 @@ const Navbar = () => {
                             ) : (
                                 <div className="flex flex-col h-full">
                                     <div className="px-3 pb-5">
-                                        <p className="text-sm font-semibold text-white truncate">{user.fullname}</p>
+                                        <p className={`${fraunces.className} text-sm font-semibold text-white truncate`}>{user.fullname}</p>
                                         <p className="text-xs text-zinc-500 truncate mt-0.5">{user.email}</p>
                                     </div>
 
@@ -243,13 +241,15 @@ const Navbar = () => {
                                     <div className="mt-auto pb-8 flex flex-col gap-3">
                                         <Separator className="bg-zinc-800/60" />
                                         <Button
-                                            className="text-left text-xs! text-zinc-400 transition-colors px-3 py-1"
+                                            variant="ghost"
+                                            className="justify-start text-xs text-zinc-400 hover:text-white hover:bg-zinc-800/60"
                                             onClick={handleDashboard}
                                         >
                                             Dashboard
                                         </Button>
                                         <Button
-                                            className="text-left text-xs! text-red-400 transition-colors px-3 py-1"
+                                            variant="ghost"
+                                            className="justify-start text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
                                             onClick={logout}
                                         >
                                             Log Out
@@ -261,7 +261,7 @@ const Navbar = () => {
                     </Sheet>
                 </div>
             </div>
-        </header >
+        </header>
     )
 }
 

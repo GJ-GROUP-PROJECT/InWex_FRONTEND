@@ -8,6 +8,9 @@ import { resetPasswordSchema, ResetPasswordType } from "@/lib/schemas/validation
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { fraunces } from "@/lib/fonts"
+
+const inputClass = "h-8 w-full text-xs pl-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-white transition-all duration-300 hover:border-violet-500/60 hover:shadow-[-4px_4px_20px_rgba(124,58,237,0.2)] focus:border-violet-500/60 focus:shadow-[-4px_4px_24px_rgba(124,58,237,0.3)]"
 
 const ResetPassword = () => {
     const router = useRouter()
@@ -27,9 +30,14 @@ const ResetPassword = () => {
 
     return (
         <div className="min-h-screen flex justify-center items-center">
-            <Card className="w-90 border-none bg-transparent">
+            <Card className="w-100 border-none bg-transparent">
                 <CardHeader className="text-center space-y-1">
-                    <CardTitle className="text-3xl tracking-tight">Set New Password</CardTitle>
+                    <p className="text-xs text-violet-400 uppercase tracking-widest font-medium mb-1">
+                        Password Reset
+                    </p>
+                    <CardTitle className={`${fraunces.className} text-4xl font-bold italic tracking-tight text-white leading-tight`}>
+                        Set New Password.
+                    </CardTitle>
                     <p className="text-xs text-muted-foreground">
                         Please enter your new password below.
                     </p>
@@ -44,7 +52,7 @@ const ResetPassword = () => {
                                     <FormItem>
                                         <FormLabel className="text-xs text-zinc-300">Password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" autoComplete="new-password" placeholder="••••••••" {...field} className="h-8 text-xs! pl-3 border-none" />
+                                            <Input type="password" autoComplete="new-password" placeholder="••••••••" {...field} className={inputClass} />
                                         </FormControl>
                                         <FormMessage className="text-[11px] transition-opacity duration-200" />
                                     </FormItem>
@@ -57,7 +65,7 @@ const ResetPassword = () => {
                                     <FormItem>
                                         <FormLabel className="text-xs text-zinc-300">Confirm Password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" autoComplete="password" placeholder="••••••••" {...field} className="h-8 text-xs pl-3 border-none" />
+                                            <Input type="password" autoComplete="password" placeholder="••••••••" {...field} className={inputClass} />
                                         </FormControl>
                                         <FormMessage className="text-[11px] transition-opacity duration-200" />
                                     </FormItem>
@@ -66,7 +74,7 @@ const ResetPassword = () => {
                             <Button
                                 type="submit"
                                 disabled={form.formState.isSubmitting}
-                                className="h-8 text-xs w-36 mt-2 self-center cursor-pointer"
+                                className="h-8 text-xs w-36 mt-2 self-center cursor-pointer hover:bg-[#7c3aed] transition-all duration-300"
                             >
                                 {form.formState.isSubmitting ? "Changing..." : "Change"}
                             </Button>

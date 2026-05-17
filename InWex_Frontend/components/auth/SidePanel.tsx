@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Button } from "../ui/button"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { fraunces } from "@/lib/fonts"
 
 type SidePanelProps = {
     isSignup: boolean
@@ -50,7 +51,7 @@ const SidePanel = ({ isSignup }: SidePanelProps) => {
 
                 <div className="absolute inset-0 flex items-center justify-center z-10 text-white p-12">
                     <div className="text-center transition-all duration-500 delay-200 overflow-hidden">
-                        <h2 className="text-2xl font-bold tracking-tight mb-2">
+                        <h2 className={`${fraunces.className} text-4xl font-bold tracking-tight mb-2`}>
                             {isSignup ? "Create Account" : "Welcome Back"}
                         </h2>
                         <div className="h-px w-8 bg-primary mx-auto mb-3" />
@@ -62,7 +63,7 @@ const SidePanel = ({ isSignup }: SidePanelProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

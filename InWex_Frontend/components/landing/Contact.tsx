@@ -7,69 +7,47 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import { fraunces } from "@/lib/fonts";
+
+const inputClass = "w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-xs text-white transition-all duration-300 hover:border-violet-500/60 hover:shadow-[-4px_4px_20px_rgba(124,58,237,0.2)] focus:border-violet-500/60 focus:shadow-[-4px_4px_24px_rgba(124,58,237,0.3)]"
 
 const Contact = () => {
     const form = useForm<ContactValues>({
         resolver: zodResolver(contactSchema),
-        defaultValues: {
-            "name": "",
-            "email": "",
-            "message": ""
-        },
+        defaultValues: { name: "", email: "", message: "" },
     })
 
-    const formElements: {
-        name: keyof ContactValues,
-        type: string,
-        placeholder: string,
-        autocomplete: string
-    }[] = [
-            {
-                name: "name",
-                type: "text",
-                placeholder: "ENTER YOUR NAME *",
-                autocomplete: "name",
-            },
-            {
-                name: "email",
-                type: "email",
-                placeholder: "ENTER YOUR EMAIL *",
-                autocomplete: "email",
-            },
-        ]
+    const formElements: { name: keyof ContactValues, type: string, placeholder: string, autocomplete: string }[] = [
+        { name: "name", type: "text", placeholder: "ENTER YOUR NAME *", autocomplete: "name" },
+        { name: "email", type: "email", placeholder: "ENTER YOUR EMAIL *", autocomplete: "email" },
+    ]
 
     const onSubmit = async (data: ContactValues) => {
         try {
             await api.post("/accounts/support", data)
             toast.success("Request Sent")
             form.reset()
-        }
-        catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.log(error.response?.data?.message)
-                toast.error(
-                    error.response?.data?.message ||
-                    "Invalid Request"
-                )
-            }
-            else {
+                toast.error(error.response?.data?.message || "Invalid Request")
+            } else {
                 toast.error("Something went wrong")
             }
         }
     }
 
     return (
-        <div className="mx-auto max-w-4xl px-6 gap-20 w-full py-24">
-            {/* Section Header */}
-            <div className="mb-12 text-center">
-                <h2 className="text-xl md:text-4xl font-bold tracking-tight">Get In Touch</h2>
-                <p className="mt-2.5 text-xs text-zinc-400 leading-relaxed max-w-lg mx-auto">
-                    Have questions about our inventory management system? We&#39;d love to
-                    hear from you.
+        <div className="mx-auto max-w-5xl px-8 md:px-12 w-full py-28">
+
+            <div className="mb-10 text-center">
+                <p className="text-xs text-violet-400 uppercase tracking-widest font-medium mb-3">
+                    Contact
                 </p>
+                <h2 className={`${fraunces.className} text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight`}>
+                    Let&apos;s talk.
+                </h2>
             </div>
 
-            {/* Contact Form */}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-sm mx-auto">
                     {formElements.map(({ name, type, placeholder, autocomplete }) => (
@@ -84,7 +62,7 @@ const Contact = () => {
                                             type={type}
                                             placeholder={placeholder}
                                             autoComplete={autocomplete}
-                                            className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 placeholder:text-zinc-500 placeholder:text-[10px] text-xs"
+                                            className={inputClass}
                                             {...field}
                                         />
                                     </FormControl>
@@ -96,18 +74,18 @@ const Contact = () => {
                     <FormField
                         control={form.control}
                         name="message"
-                        render={(({ field }) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormControl>
                                     <textarea
                                         placeholder="YOUR MESSAGE *"
-                                        className="w-full min-h-24 py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none resize-none focus:outline-none placeholder:text-zinc-500 placeholder:text-[10px] text-xs text-white"
+                                        className={`${inputClass} min-h-24 resize-none focus:outline-none`}
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormMessage className="text-[10px]" />
                             </FormItem>
-                        ))}
+                        )}
                     />
                     <div className="flex items-center justify-center mt-2">
                         <Button
