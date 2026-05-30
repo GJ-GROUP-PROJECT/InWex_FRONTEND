@@ -11,7 +11,7 @@ type FilterItem = {
 }
 
 type SearchbarProps = {
-    filters: FilterItem[]
+    filters?: FilterItem[]
     onFilterSelect?: (value: string) => void
     onSearch?: (value: string) => void
 }
@@ -30,34 +30,36 @@ const SearchbarWithFilter = ({ filters, onFilterSelect, onSearch }: SearchbarPro
                 </InputGroupAddon>
             </InputGroup>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="secondary"
-                        className="h-9 px-4 cursor-pointer rounded-lg bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white border-none transition-all flex items-center gap-1.5"
-                    >
-                        <Funnel className="h-3.5! w-3.5!" />
-                        <span className="text-xs font-medium hidden xs:inline">Filter</span>
-                    </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent
-                    side="bottom"
-                    align="end"
-                    sideOffset={6}
-                    className="px-1 py-1 rounded-lg bg-zinc-950 text-zinc-100 border-none shadow-2xl min-w-36"
-                >
-                    {filters.map((item) => (
-                        <DropdownMenuItem
-                            key={item.value}
-                            className="rounded-md cursor-pointer focus:bg-zinc-800 focus:text-white py-2 px-3 text-xs transition-colors"
-                            onClick={() => onFilterSelect?.(item.value)}
+            {(filters ?? []).length > 0 && (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="secondary"
+                            className="h-9 px-4 cursor-pointer rounded-lg bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white border-none transition-all flex items-center gap-1.5"
                         >
-                            {item.label}
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
+                            <Funnel className="h-3.5! w-3.5!" />
+                            <span className="text-xs font-medium hidden xs:inline">Filter</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent
+                        side="bottom"
+                        align="end"
+                        sideOffset={6}
+                        className="px-1 py-1 rounded-lg bg-zinc-950 text-zinc-100 border-none shadow-2xl min-w-36"
+                    >
+                        {filters?.map((item) => (
+                            <DropdownMenuItem
+                                key={item.value}
+                                className="rounded-md cursor-pointer focus:bg-zinc-800 focus:text-white py-2 px-3 text-xs transition-colors"
+                                onClick={() => onFilterSelect?.(item.value)}
+                            >
+                                {item.label}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )}
         </div>
     )
 }

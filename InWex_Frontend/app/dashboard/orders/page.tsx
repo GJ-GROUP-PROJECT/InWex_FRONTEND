@@ -65,12 +65,6 @@ const Orders = () => {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                     <div className="flex-1 w-full max-w-xl">
                         <SearchbarWithFilter
-                            filters={[
-                                { label: "Id", value: "id" },
-                                { label: "Type", value: "type" },
-                                { label: "Date Created", value: "date" }
-                            ]}
-                            onFilterSelect={(value) => console.log("Filter:", value)}
                             onSearch={handleSearch}
                         />
                     </div>

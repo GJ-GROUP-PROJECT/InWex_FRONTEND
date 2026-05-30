@@ -101,12 +101,10 @@ export const StaffProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
             await api.post('warehouse/warehouse-staff', payload)
         }
-        toast.success("Warehouse assigned successfully")
     }, [])
 
     const assignRole = useCallback(async (staffId: number, payload: AssignRoleValues) => {
         await api.patch(`accounts/assign-role/${staffId}`, payload)
-        toast.success("Role updated successfully")
     }, [])
 
     const updateStaff = useCallback(async (staffId: number) => {

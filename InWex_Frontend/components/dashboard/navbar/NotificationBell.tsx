@@ -6,11 +6,14 @@ import ws from "@/lib/socket"
 import { api } from "@/lib/api"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { DropdownMenuPortal } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
 
 
 const NotificationBell = ({ sound }: { sound?: boolean }) => {
     const [notifications, setNotifications] = useState<{ id: number, title: string, message: string, created_at: string, is_read: boolean }[]>([])
     const unreadCount = notifications.filter((n) => !n.is_read).length
+    const router = useRouter()
 
     useEffect(() => {
         api.get(`/network/notifications`)
@@ -33,6 +36,12 @@ const NotificationBell = ({ sound }: { sound?: boolean }) => {
             .catch((err) => console.log(err))
     }
 
+    const getNotificationHref = (message: string): string | null => {
+        const match = message.match(/^(.+?)\s+just created a new account/i)
+        if (match) return `/dashboard/staff`
+        return null
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -48,51 +57,60 @@ const NotificationBell = ({ sound }: { sound?: boolean }) => {
                 </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent
-                align="end"
-                sideOffset={10}
-                className="w-90 bg-zinc-950 border border-zinc-900 rounded-xl shadow-2xl overflow-hidden z-50"
-            >
-                <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-900 bg-zinc-900/40">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white">Notifications</p>
-                    {unreadCount > 0 && (
-                        <button
-                            onClick={markAllRead}
-                            className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white flex items-center gap-1 transition-colors"
-                        >
-                            <CheckCheck className="h-2.5 w-2.5 text-emerald-500" />
-                            Mark all read
-                        </button>
-                    )}
-                </div>
-
-                <div className="max-h-64 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-10">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-700">No active alerts</p>
-                        </div>
-                    ) : (
-                        notifications.map((n) => (
-                            <div
-                                key={n.id}
-                                className={`flex items-start gap-2.5 px-4 py-3 border-b border-zinc-900/50 hover:bg-zinc-900/20 transition-colors ${!n.is_read ? "bg-zinc-900/10" : "opacity-60"}`}
+            <DropdownMenuPortal>
+                <DropdownMenuContent
+                    align="end"
+                    sideOffset={10}
+                    className="w-90 bg-zinc-950 border border-zinc-900 rounded-xl shadow-2xl overflow-hidden z-50"
+                >
+                    <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-900 bg-zinc-900/40">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white">Notifications</p>
+                        {unreadCount > 0 && (
+                            <button
+                                onClick={markAllRead}
+                                className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white flex items-center gap-1 transition-colors"
                             >
-                                <div className="flex-1 min-w-0">
-                                    <p className={`text-[10px] leading-relaxed ${!n.is_read ? "font-bold text-zinc-100" : "text-zinc-500"}`}>
-                                        {n.message}
-                                    </p>
-                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-tighter mt-1">
-                                        {new Date(n.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
-                                    </p>
-                                </div>
-                                {!n.is_read && (
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-1 shrink-0 animate-pulse" />
-                                )}
+                                <CheckCheck className="h-2.5 w-2.5 text-emerald-500" />
+                                Mark all read
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="max-h-64 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-10">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-700">No active alerts</p>
                             </div>
-                        ))
-                    )}
-                </div>
-            </DropdownMenuContent>
+                        ) : (
+                            notifications.map((n) => {
+                                const href = getNotificationHref(n.message)
+                                return (
+                                    <div
+                                        key={n.id}
+                                        onClick={() => href && router.push(href)}
+                                        className={`flex items-start gap-2.5 px-4 py-3 border-b border-zinc-900/50 hover:bg-zinc-900/20 transition-colors 
+                                                ${href ? "cursor-pointer" : "cursor-default"} 
+                                                ${!n.is_read ? "bg-zinc-900/10" : "opacity-60"}`
+                                        }
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <p className={`text-[10px] leading-relaxed ${!n.is_read ? "font-bold text-zinc-100" : "text-zinc-500"}`}>
+                                                {n.message}
+                                            </p>
+                                            <p className="text-[9px] font-black text-zinc-600 uppercase tracking-tighter mt-1">
+                                                {new Date(n.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                            </p>
+                                        </div>
+                                        {!n.is_read && (
+                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-1 shrink-0 animate-pulse" />
+                                        )}
+                                    </div>
+                                )
+                            })
+                        )}
+                    </div>
+                </DropdownMenuContent>
+            </DropdownMenuPortal>
         </DropdownMenu>
     )
 }

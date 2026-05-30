@@ -1,7 +1,7 @@
 "use client"
 
 import { Staff, Warehouse } from "@/lib/types/types"
-import { Calendar, Loader2, Package, Users, Edit3, Trash2, ArrowLeft, Building2, UserRound, ShieldCheck } from "lucide-react"
+import { Calendar, Loader2, Package, Users, Edit3, Trash2, ArrowLeft, Building2, UserRound, ShieldCheck, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useWarehouse } from "@/contexts/WarehouseContext"
@@ -69,6 +69,11 @@ const WarehousePage = ({ warehouse }: { warehouse: Warehouse }) => {
                                 <Calendar size={11} /> Created {new Date(warehouse.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                             </span>
                             <span className="flex items-center gap-1"><Building2 size={11} /> ID: {warehouse.id}</span>
+                            {(warehouse.latitude && warehouse.longitude) && (
+                                <span className="flex items-center gap-1">
+                                    <MapPin size={11} /> {warehouse.latitude.toFixed(4)}, {warehouse.longitude.toFixed(4)}
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

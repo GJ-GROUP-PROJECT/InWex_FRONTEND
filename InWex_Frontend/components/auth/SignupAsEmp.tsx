@@ -72,6 +72,7 @@ const SignupAsEmp = ({ onSwitch }: SignupFormProps) => {
         try {
             await api.post("/accounts/register", data)
             toast.success("Account created successfully!")
+            sessionStorage.setItem("pendingVerification", "true")
             router.push("/auth/verify")
         } catch (error) {
             if (axios.isAxiosError(error)) {

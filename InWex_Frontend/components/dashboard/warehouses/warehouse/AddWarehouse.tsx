@@ -6,7 +6,12 @@ import { Input } from "@/components/ui/input"
 import { useWarehouse } from "@/contexts/WarehouseContext"
 import { warehouseSchema, WarehouseValues } from "@/lib/schemas/warehouse/addWarehouse.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
+import dynamic from "next/dynamic"
+
+const MapPicker = dynamic(() => import("@/components/dashboard/warehouses/MapPicker"), { ssr: false })
+
+const inputClass = "w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 text-[10px]! text-white placeholder:text-zinc-500"
 
 const AddWarehouse = () => {
     const { addWarehouse } = useWarehouse()
@@ -15,8 +20,13 @@ const AddWarehouse = () => {
         resolver: zodResolver(warehouseSchema),
         defaultValues: {
             name: "",
+            latitude: undefined,
+            longitude: undefined,
         },
     })
+
+    const lat = useWatch({ control: form.control, name: "latitude" })
+    const lng = useWatch({ control: form.control, name: "longitude" })
 
     const onSubmit = async (data: WarehouseValues) => {
         await addWarehouse(data)
@@ -24,7 +34,7 @@ const AddWarehouse = () => {
     }
 
     return (
-        <div className="mx-auto max-w-4xl px-6 w-full py-16">
+        <div className="mx-auto max-w-2xl px-6 w-full py-16">
             <div className="mb-10 text-center">
                 <h2 className="text-xl md:text-3xl font-bold tracking-tight">Add New Warehouse</h2>
                 <p className="mt-2 text-xs text-zinc-400 max-w-lg mx-auto">
@@ -47,7 +57,7 @@ const AddWarehouse = () => {
                                         type="text"
                                         placeholder="WAREHOUSE NAME *"
                                         autoComplete="off"
-                                        className="w-full py-2 px-3 border-0 border-l-2 border-b-2 border-white/30 bg-transparent! rounded-none focus-visible:ring-0 text-[10px]! text-white"
+                                        className={inputClass}
                                         {...field}
                                     />
                                 </FormControl>
@@ -55,6 +65,26 @@ const AddWarehouse = () => {
                             </FormItem>
                         )}
                     />
+
+                    {/* Map */}
+                    <div className="space-y-2">
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
+                            Pin Location <span className="text-zinc-600 normal-case tracking-normal">(click map to set)</span>
+                        </p>
+                        <MapPicker
+                            lat={lat ?? null}
+                            lng={lng ?? null}
+                            onChange={(lat, lng) => {
+                                form.setValue("latitude", lat)
+                                form.setValue("longitude", lng)
+                            }}
+                        />
+                        {lat && lng && (
+                            <p className="text-[10px] text-zinc-500 text-center">
+                                {lat.toFixed(6)}, {lng.toFixed(6)}
+                            </p>
+                        )}
+                    </div>
 
                     <div className="flex items-center justify-center mt-2">
                         <Button

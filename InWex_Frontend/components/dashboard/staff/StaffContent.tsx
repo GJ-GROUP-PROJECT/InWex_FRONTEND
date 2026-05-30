@@ -37,11 +37,6 @@ const StaffContent = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-6">
                 <div className="flex-1 w-full">
                     <SearchbarWithFilter
-                        filters={[
-                            { label: "All warehouses", value: "allWarehouses" },
-                            { label: "Mumbai", value: "mumbai" },
-                        ]}
-                        onFilterSelect={(value) => console.log("Warehouse filter:", value)}
                         onSearch={handleSearch}
                     />
                 </div>

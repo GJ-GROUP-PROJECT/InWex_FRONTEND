@@ -27,6 +27,7 @@ import { useStaff, AssignRoleValues } from "@/contexts/StaffContext"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AssignWarehouseSchema, AssignWarehouseValues } from "@/lib/schemas/staff/assignWarehouse.schema"
+import { toast } from "sonner"
 
 // --- Types & Constants ---
 type RoleKey = "is_manager" | "is_warehouse_staff" | "none"
@@ -158,6 +159,7 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
             assignWarehouse(data, latestAssignment?.id),
             assignRole(staff.user?.id, rolePayload),
         ])
+        toast.success("Staff updated successfully")
         router.refresh()
     })
 
@@ -184,6 +186,24 @@ const StaffPage = ({ staff }: { staff: Staff }) => {
                     <Badge className={`${staff.user?.is_active ? "bg-blue-500/10 text-blue-400" : "bg-orange-500/10 text-orange-400"} border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest`}>
                         {staff.user?.is_active ? "Verified Member" : "Verification Pending"}
                     </Badge>
+
+                    {!staff.user?.is_active && (
+                        <Button
+                            size="sm"
+                            onClick={async () => {
+                                await assignRole(staff.user?.id, {
+                                    is_manager: staff.user?.is_manager ?? false,
+                                    is_warehouse_staff: staff.user?.is_warehouse_staff ?? false,
+                                    is_active: true,
+                                })
+                                router.refresh()
+                            }}
+                            className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-lg h-9 px-4 text-xs font-bold gap-2"
+                        >
+                            <BadgeCheck size={14} />
+                            Verify Member
+                        </Button>
+                    )}
 
                     <Sheet>
                         <SheetTrigger asChild>

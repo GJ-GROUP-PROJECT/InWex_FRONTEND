@@ -37,10 +37,6 @@ const WarehouseContent = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-6">
                 <div className="flex-1 w-full">
                     <SearchbarWithFilter
-                        filters={[
-                            { label: "Warehouse Name", value: "name" },
-                        ]}
-                        onFilterSelect={(value) => console.log("Warehouse filter:", value)}
                         onSearch={handleSearch}
                     />
                 </div>

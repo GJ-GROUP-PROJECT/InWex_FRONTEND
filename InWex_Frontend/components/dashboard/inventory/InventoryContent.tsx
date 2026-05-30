@@ -8,7 +8,7 @@ import SearchbarWithFilter from "@/components/ui/SearchbarWithFilter"
 import { useProduct } from "@/contexts/ProductContext"
 import { AlertTriangle, ChevronDown, Package, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
     Pagination,
     PaginationContent,
@@ -31,7 +31,6 @@ const InventoryContent = () => {
 
     const options = [
         "Product",
-        "Warehouse",
         "Price: High To Low",
         "Price: Low to High",
     ]
@@ -43,6 +42,17 @@ const InventoryContent = () => {
         fetchCategory()
     }, [fetchProducts, fetchCategory])
 
+    const sortedProducts = useMemo(() => {
+        const arr = [...products]
+        switch (selected) {
+            case "Price: High To Low":
+                return arr.sort((a, b) => Number(b.selling_price) - Number(a.selling_price))
+            case "Price: Low to High":
+                return arr.sort((a, b) => Number(a.selling_price) - Number(b.selling_price))
+            default:
+                return arr
+        }
+    }, [products, selected])
 
     const videoRef = useRef<HTMLDivElement | null>(null)
 
@@ -118,12 +128,6 @@ const InventoryContent = () => {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <div className="w-full">
                     <SearchbarWithFilter
-                        filters={[
-                            { label: "Product Code", value: "code" },
-                            { label: "Product Name", value: "name" },
-                            { label: "Price", value: "price" }
-                        ]}
-                        onFilterSelect={(value) => console.log("Products filter:", value)}
                         onSearch={handleSearch}
                     />
                 </div>
@@ -194,8 +198,8 @@ const InventoryContent = () => {
             {!isLoading && !error && (
                 <>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {products.length > 0 ? (
-                            products.map((product) => (
+                        {sortedProducts.length > 0 ? (
+                            sortedProducts.map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))
                         ) : (
@@ -209,7 +213,7 @@ const InventoryContent = () => {
                         )}
                     </div>
 
-                    {products.length > 0 && total_pages > 1 && (
+                    {sortedProducts.length > 0 && total_pages > 1 && (
                         <div className="mt-8 mb-2 flex justify-center items-center">
                             <Pagination>
                                 <PaginationContent>

@@ -63,6 +63,8 @@ export type Warehouse = {
     name: string
     company: number
     created_at: string
+    latitude?: number
+    longitude?: number
 }
 
 export type Section = {

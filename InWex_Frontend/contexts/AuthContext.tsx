@@ -28,6 +28,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const stored = localStorage.getItem("UserData")
             if (stored) {
                 setUser(JSON.parse(stored))
+                const parsed = JSON.parse(stored)
+                setUser(parsed)
+                if (parsed?.token) {
+                    document.cookie = `token=${parsed.token}; path=/; SameSite=Lax`
+                }
             }
         } catch (error) {
             console.error("Error parsing user data:", error)

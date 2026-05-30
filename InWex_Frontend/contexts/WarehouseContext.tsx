@@ -91,7 +91,7 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
             await api.post("/warehouse/warehouse", warehouse)
             await fetchWarehouses(true)
             toast.success("Warehouse added successfully")
-            router.push("/dashboard/warehouse")
+            router.push("/dashboard/warehouses")
         } catch (err) {
             toast.error(extractErrorMessage(err, "Failed to add warehouse"))
         }
@@ -102,7 +102,7 @@ export const WarehouseProvider = ({ children }: { children: React.ReactNode }) =
             await api.patch(`/warehouse/warehouse/${warehouseId}`, updatedWarehouse)
             await fetchWarehouses(true)
             toast.success("Warehouse updated successfully")
-            router.push("/dashboard/warehouse")
+            router.push("/dashboard/warehouses")
         } catch (err) {
             toast.error(extractErrorMessage(err, "Failed to update warehouse"))
         }
